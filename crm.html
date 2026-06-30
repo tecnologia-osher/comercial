@@ -222,6 +222,8 @@ label.fl{display:flex;flex-direction:column;gap:5px;font-size:12px;color:var(--m
     <select id="fVend" onchange="renderBoard()"></select>
     <select id="fBem" onchange="renderBoard()"><option value="">Todos os bens</option><option>Imóvel</option><option>Automóvel</option><option>Serviços</option><option>Outro</option></select>
     <input id="fSearch" placeholder="Buscar cliente..." oninput="renderBoard()">
+    <input id="fMes" type="month" onchange="renderBoard()" title="Filtrar por mês de entrada" style="padding:6px 8px">
+    <button class="btn sm" onclick="if(el('fMes'))el('fMes').value='';renderBoard()" title="Limpar mês">Todos os meses</button>
     <span class="pill" id="pipeStat"></span>
   </div>
   <div class="filters" id="qfilters" style="margin-top:-4px">
@@ -759,7 +761,7 @@ var QF={mine:false,hot:false,over:false,nonext:false,high:false};
 function toggleQF(k){QF[k]=!QF[k];syncQFUI();renderBoard();}
 function clearQF(){Object.keys(QF).forEach(function(k){QF[k]=false;});if(el('fSearch'))el('fSearch').value='';if(el('fBem'))el('fBem').value='';if(canSeeAll()&&el('fVend'))el('fVend').value='';syncQFUI();renderBoard();}
 function syncQFUI(){[].forEach.call(document.querySelectorAll('#qfilters .qf'),function(b){var k=b.dataset.qf;if(!k)return;if(QF[k]){b.style.background='var(--ac)';b.style.color='#fff';b.style.borderColor='var(--ac)';}else{b.style.background='';b.style.color='';b.style.borderColor='';}});}
-function filtered(){var L=el('pLinha').value||LINHAS[0];var fv=el('fVend').value,fb=el('fBem').value,fs=(el('fSearch').value||'').toLowerCase();return scope(DB.deals).filter(function(d){if(d.linha!==L)return false;if(canSeeAll()&&fv&&d.vendedor!==fv)return false;if(fb&&d.bem!==fb)return false;if(fs&&((d.cliente||'').toLowerCase().indexOf(fs)<0)&&((d.telefone||'').toLowerCase().indexOf(fs)<0))return false;if(QF.mine&&ME&&d.vendedor!==ME.nome)return false;if(QF.hot&&!(isOpen(d)&&scoreLead(d)>=70))return false;if(QF.over&&!overdue(d))return false;if(QF.nonext&&d.dataProximoPasso)return false;if(QF.high&&!((d.valor||0)>=300000))return false;return true;});}
+function filtered(){var L=el('pLinha').value||LINHAS[0];var fv=el('fVend').value,fb=el('fBem').value,fs=(el('fSearch').value||'').toLowerCase();var fm=(el('fMes')&&el('fMes').value)||'';return scope(DB.deals).filter(function(d){if(d.linha!==L)return false;if(fm&&String(d.criadoEm||'').slice(0,7)!==fm)return false;if(canSeeAll()&&fv&&d.vendedor!==fv)return false;if(fb&&d.bem!==fb)return false;if(fs&&((d.cliente||'').toLowerCase().indexOf(fs)<0)&&((d.telefone||'').toLowerCase().indexOf(fs)<0))return false;if(QF.mine&&ME&&d.vendedor!==ME.nome)return false;if(QF.hot&&!(isOpen(d)&&scoreLead(d)>=70))return false;if(QF.over&&!overdue(d))return false;if(QF.nonext&&d.dataProximoPasso)return false;if(QF.high&&!((d.valor||0)>=300000))return false;return true;});}
 function nextOpenStage(d){var o=openStages(d.linha);var i=o.indexOf(d.estagio);return (i>=0&&i<o.length-1)?o[i+1]:null;}
 function advanceDeal(id,ev){if(ev&&ev.stopPropagation)ev.stopPropagation();var d=DB.deals.find(function(x){return x.id===id});if(!d)return;var ns=nextOpenStage(d);if(!ns)return;if(moveStage(d,ns)){save();renderAll();}}
 function fmtMonth(v){if(!v)return '';var p=String(v).split('-');return p.length>=2?(p[1]+'/'+p[0]):v;}
