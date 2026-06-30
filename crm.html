@@ -35,6 +35,7 @@ h2.sec{font-size:15px;font-weight:700;margin:22px 0 12px}
 .kpi .sub{font-size:12px;color:var(--mut);margin-top:3px}
 .cards2{grid-template-columns:1.3fr 1fr}
 @media(max-width:900px){.cards2{grid-template-columns:1fr}}
+@media(max-width:560px){.topbar{flex-wrap:wrap;height:auto;padding:8px}.actions{flex-wrap:wrap;gap:6px}.actions .btn{font-size:12px;padding:7px 9px}.modal{width:96vw;max-width:96vw;padding:14px;max-height:92vh}.mgrid,.mgrid.three{grid-template-columns:1fr}.grid,.cards2,.kpis,.kpis4{grid-template-columns:1fr}.filters{flex-wrap:wrap}.board{overflow-x:auto}.fbar{grid-template-columns:84px 1fr 78px;gap:6px;font-size:12px}table{font-size:12px}}
 .card{background:var(--card);border:1px solid var(--bd);border-radius:14px;padding:18px}
 .card h3{font-size:14px;font-weight:700;margin:0 0 4px;display:flex;align-items:center;gap:8px}
 .card .h3sub{font-size:12px;color:var(--mut);margin-bottom:14px}
@@ -214,6 +215,7 @@ label.fl{display:flex;flex-direction:column;gap:5px;font-size:12px;color:var(--m
     <div class="card"><h3><span class="dot" style="background:var(--ac)"></span>Previsão ponderada por mês</h3><div class="h3sub">Pela data prevista de fechamento</div><div id="forecast"></div></div>
     <div class="card"><h3><span class="dot" style="background:var(--ac2)"></span>Comissões previstas</h3><div class="h3sub">Sobre negócios ganhos</div><div id="commBox"></div></div>
   </div>
+  <div class="grid cards2" style="margin-top:14px"><div class="card"><h3><span class="dot" style="background:var(--ac2)"></span>Forecast — Commit vs Upside</h3><div class="h3sub">Commit = Negociação &middot; Upside = Proposta &middot; provável = ponderado do pipeline</div><div id="commitBox"></div></div></div>
 </section>
 
 <!-- PIPELINE -->
@@ -625,7 +627,7 @@ function scoreCls(s){return s>=70?'b-ok':s>=45?'b-warn':'b-bad';}
 function scoreLbl(s){return s>=70?'quente':s>=45?'morno':'frio';}
 function digits(t){return (t||'').replace(/\D/g,'');}
 function waNum(t){var n=digits(t);if(!n)return '';if(n.length<=11)n='55'+n;return n;}
-function waMsg(d){var nome=(d.cliente||'').split(' ')[0];var vend=(d.vendedor||'').split(' ')[0];return 'Olá '+nome+', tudo bem? Aqui é '+(vend||'a equipe')+' da Osher Capital. Vi seu interesse e queria te ajudar com '+(d.linha||'consórcio')+'. Posso te explicar rapidinho?';}
+function waMsg(d){var nome=(d.cliente||'').split(' ')[0]||'';var vend=(d.vendedor||'').split(' ')[0]||'a equipe';var bem=(d.linha||'consórcio');var T={'Prospecção':'Olá '+nome+'! Aqui é '+vend+' da Osher Capital. Vi seu interesse em '+bem+' e queria te apresentar uma condição. Tem 5 minutinhos?','Primeiro contato':'Oi '+nome+', tudo bem? É '+vend+' da Osher Capital. Posso te explicar rapidinho como funciona o '+bem+' e tirar suas dúvidas?','Qualificação':'Oi '+nome+'! Para montar a melhor proposta de '+bem+' pra você, posso confirmar dois detalhes rápidos (valor desejado e prazo)?','Proposta':'Olá '+nome+', preparei uma simulação de '+bem+' sob medida pra você. Posso te enviar agora para analisarmos juntos?','Negociação':'Oi '+nome+'! Sobre a proposta de '+bem+': conseguimos avançar hoje? Posso reservar sua cota e garantir a condição.','Ganho':'Parabéns '+nome+'! 🎉 Seguimos com os próximos passos do seu '+bem+'. Qualquer dúvida, estou à disposição.'};return T[d.estagio]||('Olá '+nome+', tudo bem? Aqui é '+vend+' da Osher Capital. Posso te ajudar com '+bem+'?');}
 function waLink(d){var n=waNum(d.telefone);return n?'https://wa.me/'+n+'?text='+encodeURIComponent(waMsg(d)):'';}
 function telLink(t){var n=waNum(t);return n?'tel:+'+n:'';}
 
@@ -676,7 +678,7 @@ function fillSelects(){
 /* ===================== DASHBOARD ===================== */
 function renderDash(){
  var ds=scope(DB.deals);
- var open=ds.filter(isOpen),won=ds.filter(isWon),lost=ds.filter(isLost);
+ var open=ds.filter(isOpen),won=ds.filter(isWon),lost=ds.filter(isLost);(function(){var _cm=open.filter(function(d){return d.estagio==='Negociação';});var _up=open.filter(function(d){return d.estagio==='Proposta';});function _sv(a){return a.reduce(function(x,d){return x+(d.valor||0);},0);}var _cmv=_sv(_cm),_upv=_sv(_up),_pv=open.reduce(function(a,d){return a+pond(d);},0);var _cb=el('commitBox');if(_cb)_cb.innerHTML='<div class="grid kpis"><div class="kpi"><div class="lbl">Commit (Negociação)</div><div class="val">'+BRLk(_cmv)+'</div><div class="sub">'+_cm.length+' negócios</div></div><div class="kpi"><div class="lbl">Upside (Proposta)</div><div class="val">'+BRLk(_upv)+'</div><div class="sub">'+_up.length+' negócios</div></div><div class="kpi"><div class="lbl">Provável (ponderado)</div><div class="val">'+BRLk(_pv)+'</div><div class="sub">todo o pipeline</div></div><div class="kpi"><div class="lbl">Best case</div><div class="val">'+BRLk(_cmv+_upv)+'</div><div class="sub">commit + upside</div></div></div>';})();
  var pipeTot=open.reduce(function(a,d){return a+(d.valor||0)},0);
  var pondTot=open.reduce(function(a,d){return a+pond(d)},0);
  var ym=todayStr().slice(0,7);
@@ -744,7 +746,7 @@ function renderVelocity(ds,open){
  var wonAll=ds.filter(isWon);var ttw=wonAll.map(timeToWin).filter(function(x){return x!=null;});var stl=ds.map(speedToLeadH).filter(function(x){return x!=null;});
  var head='<div class="simout" style="grid-template-columns:repeat(3,1fr);margin-bottom:12px">'+
   '<div class="simbox"><div class="sl">Tempo até ganho</div><div class="sv">'+(ttw.length?Math.round(avg(ttw))+'d':'—')+'</div></div>'+
-  '<div class="simbox"><div class="sl">Speed-to-lead</div><div class="sv">'+(stl.length?Math.round(avg(stl))+'h':'—')+'</div></div>'+
+  '<div class="simbox"><div class="sl">Speed-to-lead</div><div class="sv">'+(stl.length?Math.round(avg(stl))+'h':'—')+'</div></div>'+'<div class="simbox"><div class="sl">Contato &lt; 1h</div><div class="sv">'+(stl.length?Math.round(100*stl.filter(function(h){return h<=1;}).length/stl.length)+'%':'—')+'</div></div>'+
   '<div class="simbox"><div class="sl">Idade do pipeline</div><div class="sv">'+(open.length?Math.round(avg(open.map(stageAge)))+'d':'—')+'</div></div></div>';
  var L=el('dashLinha').value||LINHAS[0];var ostg=openStages(L);
  var byAge={};ostg.forEach(function(s){var arr=open.filter(function(d){return d.linha===L&&d.estagio===s});byAge[s]=arr.length?avg(arr.map(stageAge)):0;});
