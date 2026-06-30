@@ -736,8 +736,8 @@ async function doLogin(){
 async function _loadData(){
  try{
   var H={apikey:SB_KEY,Authorization:'Bearer '+(__tok||SB_KEY)};
-  var r=await Promise.all([fetch(SB_URL+'contratos?select=*&limit=5000',{headers:H}).then(x=>x.json()),fetch(SB_URL+'deals?select=*&limit=5000',{headers:H}).then(x=>x.json())]);
-  var cr=r[0],dl=r[1];
+  var cr=await fetch(SB_URL+'contratos?select=*&limit=5000',{headers:H}).then(x=>x.json());
+  var dl=[],_o=0;while(true){var _pg=await fetch(SB_URL+'deals?select=*&order=id&limit=1000&offset='+_o,{headers:H}).then(x=>x.json());if(!Array.isArray(_pg))break;dl=dl.concat(_pg);if(_pg.length<1000)break;_o+=1000;}
   if(Array.isArray(cr)){
    var rows=cr.map(function(c){return {data:c.data,contrato:c.contrato,grupo:c.grupo,cota:c.cota,cliente:c.cliente,cpf:c.cpf,origem:c.origem,genero:c.genero,nasc:c.nascimento,cidade:c.cidade,bairro:c.bairro,profissao:c.profissao,vendedor:c.vendedor,tipoVend:c.tipo_vendedor,diretor:c.diretor,tipo:c.tipo,valor:+c.valor||0,taxa:c.taxa,adesao:c.adesao,administradora:c.administradora,lance:c.lance,parc:_pj(c.parc),status:c.status};});
    var leads=(Array.isArray(dl)?dl:[]).map(function(d){return {entrada:d.criado_em,vendedor:d.vendedor,atendente:d.vendedor,origem:d.origem,interesse:d.bem,cliente:d.cliente,expectativa:(d.payload&&d.payload.expectativa)||d.expectativa||'',estagio:d.estagio,prob:d.prob,status:d.estagio};});
