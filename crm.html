@@ -200,6 +200,7 @@ label.fl{display:flex;flex-direction:column;gap:5px;font-size:12px;color:var(--m
   <div class="grid cards2" style="margin-top:14px">
     <div class="card"><h3><span class="dot"></span>Funil de vendas</h3><div class="h3sub">Valor por etapa em aberto · <select id="dashLinha" onchange="renderDash()" style="padding:3px 8px;font-size:12px"></select></div><div id="funnel"></div></div>
     <div class="card" id="cardVend" data-see="1"><h3><span class="dot" style="background:var(--vio)"></span>Pipeline ponderado por vendedor</h3><div class="h3sub">Top 8 · valor × probabilidade</div><div id="dashVend"></div></div>
+    <div class="card" data-see="1"><h3><span class="dot" style="background:var(--ac2)"></span>Ganhos por vendedor</h3><div class="h3sub">Top 8 · valor fechado (todas as vendas)</div><div id="dashWonVend"></div></div>
   </div>
   <div class="grid cards2" style="margin-top:14px">
     <div class="card" id="cardChannel" data-see="1"><h3><span class="dot" style="background:var(--ac)"></span>Desempenho por canal / origem</h3><div class="h3sub">De onde vêm os negócios — volume, conversão e receita ganha</div><div id="channelBox"></div></div>
@@ -686,6 +687,7 @@ function renderDash(){
   ['Pipeline aberto',BRLk(pipeTot),open.length+' negócios'],
   ['Previsão ponderada',BRLk(pondTot),'valor × probabilidade'],
   [canSeeAll()?'Fechado no mês':'Meus fechados no mês',BRLk(wonMonthV),wonMonth.length+' negócios'],
+  [canSeeAll()?'Fechado total (ganhos)':'Meu total fechado',BRLk(won.reduce(function(a,d){return a+(d.valor||0)},0)),won.length+' ganhos'],
   ['Taxa de conversão',convRate+'%',won.length+' ganhos / '+decided+' decididos'],
   ['Comissões previstas',BRLk(commPrev),'sobre ganhos'],
   ['Follow-ups atrasados',String(atrasados),atrasados?'⚠ exige ação':'em dia']
@@ -719,6 +721,7 @@ function renderDash(){
  el('forecast').innerHTML=msv.length?msv.map(function(m){var w=Math.round(byM[m]/maxM*100);return '<div class="hbar"><div class="hname">'+mlabel(m)+'</div><div class="htrack"><div class="hfill" style="width:'+w+'%"></div></div><div class="hval">'+BRLk(byM[m])+'</div></div>';}).join(''):'<div class="empty">Defina datas de próximo passo.</div>';
 
  if(canSeeAll()){
+  var wbv={};won.forEach(function(d){if(!d.vendedor)return;wbv[d.vendedor]=(wbv[d.vendedor]||0)+(d.valor||0);});var wvs=Object.keys(wbv).sort(function(a,b){return wbv[b]-wbv[a]}).slice(0,8);var maxWV=Math.max.apply(null,wvs.map(function(v){return wbv[v]}).concat([1]));var _gw=el('dashWonVend');if(_gw)_gw.innerHTML=wvs.length?wvs.map(function(v){var w=Math.round(wbv[v]/maxWV*100);return '<div class="hbar"><div class="hname" title="'+esc(v)+'">'+esc(v)+(isExternal(v)?' <span class="ext">ext</span>':'')+'</div><div class="htrack"><div class="hfill" style="width:'+w+'%;background:var(--ac2)"></div></div><div class="hval">'+BRLk(wbv[v])+'</div></div>';}).join(''):'<div class="empty">Sem ganhos ainda.</div>';
   var byV={};open.forEach(function(d){if(!d.vendedor)return;byV[d.vendedor]=(byV[d.vendedor]||0)+pond(d);});
   var vs=Object.keys(byV).sort(function(a,b){return byV[b]-byV[a]}).slice(0,8);var maxV=Math.max.apply(null,vs.map(function(v){return byV[v]}).concat([1]));
   el('dashVend').innerHTML=vs.length?vs.map(function(v){var w=Math.round(byV[v]/maxV*100);return '<div class="hbar"><div class="hname" title="'+esc(v)+'">'+esc(v)+(isExternal(v)?' <span class="ext">ext</span>':'')+'</div><div class="htrack"><div class="hfill" style="width:'+w+'%;background:var(--vio)"></div></div><div class="hval">'+BRLk(byV[v])+'</div></div>';}).join(''):'<div class="empty">Sem pipeline atribuído.</div>';
