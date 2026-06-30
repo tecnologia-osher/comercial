@@ -540,6 +540,7 @@ function openStages(linha){return stages(linha).filter(function(s){return s.t===
 function isOpen(d){return stageType(d.linha,d.estagio)==='open';}
 function isWon(d){return stageType(d.linha,d.estagio)==='won';}
 function isLost(d){return stageType(d.linha,d.estagio)==='lost';}
+function isInativo(d){return isLost(d)&&/higieniza|inativo/i.test(d.perdaCat||'');}
 function pond(d){return (d.valor||0)*(d.prob||0)/100;}
 
 var VEND=["PEDRO HENRIQUE","ANDRE RODRIGUES","NORONHA IMOB","JEFFERSON ARAUJO","DANIEL SANTOS","FELIPE LACERDA","MILTON SANTOS","FELIPE RIBEIRO","NG CONTABILIDADE","THIAGO FIUZA","ANDRE SOARES","MARCOS CÉSAR","RAFAEL GUIMARAES","PACHECO","LUAN SOUZA","RF CONTABILIDADE","WALNER AMARAL","BRISE IMOB","DAVI BERTOLDO","BRUNO POUPINVISTA","ANDRE SOUZA"];
@@ -689,7 +690,7 @@ function renderDash(){
  var ym=todayStr().slice(0,7);
  var wonMonth=won.filter(function(d){return (d.ganhoEm||d.atualizadoEm||'').slice(0,7)===ym;});
  var wonMonthV=wonMonth.reduce(function(a,d){return a+(d.valor||0)},0);
- var decided=won.length+lost.length;var convRate=decided?Math.round(won.length/decided*100):0;
+ var lostReal=lost.filter(function(d){return !isInativo(d);});var decided=won.length+lostReal.length;var convRate=decided?Math.round(won.length/decided*100):0;
  var commPrev=won.reduce(function(a,d){return a+commission(d)},0);
  var atrasados=open.filter(overdue).length;
  var kp=[
@@ -697,7 +698,7 @@ function renderDash(){
   ['Previsão ponderada',BRLk(pondTot),'valor × probabilidade'],
   [canSeeAll()?'Fechado no mês':'Meus fechados no mês',BRLk(wonMonthV),wonMonth.length+' negócios'],
   [canSeeAll()?'Fechado total (ganhos)':'Meu total fechado',BRLk(won.reduce(function(a,d){return a+(d.valor||0)},0)),won.length+' ganhos'],
-  ['Taxa de conversão',convRate+'%',won.length+' ganhos / '+decided+' decididos'],
+  ['Taxa de conversão',convRate+'%',won.length+' ganhos / '+decided+' decididos (s/ inativos)'],
   ['Comissões previstas',BRLk(commPrev),'sobre ganhos'],
   ['Follow-ups atrasados',String(atrasados),atrasados?'⚠ exige ação':'em dia']
  ];
@@ -715,7 +716,7 @@ function renderDash(){
   el('channelBox').innerHTML=chs.length?('<table><thead><tr><th class="l">Origem</th><th>Leads</th><th>Ganhos</th><th>Conv.</th><th>Receita</th></tr></thead><tbody>'+chs.map(function(o){var c=ch[o];var cv=c.leads?Math.round(c.ganhos/c.leads*100):0;return '<tr><td class="l">'+esc(o)+'</td><td>'+c.leads+'</td><td>'+c.ganhos+'</td><td>'+cv+'%</td><td>'+BRLk(c.val)+'</td></tr>'}).join('')+'</tbody></table>'):'<div class="empty">Sem dados de origem.</div>';
 
   // motivos de perda
-  var lr={};lost.forEach(function(d){var k=d.perdaCat||'Não informado';lr[k]=(lr[k]||0)+1;});
+  var lr={};lost.filter(function(d){return !isInativo(d);}).forEach(function(d){var k=d.perdaCat||'Não informado';lr[k]=(lr[k]||0)+1;});
   var lrs=Object.keys(lr).sort(function(a,b){return lr[b]-lr[a]});var maxLr=Math.max.apply(null,lrs.map(function(k){return lr[k]}).concat([1]));
   el('lossBox').innerHTML=lrs.length?lrs.map(function(k){var w=Math.round(lr[k]/maxLr*100);return '<div class="hbar"><div class="hname" title="'+esc(k)+'">'+esc(k)+'</div><div class="htrack"><div class="hfill" style="width:'+w+'%;background:var(--red)"></div></div><div class="hval">'+lr[k]+'</div></div>'}).join(''):'<div class="empty">Nenhum negócio perdido registrado. 👏</div>';
  }

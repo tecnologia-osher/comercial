@@ -380,13 +380,13 @@ function renderGeral(){var D=CUR.geral,r=D.resumo;
  function kpi(l,v,sub){return '<div class="kpi"><div class="lbl">'+l+'</div><div class="val">'+v+'</div><div class="sub">'+(sub||'')+'</div></div>';}
  var L=(window.LEADS||[]);
  var order=['Prospecção','Primeiro contato','Qualificação','Proposta','Negociação','Ganho'];
- var total=L.length, perdido=L.filter(function(l){return l.estagio==='Perdido';}).length, ganho=L.filter(function(l){return l.estagio==='Ganho';}).length;
+ var total=L.length, perdido=L.filter(function(l){return l.estagio==='Perdido';}).length, ganho=L.filter(function(l){return l.estagio==='Ganho';}).length;var inativo=L.filter(function(l){return l.estagio==='Perdido'&&/higieniza|inativo/i.test(l.perdaCat||'');}).length;var perdidoReal=perdido-inativo;var baseAtiva=Math.max(0,total-inativo);
  function reached(st){var k=order.indexOf(st);return L.filter(function(l){var si=order.indexOf(l.estagio);return si>=k && l.estagio!=='Perdido';}).length;}
- var steps=[['Leads',total],['Qualificação+',reached('Qualificação')],['Proposta+',reached('Proposta')],['Negociação+',reached('Negociação')],['Ganho',ganho]];
- var mxf=total||1;
- var fh=steps.map(function(s){var w=Math.round(s[1]/mxf*100);var pct=total?Math.round(s[1]/total*100):0;return '<div class="hbar"><div class="hname">'+s[0]+'</div><div class="htrack"><div class="hf" style="width:'+w+'%;background:'+C.vio+'"></div></div><div class="hval">'+s[1]+' ('+pct+'%)</div></div>';}).join('');
- var winrate=(ganho+perdido)?Math.round(ganho/(ganho+perdido)*100):0;
- fh+='<div class="note" style="margin-top:8px">Conversão lead&rarr;venda: <b>'+(total?Math.round(ganho/total*100):0)+'%</b> &middot; Taxa de fechamento (ganho/decididos): <b>'+winrate+'%</b> &middot; Perdidos: '+perdido+'</div>';
+ var steps=[['Leads (ativos)',baseAtiva],['Qualificação+',reached('Qualificação')],['Proposta+',reached('Proposta')],['Negociação+',reached('Negociação')],['Ganho',ganho]];
+ var mxf=baseAtiva||1;
+ var fh=steps.map(function(s){var w=Math.round(s[1]/mxf*100);var pct=baseAtiva?Math.round(s[1]/baseAtiva*100):0;return '<div class="hbar"><div class="hname">'+s[0]+'</div><div class="htrack"><div class="hf" style="width:'+w+'%;background:'+C.vio+'"></div></div><div class="hval">'+s[1]+' ('+pct+'%)</div></div>';}).join('');
+ var winrate=(ganho+perdidoReal)?Math.round(ganho/(ganho+perdidoReal)*100):0;
+ fh+='<div class="note" style="margin-top:8px">Conversão lead&rarr;venda: <b>'+(baseAtiva?Math.round(ganho/baseAtiva*100):0)+'%</b> &middot; Taxa de fechamento (ganho/decididos): <b>'+winrate+'%</b> &middot; Perdidos reais: '+perdidoReal+' &middot; Inativos (higienizados): '+inativo+'</div>';
  var _dr=[];for(var _i=1;_i<steps.length;_i++){var _pv=steps[_i-1][1],_cv=steps[_i][1];_dr.push({from:steps[_i-1][0],to:steps[_i][0],keep:_pv?_cv/_pv:1,lost:_pv-_cv});}_dr.sort(function(a,b){return a.keep-b.keep;});var _w=_dr[0];if(_w&&_w.keep<1)fh+='<div class="callout" style="border-left-color:var(--red);margin-top:8px">🔴 <b>Maior gargalo:</b> '+_w.from+' &rarr; '+_w.to+' — passa só <b>'+Math.round(_w.keep*100)+'%</b> (perde '+_w.lost+' aqui). Foco do time nessa passagem.</div>';var gf=el('g_funilConv'); if(gf)gf.innerHTML=fh;
 
  var R=F();
@@ -790,7 +790,7 @@ async function _loadData(){
   var dl=[],_o=0;while(true){var _pg=await fetch(SB_URL+'deals?select=*&order=id&limit=1000&offset='+_o,{headers:H}).then(x=>x.json());if(!Array.isArray(_pg))break;dl=dl.concat(_pg);if(_pg.length<1000)break;_o+=1000;}
   if(Array.isArray(cr)){
    var rows=cr.map(function(c){return {data:c.data,contrato:c.contrato,grupo:c.grupo,cota:c.cota,cliente:c.cliente,cpf:c.cpf,origem:c.origem,genero:c.genero,nasc:c.nascimento,cidade:c.cidade,bairro:c.bairro,profissao:c.profissao,vendedor:c.vendedor,tipoVend:c.tipo_vendedor,diretor:c.diretor,tipo:c.tipo,valor:+c.valor||0,taxa:c.taxa,adesao:c.adesao,administradora:c.administradora,lance:c.lance,parc:_pj(c.parc),status:c.status};});
-   var leads=(Array.isArray(dl)?dl:[]).map(function(d){return {entrada:d.criado_em,vendedor:d.vendedor,atendente:d.vendedor,origem:d.origem,interesse:d.bem,cliente:d.cliente,expectativa:(d.payload&&d.payload.expectativa)||d.expectativa||'',valor:(+d.valor||0),ganhoEm:(d.payload&&d.payload.ganhoEm)||null,estagio:d.estagio,prob:d.prob,status:d.estagio};});
+   var leads=(Array.isArray(dl)?dl:[]).map(function(d){return {entrada:d.criado_em,vendedor:d.vendedor,atendente:d.vendedor,origem:d.origem,interesse:d.bem,cliente:d.cliente,expectativa:(d.payload&&d.payload.expectativa)||d.expectativa||'',valor:(+d.valor||0),ganhoEm:(d.payload&&d.payload.ganhoEm)||null,perdaCat:(d.payload&&d.payload.perdaCat)||'',estagio:d.estagio,prob:d.prob,status:d.estagio};});
    onData({rows:rows,leads:leads,internal:EMBED.internal});return;
   }
  }catch(e){_bootErr(e);}
