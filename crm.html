@@ -543,21 +543,23 @@ var DOCS={'Consórcio':['RG/CNH','CPF','Comprovante de residência','Comprovante
 
 function slugEmail(n){return n.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'').replace(/[^a-z0-9]+/g,'.').replace(/(^\.|\.$)/g,'')+'@oshersolucoes.com.br';}
 function defaultTeam(){
- var t=[
+ return [
   {nome:'Tecnologia (você)',email:'tecnologia@oshersolucoes.com.br',senha:'',papel:'admin',meta:0},
-  {nome:'Proprietário 1',email:'socio1@oshersolucoes.com.br',senha:'',papel:'admin',meta:0},
-  {nome:'Proprietário 2',email:'socio2@oshersolucoes.com.br',senha:'',papel:'admin',meta:0},
-  {nome:'Pedro Ferreira',email:'pedro.ferreira@oshersolucoes.com.br',senha:'',papel:'diretor',meta:0}
+  {nome:'FELIPE LACERDA',email:'felipe.lacerda@oshersolucoes.com.br',senha:'',papel:'admin',vende:true,meta:300000},
+  {nome:'MILTON SANTOS',email:'milton.santos@oshersolucoes.com.br',senha:'',papel:'admin',vende:true,meta:300000},
+  {nome:'Pedro Ferreira',email:'pedro.ferreira@oshersolucoes.com.br',senha:'',papel:'diretor',meta:0},
+  {nome:'ANDRE RODRIGUES',email:'andre.rodrigues@oshersolucoes.com.br',senha:'',papel:'interno',meta:300000},
+  {nome:'JEFFERSON ARAUJO',email:'jefferson.araujo@oshersolucoes.com.br',senha:'',papel:'interno',meta:300000},
+  {nome:'LUIZ SPAGNA',email:'luiz.spagna@oshersolucoes.com.br',senha:'',papel:'interno',meta:300000},
+  {nome:'WALNER AMARAL',email:'walner.amaral@oshersolucoes.com.br',senha:'',papel:'interno',meta:300000}
  ];
- VEND.forEach(function(n){var ext=/IMOB|CONTAB|POUPIN/i.test(n);t.push({nome:n,email:(ext?'':slugEmail(n)),senha:'',papel:(ext?'externo':'interno'),meta:(ext?0:300000)});});
- return t;
 }
 var DEFAULT_CFG={meta:5000000,adm:[{nome:'Porto',tadm:17,fr:2},{nome:'Embracon',tadm:22,fr:0},{nome:'Servopa',tadm:18,fr:1},{nome:'Rodobens',tadm:19,fr:2},{nome:'Itaú',tadm:16,fr:0},{nome:'Genérica',tadm:20,fr:1}],comm:{'Consórcio':1.5,'Financiamento':1.0,'Home Equity':2.0,'Seguros':10.0},team:[]};
 
 /* ===================== PERSISTÊNCIA ===================== */
 var KEY='osher_crm_v7',MEKEY='osher_crm_me_v7';
 var DB={deals:[],seq:1,cfg:null};var ME=null;
-function ensureCfg(){if(!DB.cfg)DB.cfg=clone(DEFAULT_CFG);if(!DB.cfg.team||!DB.cfg.team.length)DB.cfg.team=defaultTeam();if(!DB.cfg.adm)DB.cfg.adm=clone(DEFAULT_CFG.adm);if(!DB.cfg.comm)DB.cfg.comm=clone(DEFAULT_CFG.comm);if(DB.cfg.meta==null)DB.cfg.meta=DEFAULT_CFG.meta;DB.cfg.team.forEach(function(p){if(p.meta==null)p.meta=0;if(p.metaWkNovos==null)p.metaWkNovos=10;if(p.metaWkQual==null)p.metaWkQual=5;if(p.metaWkFech==null)p.metaWkFech=1;});if(!DB.cfg.atv)DB.cfg.atv={lig:100,reun:8,prop:10,ind:5};if(!DB.atividades)DB.atividades=[];if(!DB.rotina)DB.rotina={};}
+function ensureCfg(){if(!DB.cfg)DB.cfg=clone(DEFAULT_CFG);DB.cfg.team=defaultTeam();if(!DB.cfg.adm)DB.cfg.adm=clone(DEFAULT_CFG.adm);if(!DB.cfg.comm)DB.cfg.comm=clone(DEFAULT_CFG.comm);if(DB.cfg.meta==null)DB.cfg.meta=DEFAULT_CFG.meta;DB.cfg.team.forEach(function(p){if(p.meta==null)p.meta=0;if(p.metaWkNovos==null)p.metaWkNovos=10;if(p.metaWkQual==null)p.metaWkQual=5;if(p.metaWkFech==null)p.metaWkFech=1;});if(!DB.cfg.atv)DB.cfg.atv={lig:100,reun:8,prop:10,ind:5};if(!DB.atividades)DB.atividades=[];if(!DB.rotina)DB.rotina={};}
 function load(){try{var s=localStorage.getItem(KEY);if(s){DB=JSON.parse(s);ensureCfg();return true;}}catch(e){}return false;}
 function save(){try{localStorage.setItem(KEY,JSON.stringify(DB));}catch(e){alert('Não foi possível salvar localmente.');}cloudPush();}
 async function cloudPullDeals(){try{var B='https://pidzzwlpsffjznbzukhj.supabase.co/rest/v1/';var KP='sb_publishable_P1IyQB54v9tdmUIKR5L44w_uTbs8yzJ';var TOK=window.__crmtok||(function(){try{return localStorage.getItem('osher_crm_tok')}catch(e){return null}})();if(!TOK)return false;var rows=[],off=0;while(true){var r=await fetch(B+'deals?select=payload&order=id&limit=1000&offset='+off,{headers:{apikey:KP,Authorization:'Bearer '+TOK}});if(!r.ok)return false;var pg=await r.json();if(!Array.isArray(pg))return false;rows=rows.concat(pg);if(pg.length<1000)break;off+=1000;}if(true){DB.deals=rows.map(function(x){return x.payload;}).filter(Boolean);if(typeof ensureCfg==='function')ensureCfg();return true;}}catch(e){console.warn('cloudPull falhou',e);}return false;}
@@ -568,7 +570,7 @@ function nowISO(){return new Date().toISOString();}
 function todayStr(){return new Date().toISOString().slice(0,10);}
 function CFG(){return DB.cfg;}
 function team(){return CFG().team||[];}
-function sellers(){return team().filter(function(p){return p.papel==='interno'||p.papel==='externo'});}
+function sellers(){return team().filter(function(p){return p.papel==='interno'||p.vende;});}
 function memberByEmail(e){e=(e||'').trim().toLowerCase();return team().find(function(p){return (p.email||'').trim().toLowerCase()===e});}
 function memberByName(n){return team().find(function(p){return p.nome===n});}
 function canSeeAll(){return ME&&(ME.papel==='admin'||ME.papel==='diretor');}
