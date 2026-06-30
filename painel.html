@@ -387,7 +387,7 @@ function renderGeral(){var D=CUR.geral,r=D.resumo;
  var fh=steps.map(function(s){var w=Math.round(s[1]/mxf*100);var pct=total?Math.round(s[1]/total*100):0;return '<div class="hbar"><div class="hname">'+s[0]+'</div><div class="htrack"><div class="hf" style="width:'+w+'%;background:'+C.vio+'"></div></div><div class="hval">'+s[1]+' ('+pct+'%)</div></div>';}).join('');
  var winrate=(ganho+perdido)?Math.round(ganho/(ganho+perdido)*100):0;
  fh+='<div class="note" style="margin-top:8px">Conversão lead&rarr;venda: <b>'+(total?Math.round(ganho/total*100):0)+'%</b> &middot; Taxa de fechamento (ganho/decididos): <b>'+winrate+'%</b> &middot; Perdidos: '+perdido+'</div>';
- var gf=el('g_funilConv'); if(gf)gf.innerHTML=fh;
+ var _dr=[];for(var _i=1;_i<steps.length;_i++){var _pv=steps[_i-1][1],_cv=steps[_i][1];_dr.push({from:steps[_i-1][0],to:steps[_i][0],keep:_pv?_cv/_pv:1,lost:_pv-_cv});}_dr.sort(function(a,b){return a.keep-b.keep;});var _w=_dr[0];if(_w&&_w.keep<1)fh+='<div class="callout" style="border-left-color:var(--red);margin-top:8px">🔴 <b>Maior gargalo:</b> '+_w.from+' &rarr; '+_w.to+' — passa só <b>'+Math.round(_w.keep*100)+'%</b> (perde '+_w.lost+' aqui). Foco do time nessa passagem.</div>';var gf=el('g_funilConv'); if(gf)gf.innerHTML=fh;
 
  var R=F();
  var bm={},om=[];R.forEach(function(r){var p=ymd(r.data);if(!p)return;var k=p.y*100+p.mo;if(!bm[k]){bm[k]={k:k,y:p.y,mo:p.mo,val:0,n:0,c:0,lbl:MES[p.mo-1]+'/'+(''+p.y).slice(2)};om.push(k);}bm[k].val+=r.valor;bm[k].n++;if(r.status==='CANCELADO')bm[k].c++;});
