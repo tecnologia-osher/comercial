@@ -874,9 +874,11 @@ function renderFunil(){
  var ord=stages(L);function idxOf(k){for(var i=0;i<ord.length;i++)if(ord[i].k===k)return i;return -1;}
  var seq=openStages(L).concat(['Ganho']);
  var cum=seq.map(function(st){var si=idxOf(st);return base.filter(function(d){return !isLost(d)&&idxOf(d.estagio)>=si;}).length;});
- var top=cum[0]||1;
- var rows=seq.map(function(st,i){var n=cum[i];var w=Math.max(6,Math.round(n/top*100));var pc=i>0?(cum[i-1]?Math.round(n/cum[i-1]*100):0):100;var col=stageC(L,st);return '<div style="display:flex;align-items:center;gap:12px;margin:7px 0"><div style="width:120px;text-align:right;font-size:13px;font-weight:600">'+st+'</div><div style="flex:1;display:flex;justify-content:center"><div style="width:'+w+'%;min-width:54px;background:'+col+';color:#fff;border-radius:9px;padding:10px;text-align:center;font-weight:800;font-size:15px;box-shadow:0 1px 5px rgba(0,0,0,.18)">'+n+'</div></div><div style="width:78px;font-size:12px;color:var(--mut)">'+(i>0?('▼ '+pc+'%'):'entradas')+'</div></div>';}).join('');
- el('funilBox').innerHTML=cum[0]?rows:'<div class="empty">Sem negócios em '+L+'. Cadastre leads para ver seu funil.</div>';
+ var top=cum[0]||1;var n=seq.length;
+ var W=680,segH=66,pad=8,maxW=520,cx=W/2;function wOf(v){return Math.max(70,Math.round(v/top*maxW));}
+ var svgH=n*segH+pad*2,parts='';
+ for(var i=0;i<n;i++){var y=pad+i*segH;var tw=wOf(cum[i]);var bw=(i<n-1)?wOf(cum[i+1]):Math.max(70,Math.round(tw*0.7));var col=stageC(L,seq[i]);var pc=i>0?(cum[i-1]?Math.round(cum[i]/cum[i-1]*100):0):100;var pts=[(cx-tw/2)+','+y,(cx+tw/2)+','+y,(cx+bw/2)+','+(y+segH-10),(cx-bw/2)+','+(y+segH-10)].join(' ');parts+='<polygon points="'+pts+'" fill="'+col+'" opacity="0.93"><title>'+seq[i]+': '+cum[i]+'</title></polygon>';parts+='<text x="'+cx+'" y="'+(y+segH/2-3)+'" text-anchor="middle" fill="#fff" font-size="15" font-weight="800" style="font-family:inherit">'+seq[i]+' · '+cum[i]+'</text>';if(i>0)parts+='<text x="'+(cx+tw/2+8)+'" y="'+(y+7)+'" style="fill:var(--mut);font-family:inherit" font-size="12">▼ '+pc+'%</text>';}
+ el('funilBox').innerHTML=cum[0]?('<svg viewBox="0 0 '+W+' '+svgH+'" width="100%" style="max-width:700px;display:block;margin:2px auto">'+parts+'</svg>'):'<div class="empty">Sem negócios em '+L+'. Cadastre leads para ver seu funil.</div>';
  if(el('funilStat'))el('funilStat').textContent=cum[0]+' na esteira';
  var leadWin=cum[0]?Math.round(cum[seq.length-1]/cum[0]*100):0;
  var won=base.filter(isWon),lost=base.filter(function(d){return isLost(d)&&!isInativo(d);});var dec=won.length+lost.length;var wr=dec?Math.round(won.length/dec*100):0;
