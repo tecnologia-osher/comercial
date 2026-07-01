@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="pt-BR" data-theme="light">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Compra Imobiliária Inteligente · Financiamento ou Consórcio</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root,[data-theme="light"]{
+    --bg:#f4efe3;--surface:#fbf8f1;--surface2:#efe8d9;--border:rgba(33,40,28,.14);
+    --txt:#22271d;--muted:#6c6f60;--green:#1d4a3b;--greenSoft:rgba(29,74,59,.07);--onGreen:#f4efe3;
+    --gold:#a9772a;--red:#a4402f;--redSoft:rgba(164,64,47,.07);--winBg:rgba(29,74,59,.06)
+  }
+  [data-theme="dark"]{
+    --bg:#0f1311;--surface:#161b18;--surface2:#1b211d;--border:rgba(255,255,255,.1);
+    --txt:#eef1ec;--muted:#9aa39a;--green:#5fdca0;--greenSoft:rgba(95,220,160,.08);--onGreen:#0c1a12;
+    --gold:#d8b061;--red:#e0726a;--redSoft:rgba(224,114,106,.08);--winBg:rgba(95,220,160,.06)
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--txt);font-family:Inter,system-ui,Segoe UI,sans-serif;-webkit-font-smoothing:antialiased;line-height:1.5}
+  h1,h2,h3,.serif{font-family:"Playfair Display",Georgia,serif;font-weight:600;letter-spacing:-.01em}
+  .wrap{max-width:900px;margin:0 auto;padding:0 20px}
+  header{border-bottom:1px solid var(--border)}
+  .hd{display:flex;align-items:center;justify-content:space-between;padding:16px 0}
+  .brand{display:flex;align-items:center;gap:11px}
+  .logo{width:36px;height:36px;border-radius:9px;background:var(--green);display:flex;align-items:center;justify-content:center;color:var(--onGreen);font-family:"Playfair Display",serif;font-weight:700;font-size:18px}
+  .bname{font-weight:600;font-size:15px}.bname span{color:var(--green)}
+  .sub{font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:var(--muted)}
+  .themebtn{background:transparent;border:1px solid var(--border);border-radius:8px;color:var(--muted);padding:7px 11px;cursor:pointer;font-size:13px}
+  .steps{display:flex;gap:8px;justify-content:center;margin:30px 0 4px;flex-wrap:wrap}
+  .sdot{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--muted)}
+  .sdot .n{width:27px;height:27px;border-radius:50%;border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:13px;font-family:"Playfair Display",serif}
+  .sdot.on{color:var(--txt)}.sdot.on .n{border-color:var(--green);background:var(--greenSoft);color:var(--green);font-weight:700}
+  .sdot.done .n{background:var(--green);color:var(--onGreen);border-color:var(--green)}
+  .sline{width:22px;height:1px;background:var(--border);align-self:center}
+  .card{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:30px;margin:16px 0 34px}
+  h2.t{font-size:26px;margin:0 0 8px}.lead{color:var(--muted);font-size:15px;margin:0 0 22px;max-width:640px}
+  .kicker{font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--gold);margin-bottom:6px}
+  .filtros{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:22px}
+  .filtro{border:1px solid var(--border);border-radius:12px;padding:18px;background:var(--bg)}
+  .filtro .fn{font-family:"Playfair Display",serif;color:var(--gold);font-size:22px;font-weight:700}
+  .filtro h3{margin:6px 0 6px;font-size:16px}.filtro p{margin:0;font-size:13px;color:var(--muted);line-height:1.5}
+  .caminhos{border-top:1px solid var(--border);padding-top:18px;margin-bottom:6px}
+  .caminhos .row{display:flex;gap:10px;font-size:13.5px;padding:5px 0;color:var(--txt)}
+  .caminhos .row b{color:var(--green)}
+  .pos{font-size:13.5px;color:var(--muted);font-style:italic;margin-top:12px;border-left:2px solid var(--green);padding-left:12px}
+  .inputs{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+  label.f{display:block;font-size:13.5px;color:var(--txt);margin-bottom:5px;font-weight:500}
+  .help{font-size:11.5px;color:var(--muted);margin-top:5px;line-height:1.45}
+  input[type=number],select{width:100%;background:var(--bg);border:1px solid var(--border);border-radius:9px;color:var(--txt);padding:11px;font-family:ui-monospace,Menlo,monospace;font-size:14px}
+  input[type=text],input[type=email]{width:100%;background:var(--bg);border:1px solid var(--border);border-radius:9px;color:var(--txt);padding:12px;font-size:14px;font-family:inherit}
+  input[type=range]{width:100%;accent-color:var(--green)}
+  .rowlab{display:flex;justify-content:space-between;font-size:13.5px;margin-bottom:6px;font-weight:500}.rowlab b{color:var(--green);font-family:ui-monospace,monospace}
+  .switch{display:flex;align-items:center;gap:10px;font-size:14px}
+  .seg{display:inline-flex;border:1px solid var(--border);border-radius:8px;overflow:hidden}
+  .seg button{background:transparent;border:0;color:var(--muted);padding:8px 14px;cursor:pointer;font-size:13px}
+  .seg button.on{background:var(--green);color:var(--onGreen);font-weight:600}
+  .nav{display:flex;justify-content:space-between;margin-top:26px;gap:10px}
+  .btn{background:var(--green);color:var(--onGreen);border:0;border-radius:9px;padding:13px 24px;font-weight:600;cursor:pointer;font-size:14px}
+  .btn.ghost{background:transparent;color:var(--txt);border:1px solid var(--border)}
+  .cmp{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:16px}
+  .col{border:1px solid var(--border);border-radius:12px;padding:17px;background:var(--bg)}
+  .col.win{border-color:var(--green);background:var(--winBg)}
+  .col .tag{font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+  .col .par{font-size:13px;color:var(--muted);margin-top:8px}.col .par b{color:var(--txt);font-family:ui-monospace,monospace;font-size:15px}
+  .col .tot{font-size:23px;font-weight:700;font-family:ui-monospace,monospace;margin-top:10px}
+  .red{color:var(--red)}.grn{color:var(--green)}
+  .verdict{border-radius:12px;padding:18px;border:1px solid var(--border);background:var(--greenSoft);font-size:15.5px;line-height:1.55;margin-bottom:16px}.verdict b{color:var(--green)}
+  .toolbar{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;margin-bottom:16px}.chk{display:flex;gap:8px;align-items:center;font-size:13px;color:var(--muted);cursor:pointer}
+  .patbox{border:1px solid var(--green);border-radius:12px;padding:18px;margin-bottom:16px;background:var(--bg)}
+  .patline{display:flex;justify-content:space-between;gap:12px;padding:10px 0;border-bottom:1px solid var(--border);font-size:13.5px}.patline:last-child{border-bottom:0}
+  .patline .q{color:var(--muted)}.patline .a{font-family:ui-monospace,monospace;text-align:right}
+  .detgrid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+  .box{border:1px solid var(--border);background:var(--bg);border-radius:12px;padding:16px}
+  .box h4{margin:0 0 4px;font-size:15px}.box .d{font-size:12px;color:var(--muted);margin:0 0 12px}
+  .mini{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+  .metric{border:1px solid var(--border);border-radius:10px;padding:11px}.metric .k{font-size:11px;color:var(--muted)}.metric .v{font-size:17px;font-weight:600;font-family:ui-monospace,monospace;margin-top:3px}.metric .h{font-size:11px;color:var(--muted);margin-top:3px}
+  .cost{color:var(--red)}.profit{color:var(--green)}
+  .modal{position:fixed;inset:0;background:rgba(0,0,0,.5);display:none;align-items:center;justify-content:center;padding:18px;z-index:50}.modal.on{display:flex}.modalc{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:24px;max-width:430px;width:100%}.modalc input{width:100%;background:var(--bg);border:1px solid var(--border);border-radius:9px;color:var(--txt);padding:11px 12px;font-size:14px}.chk2{display:flex;gap:8px;align-items:flex-start;font-size:12px;color:var(--muted);cursor:pointer}
+  .hide{display:none}
+  footer{border-top:1px solid var(--border);padding:26px 0;color:var(--muted);font-size:12px;text-align:center}
+  footer .reg{font-size:11px;margin-top:6px}
+  @media(max-width:680px){.filtros,.inputs,.cmp,.detgrid{grid-template-columns:1fr}h2.t{font-size:22px}}
+</style>
+</head>
+<body>
+<header><div class="wrap hd">
+  <div class="brand"><div class="logo">A</div><div><div class="bname">Alavancagem<span>.</span></div><div class="sub">Inteligência Imobiliária</div></div></div>
+  <button class="themebtn" id="themeBtn" onclick="toggleTheme()">☾ Escuro</button>
+</div></header>
+
+<div class="wrap">
+  <div class="steps" id="steps">
+    <div class="sdot" data-s="1"><div class="n">1</div><span>Entender</span></div><div class="sline"></div>
+    <div class="sdot" data-s="2"><div class="n">2</div><span>Financiamento</span></div><div class="sline"></div>
+    <div class="sdot" data-s="3"><div class="n">3</div><span>Consórcio</span></div><div class="sline"></div>
+    <div class="sdot" data-s="4"><div class="n">4</div><span>Decisão</span></div>
+  </div>
+
+  <div class="card">
+    <!-- ETAPA 0 — CADASTRO / INTRODUÇÃO -->
+    <div class="stepc" data-step="0">
+      <div class="kicker">Inteligência Imobiliária · Análise gratuita</div>
+      <h2 class="t" style="font-size:30px;max-width:700px">Antes de assinar com o banco ou a administradora, descubra o caminho que menos compromete o seu patrimônio.</h2>
+      <p class="lead">Em 4 passos, você compara financiamento e consórcio com transparência total — custo real, liquidez e capacidade de aporte. Análise, não venda.</p>
+      <div class="filtros" style="margin-bottom:24px">
+        <div class="filtro"><div class="fn" style="font-size:20px">✓</div><h3>Comparação honesta</h3><p>SAC, PRICE e consórcio lado a lado, com o custo total real (CET).</p></div>
+        <div class="filtro"><div class="fn" style="font-size:20px">✓</div><h3>Impacto patrimonial</h3><p>Não só o que custa menos — o que preserva sua liquidez e seus aportes.</p></div>
+        <div class="filtro"><div class="fn" style="font-size:20px">✓</div><h3>Relatório em PDF</h3><p>Receba a análise do seu cenário e, se quiser, fale com um especialista.</p></div>
+      </div>
+      <div class="card" style="background:var(--bg);margin:0;padding:22px">
+        <div style="font-family:'Playfair Display',serif;font-size:18px;margin-bottom:4px">Comece sua análise gratuita</div>
+        <div style="font-size:12.5px;color:var(--muted);margin-bottom:16px">É rápido. Pedimos só o essencial para enviar o seu relatório.</div>
+        <div class="inputs">
+          <div><label class="f">Nome completo</label><input type="text" id="leadNome" placeholder="Seu nome"></div>
+          <div><label class="f">WhatsApp</label><input type="text" id="leadTel" placeholder="(11) 99999-9999"></div>
+          <div style="grid-column:1/-1"><label class="f">E-mail</label><input type="email" id="leadEmail" placeholder="voce@email.com"></div>
+        </div>
+        <label class="chk2" style="margin-top:14px"><input type="checkbox" id="leadConsent"> Autorizo o contato e o tratamento dos meus dados para esta análise, conforme a LGPD.</label>
+        <div class="nav"><span></span><button class="btn" onclick="onCadastro()">Começar minha análise →</button></div>
+      </div>
+      <p style="font-size:11.5px;color:var(--muted);text-align:center;margin-top:14px">Leva cerca de 2 minutos · seus dados ficam protegidos.</p>
+    </div>
+
+    <!-- ETAPA 1 -->
+    <div class="stepc hide" data-step="1">
+      <div class="kicker">Antes de simular</div>
+      <h2 class="t">A decisão certa não é a mais barata.</h2>
+      <p class="lead">É a que cumpre a função do imóvel com o menor impacto na sua liquidez, nos seus aportes e no seu patrimônio. Toda boa decisão passa por três filtros — é por eles que vamos olhar.</p>
+      <div class="filtros">
+        <div class="filtro"><div class="fn">01</div><h3>Liquidez depois da compra</h3><p>Quanto dinheiro continua disponível para emergências e oportunidades — a reserva fica preservada?</p></div>
+        <div class="filtro"><div class="fn">02</div><h3>Capacidade de aporte</h3><p>Depois da compra, você continua construindo patrimônio — ou passa apenas a pagar a compra?</p></div>
+        <div class="filtro"><div class="fn">03</div><h3>Prazo e objetivo</h3><p>Para que serve este imóvel e quando você precisa dele? Sem isso, comparar é comparar no escuro.</p></div>
+      </div>
+      <div class="caminhos">
+        <div class="row"><b style="min-width:130px">À vista</b><span>elimina dívida, mas pode concentrar patrimônio e consumir liquidez.</span></div>
+        <div class="row"><b style="min-width:130px">Financiamento</b><span>entrega o imóvel agora e distribui o custo — com juros.</span></div>
+        <div class="row"><b style="min-width:130px">Consórcio</b><span>sem juros, só taxa de administração — a troca é esperar a contemplação.</span></div>
+        <div class="row"><b style="min-width:130px">Espera estratégica</b><span>às vezes, organizar 12–18 meses melhora muito a decisão.</span></div>
+      </div>
+      <p class="pos">Esta ferramenta compara financiamento e consórcio em números — sem empurrar nenhum dos dois. O objetivo é mostrar o caminho com o menor dano ao seu plano. Análise, não venda.</p>
+      <div class="nav"><span></span><button class="btn" onclick="goStep(2)">Começar análise →</button></div>
+    </div>
+
+    <!-- ETAPA 2 -->
+    <div class="stepc hide" data-step="2">
+      <div class="kicker">Etapa 2 de 4</div>
+      <h2 class="t">Dados do financiamento</h2>
+      <p class="lead">Como o banco faria a sua operação.</p>
+      <div class="inputs">
+        <div><label class="f">Valor do imóvel</label><input type="number" id="valorImovel" value="1000000" step="50000"></div>
+        <div><label class="f">Para que serve este imóvel?</label><select id="objetivo"><option value="moradia">Moradia</option><option value="troca">Troca de imóvel</option><option value="investimento">Investimento (renda)</option><option value="futura">Compra futura</option></select><div class="help">Define o que mais importa na decisão.</div></div>
+        <div><label class="f">Entrada que você dá</label><input type="number" id="valorEntrada" value="200000" step="10000"><div class="help">Quanto você paga à vista. Pode ser 0.</div></div>
+        <div><label class="f">Taxa de juros (% ao ano)</label><input type="number" id="jurosAnual" value="11.5" step="0.1"></div>
+        <div><label class="f">Indexador do financiamento</label><select id="indexador"><option value="0">Sem correção</option><option value="1.5">TR (~1,5% a.a.)</option><option value="4.5" selected>IPCA (~4,5% a.a.)</option><option value="6.5">Poupança (~6,5% a.a.)</option></select><div class="help">Corrige o saldo devedor ao longo do tempo.</div></div>
+        <div><label class="f">CDI (% ao ano)</label><input type="number" id="cdiAnual" value="10.5" step="0.1"><div class="help">Para medir quanto seu dinheiro renderia investido.</div></div>
+        <div><label class="f">Amortização extra por ano (R$)</label><input type="number" id="amortExtra" value="0" step="5000"><div class="help">Pagamento extra anual abatido do saldo (13º, FGTS, bônus). 0 = sem amortização extra.</div></div>
+        <div><div class="rowlab"><span>Número de parcelas</span><b id="parcFinLab">360 meses</b></div><input type="range" id="parcelasFin" min="60" max="420" step="12" value="360"><div class="help">Prazo do financiamento (máx. 420 meses).</div></div>
+      </div>
+      <div class="nav"><button class="btn ghost" onclick="goStep(1)">← Voltar</button><button class="btn" onclick="goStep(3)">Continuar →</button></div>
+    </div>
+
+    <!-- ETAPA 3 -->
+    <div class="stepc hide" data-step="3">
+      <div class="kicker">Etapa 3 de 4</div>
+      <h2 class="t">Dados do consórcio</h2>
+      <p class="lead">Use os números da carta da sua administradora.</p>
+      <div class="inputs">
+        <div><label class="f">Valor do crédito (carta)</label><input type="number" id="valorCredito" value="1000000" step="50000"><div class="help">O valor que você quer receber para o imóvel.</div></div>
+        <div><div class="rowlab"><span>Número de parcelas</span><b id="parcConsLab">200 meses</b></div><input type="range" id="parcelasCons" min="60" max="240" step="12" value="200"><div class="help">Prazo do consórcio (máx. 240 meses).</div></div>
+        <div><label class="f">Taxa de administração (%)</label><input type="number" id="taxaAdm" value="18" step="0.5"><div class="help">Total do contrato. Mercado: 9,5% a 25%.</div></div>
+        <div><label class="f">Fundo de reserva (%)</label><input type="number" id="fundoReserva" value="2" step="0.5"><div class="help">Mercado: 1% a 5%.</div></div>
+        <div><label class="f">Taxa de adesão (%)</label><input type="number" id="taxaAdesao" value="1" step="0.5"><div class="help">1% a 2%, paga na assinatura. Antecipa parte da taxa de adm — não é custo extra.</div></div>
+        <div><label class="f">Reajuste anual — INCC (%)</label><input type="number" id="inccAnual" value="4.5" step="0.1"><div class="help">Corrige a carta e as parcelas.</div></div>
+        <div><label class="f">Parcela reduzida (%)</label><input type="number" id="parcelaReduzida" value="0" step="5"><div class="help">Algumas administradoras oferecem 20% a 50% até a contemplação. Depois, a parcela sobe (saldo maior). 0 = sem redução.</div></div>
+        <div><div class="rowlab"><span>Contemplação no mês</span><b id="mesContLab">24</b></div><input type="range" id="mesContempl" min="1" max="240" step="1" value="24"></div>
+        <div style="grid-column:1/-1;border-top:1px solid var(--border);padding-top:16px">
+          <div class="switch" style="margin-bottom:12px">Tem lance embutido?
+            <div class="seg" id="segEmb"><button data-v="nao" class="on">Não</button><button data-v="sim">Sim</button></div>
+          </div>
+          <div class="inputs">
+            <div id="embWrap" class="hide"><label class="f">Lance embutido (% da carta)</label><input type="number" id="embutidoPct" value="25" step="1"><div class="help">Sai da própria carta: você contrata um crédito maior para receber líquido o valor desejado.</div></div>
+            <div><label class="f">Lance líquido (R$, do bolso)</label><input type="number" id="lanceLiquido" value="0" step="10000"><div class="help">Dinheiro seu ofertado como lance.</div></div>
+          </div>
+        </div>
+      </div>
+      <div class="nav"><button class="btn ghost" onclick="goStep(2)">← Voltar</button><button class="btn" onclick="goStep(4)">Ver a decisão →</button></div>
+    </div>
+
+    <!-- ETAPA 4 -->
+    <div class="stepc hide" data-step="4">
+      <div class="kicker">Etapa 4 de 4 · sua decisão</div>
+      <h2 class="t">Financiamento × Consórcio</h2>
+      <p class="lead">Não só o que custa menos — o que compromete menos o seu patrimônio.</p>
+      <div id="out"></div>
+      <div class="nav"><button class="btn ghost" onclick="goStep(3)">← Ajustar dados</button><button class="btn" onclick="sendFinal()">Receber análise em PDF</button></div>
+    </div>
+  </div>
+</div>
+
+<footer><div class="wrap">
+  <p>Material com finalidade educativa. Não constitui recomendação individualizada de investimento, crédito, consórcio, financiamento ou compra imobiliária. As alternativas dependem do seu contexto — avalie a situação individual e, se necessário, busque orientação profissional.</p>
+  <p class="reg">© <span id="yr"></span> Alavancagem Patrimonial · Inteligência Imobiliária.</p>
+</div></footer>
+
+<script>
+/* ===== CONFIGURE AQUI o destino dos leads ===== */
+var CONFIG={
+  supabaseUrl:"https://ksrwxeugknlowgdbezxq.supabase.co",       /* ex: https://xxxx.supabase.co  (do seu projeto Supabase) */
+  supabaseAnonKey:"sb_publishable_NIXXFIWyh2_TPPx3qTI2Rg_C8UWBqmw",   /* a chave "anon public" do Supabase */
+  supabaseTable:"leads_calc",
+  webhookUrl:""         /* opcional: Make/Zapier/Pipedrive, se não usar Supabase */
+};
+var VIP_THRESHOLD=1000000, SEG=120;
+var step=1, embutido=false, infl=false, amortModo="prazo";
+
+var brl=function(n){return (isFinite(n)?n:0).toLocaleString("pt-BR",{style:"currency",currency:"BRL",maximumFractionDigits:0});};
+function mensal(p){return Math.pow(1+p/100,1/12)-1;}
+function finCET(P,n,j,seg,tr,sistema,aval,amortExtra,modo){
+  amortExtra=amortExtra||0; modo=modo||"prazo";
+  var i=mensal(j),trm=mensal(tr),s=P,jt=0,sg=0,tot=0,p1=0,pn=0,A=P/n,rem=n,meses=n;
+  var pmt=i===0?P/n:P*(i*Math.pow(1+i,n))/(Math.pow(1+i,n)-1);
+  var dias=Math.min(n/12*365,365),iof=0.0038*P+0.000082*P*dias;
+  for(var m=1;m<=n && s>0.01;m++){
+    s*=(1+trm);
+    var ju=s*i,am=sistema==="PRICE"?(pmt-ju):A; if(am>s)am=s;
+    var mip=s*0.00035,dfi=aval*0.000025,p=am+ju+seg+mip+dfi;
+    if(m==1)p1=p;
+    jt+=ju;sg+=mip+dfi;tot+=p;s-=am;rem--;meses=m;pn=p;
+    if(amortExtra>0 && m%12===0 && s>0){
+      var ex=Math.min(amortExtra,s); s-=ex; tot+=ex;
+      if(modo==="parcela" && rem>0){ A=s/rem; pmt=i===0?s/rem:s*(i*Math.pow(1+i,rem))/(Math.pow(1+i,rem)-1); }
+    }
+  }
+  return {p1:p1,pn:pn,total:tot,juros:jt,seguros:sg,iof:iof,meses:meses};
+}
+function consorcio(grossCred,n,mesCont,incc,adm,fundo,lanceLiq,adesao,reducao){
+  var adesaoEff=Math.min(Math.max(adesao||0,0),adm); /* adesão antecipa parte da adm */
+  var admParc=adm-adesaoEff;
+  var adesaoVal=grossCred*adesaoEff/100; /* paga na assinatura */
+  var red=Math.min(Math.max(reducao||0,0),60)/100; /* parcela reduzida até a contemplação */
+  var custo=grossCred*(1+(admParc+fundo)/100),base=custo/n,p1=base*(1-red),t=0,s=custo,parcelaApos=base;
+  mesCont=Math.max(1,Math.min(mesCont||Math.floor(n/2),n));
+  for(var m=1;m<=n;m++){
+    if(m>1&&(m-1)%12===0){var r=n-(m-1);if(r>0){s*=(1+incc/100);base=s/r;}}
+    var pay;
+    if(m<mesCont){ pay=base*(1-red); } /* fase reduzida: amortiza menos */
+    else{
+      if(m===mesCont){ if(lanceLiq>0){t+=lanceLiq;s=Math.max(s-lanceLiq,0);} var rem=n-(m-1); if(rem>0)base=s/rem; parcelaApos=base; } /* recalcula sobre saldo maior */
+      pay=base;
+    }
+    t+=pay;s-=pay;
+  }
+  return {p1:p1,total:t+adesaoVal,custo:custo,adm:grossCred*(adm+fundo)/100,adesaoVal:adesaoVal,admParc:admParc,mesCont:mesCont,parcelaApos:parcelaApos,reduzida:red>0};
+}
+function rendCDI(v,cdi,meses){return v*(Math.pow(1+mensal(cdi),meses)-1);}
+function num(id){var e=document.getElementById(id);return e?parseFloat(e.value)||0:0;}
+function val(id){var e=document.getElementById(id);return e?e.value:"";}
+function metric(k,v,t,h){return '<div class="metric"><div class="k">'+k+'</div><div class="v '+(t||'')+'">'+v+'</div>'+(h?'<div class="h">'+h+'</div>':'')+'</div>';}
+function bars(items){var max=Math.max.apply(null,items.map(function(i){return i.v;}).concat([1])),w=820,bw=(w-100)/items.length-36;var s='<svg viewBox="0 0 '+w+' 190" width="100%">';items.forEach(function(it,k){var xx=50+k*((w-100)/items.length);var h=it.v/max*120,y=150-h;s+='<rect x="'+xx+'" y="'+y+'" width="'+bw+'" height="'+h+'" rx="6" fill="'+it.c+'"/><text x="'+(xx+bw/2)+'" y="'+(y-8)+'" fill="'+getC('--txt')+'" font-size="13" text-anchor="middle" font-family="ui-monospace">'+brl(it.v)+'</text><text x="'+(xx+bw/2)+'" y="170" fill="'+getC('--muted')+'" font-size="12" text-anchor="middle">'+it.l+'</text>';});return s+'</svg>';}
+function getC(v){return getComputedStyle(document.documentElement).getPropertyValue(v).trim()||"#888";}
+
+function syncLabels(){
+  document.getElementById("parcFinLab").textContent=num("parcelasFin")+" meses";
+  document.getElementById("parcConsLab").textContent=num("parcelasCons")+" meses";
+  var mc=document.getElementById("mesContempl"),pc=num("parcelasCons");mc.max=pc;if(num("mesContempl")>pc)mc.value=pc;
+  document.getElementById("mesContLab").textContent="mês "+num("mesContempl");
+}
+
+function renderResult(){
+  var im=num("valorImovel"), ent=num("valorEntrada"), j=num("jurosAnual"), idx=num("indexador"), cdi=num("cdiAnual"), nf=num("parcelasFin"), obj=val("objetivo"), amortExtra=num("amortExtra");
+  var credNet=num("valorCredito"), nc=num("parcelasCons"), adm=num("taxaAdm"), fundo=num("fundoReserva"), incc=num("inccAnual"), mesC=num("mesContempl"), adesao=num("taxaAdesao");
+  var embPct=embutido?num("embutidoPct"):0, lanceLiq=num("lanceLiquido"), reducao=num("parcelaReduzida");
+  var trF=infl?idx:0, inccF=infl?incc:0;
+
+  var P=Math.max(im-ent,0);
+  var sac=finCET(P,nf,j,SEG,trF,"SAC",im,amortExtra,amortModo), pr=finCET(P,nf,j,SEG,trF,"PRICE",im,amortExtra,amortModo);
+  var sacTot=sac.total+ent, prTot=pr.total+ent;
+  var sacPrazo=(amortExtra>0&&amortModo==="prazo"&&sac.meses<nf)?'<br><span style="font-size:11.5px">quita em '+sac.meses+'m (−'+(nf-sac.meses)+'m)</span>':'';
+  var prPrazo=(amortExtra>0&&amortModo==="prazo"&&pr.meses<nf)?'<br><span style="font-size:11.5px">quita em '+pr.meses+'m (−'+(nf-pr.meses)+'m)</span>':'';
+  var amortHint=amortModo==="prazo"?'Mantém a parcela e encurta o prazo — economiza mais juros.':'Mantém a parcela alta e recalcula para baixo ao longo do tempo — alívio no fluxo.';
+  var amortToolbar=amortExtra>0?'<div class="patbox" style="border-color:var(--border);margin-bottom:16px"><div class="toolbar" style="margin-bottom:6px"><span class="chk">Amortização extra de '+brl(amortExtra)+'/ano. A amortização deve:</span><div class="seg" id="segAmort"><button data-v="prazo" class="'+(amortModo==="prazo"?"on":"")+'">Reduzir prazo</button><button data-v="parcela" class="'+(amortModo==="parcela"?"on":"")+'">Reduzir parcela</button></div></div><div style="font-size:11.5px;color:var(--muted)">'+amortHint+'</div></div>':'';
+  var gross=embPct>0?credNet/(1-embPct/100):credNet;
+  var cons=consorcio(gross,nc,mesC,inccF,adm,fundo,lanceLiq,adesao,reducao);
+  var lanceEmbVal=gross*embPct/100;
+  var refFin=Math.min(sacTot,prTot), eco=refFin-cons.total;
+  var rendEnt=rendCDI(ent,cdi,mesC), rendLan=rendCDI(lanceLiq,cdi,mesC);
+  var difParcela=sac.p1-cons.p1;
+  var consSub=cons.reduzida?'reduzida · após contempl.: '+brl(cons.parcelaApos):(lanceLiq>0?'após lance: '+brl(cons.parcelaApos):'sem juros'+(cons.adesaoVal>0?' · adm '+cons.admParc+'% nas parcelas':''));
+
+  var objNote={moradia:"Como é para moradia, o que mais pesa é não comprometer a segurança da família: olhe a liquidez que sobra e a parcela frente à sua renda.",troca:"Como é uma troca, considere a venda do imóvel atual, os custos e a recomposição do seu caixa.",investimento:"Como é investimento, o retorno precisa compensar o custo, a baixa liquidez e a concentração — compare com outras aplicações.",futura:"Como é compra futura, o consórcio tende a organizar melhor a aquisição ao longo do tempo, se houver disciplina de aporte."}[obj]||"";
+
+  var frase=eco>0
+    ? 'O <b>consórcio</b> sai cerca de <b>'+brl(eco)+'</b> mais barato no total — sem juros, só a taxa de administração. Em troca, você espera a contemplação (mês '+cons.mesCont+'). O financiamento entrega o imóvel agora.'
+    : 'Neste cenário o <b>financiamento</b> tende a sair melhor — principalmente se você precisa do imóvel imediatamente.';
+
+  var out=document.getElementById("out");
+  out.innerHTML=
+    '<div class="cmp">'+
+      '<div class="col"><div class="tag">Financiamento · SAC</div><div class="par">1ª parcela <b>'+brl(sac.p1)+'</b><br><span style="font-size:11.5px">cai até '+brl(sac.pn)+'</span>'+sacPrazo+'</div><div class="tot red">'+brl(sacTot)+'</div><div class="par" style="font-size:11.5px">custo total · '+sac.meses+' meses</div></div>'+
+      '<div class="col"><div class="tag">Financiamento · PRICE</div><div class="par">parcela fixa <b>'+brl(pr.p1)+'</b>'+prPrazo+'</div><div class="tot red">'+brl(prTot)+'</div><div class="par" style="font-size:11.5px">custo total · '+pr.meses+' meses</div></div>'+
+      '<div class="col win"><div class="tag">Consórcio</div><div class="par">parcela <b>'+brl(cons.p1)+'</b><br><span style="font-size:11.5px">'+consSub+'</span></div><div class="tot grn">'+brl(cons.total)+'</div><div class="par" style="font-size:11.5px">custo total · '+nc+' meses'+(cons.adesaoVal>0?'<br>+ '+brl(cons.adesaoVal)+' na assinatura (adesão)':'')+'</div></div>'+
+    '</div>'+
+    amortToolbar+
+    '<div class="verdict">'+frase+(objNote?' '+objNote:'')+'</div>'+
+    '<div class="patbox">'+
+      '<h4 style="margin:0 0 4px;font-size:15px;font-family:Playfair Display,serif">Impacto no seu patrimônio</h4>'+
+      '<div style="font-size:12px;color:var(--muted);margin-bottom:8px">Além do custo, o que cada caminho faz com a sua liquidez e a sua capacidade de investir.</div>'+
+      '<div class="patline"><span class="q">Liquidez que sai agora</span><span class="a">Financiamento: '+brl(ent)+' de entrada · Consórcio: '+brl(lanceLiq+cons.adesaoVal)+(cons.adesaoVal>0?' (lance + adesão)':' de lance')+'</span></div>'+
+      '<div class="patline"><span class="q">Capacidade de aporte (1ª parcela)</span><span class="a">'+(difParcela>0?'Consórcio preserva '+brl(difParcela)+'/mês a mais para investir':'Financiamento com parcela menor neste prazo')+'</span></div>'+
+      '<div class="patline"><span class="q">Esse dinheiro rendendo no CDI (até mês '+mesC+')</span><span class="a">entrada +'+brl(rendEnt)+' · lance +'+brl(rendLan)+'</span></div>'+
+    '</div>'+
+    '<div class="toolbar"><label class="chk"><input type="checkbox" id="inflChk" '+(infl?'checked':'')+'> Projetar correção (indexador no financiamento e INCC no consórcio)</label><span class="sub">'+(infl?'valores corrigidos':'valores contratados')+'</span></div>'+
+    '<div style="margin-bottom:16px">'+bars([{v:Math.round(sacTot),c:getC('--red'),l:'Financ. SAC'},{v:Math.round(prTot),c:getC('--red'),l:'Financ. PRICE'},{v:Math.round(cons.total),c:getC('--green'),l:'Consórcio'}])+'</div>'+
+    '<div class="detgrid">'+
+      '<div class="box"><h4>O custo real do financiamento</h4><div class="d">O que o banco soma além da taxa anunciada.</div><div class="mini">'+metric("Juros (SAC)",brl(sac.juros),"cost")+metric("Seguros (MIP+DFI)",brl(sac.seguros),"cost")+metric("IOF",brl(sac.iof),"cost")+metric("Sua entrada",brl(ent))+'</div></div>'+
+      (embPct>0?'<div class="box"><h4>Como fica o lance embutido</h4><div class="d">O lance sai da própria carta: você contrata um crédito maior para receber líquido o que precisa.</div><div class="mini">'+metric("Contrata (bruto)",brl(gross))+metric("Lance embutido ("+embPct+"%)",brl(lanceEmbVal),"profit")+metric("Recebe (líquido)",brl(credNet))+metric("Custo do consórcio",brl(cons.total),"cost")+'</div></div>':'<div class="box"><h4>Onde mora a diferença</h4><div class="d">O consórcio troca juros por taxa de administração.</div><div class="mini">'+metric("Juros do banco",brl(sac.juros),"cost")+metric("Taxa adm + fundo",brl(cons.adm),"profit")+'</div></div>')+
+    '</div>';
+  var c=document.getElementById("inflChk");if(c)c.onchange=function(){infl=c.checked;renderResult();};
+  var sa=document.getElementById("segAmort");if(sa)sa.querySelectorAll("button").forEach(function(b){b.onclick=function(){amortModo=b.dataset.v;renderResult();};});
+}
+
+function goStep(s){
+  if(s===4){syncLabels();renderResult();}
+  step=s;
+  document.querySelectorAll(".stepc").forEach(function(el){el.classList.toggle("hide",parseInt(el.dataset.step,10)!==s);});
+  document.getElementById("steps").style.display=(s===0?"none":"flex");
+  document.querySelectorAll(".sdot").forEach(function(d){var ds=parseInt(d.dataset.s,10);d.classList.toggle("on",ds===s);d.classList.toggle("done",ds<s);});
+  window.scrollTo({top:0,behavior:"smooth"});
+}
+function toggleTheme(){var h=document.documentElement,d=h.getAttribute("data-theme")==="dark";h.setAttribute("data-theme",d?"light":"dark");document.getElementById("themeBtn").textContent=d?"☾ Escuro":"☀ Claro";try{localStorage.setItem("tema",d?"light":"dark");}catch(e){}if(step===4)renderResult();}
+document.getElementById("segEmb").querySelectorAll("button").forEach(function(b){b.onclick=function(){document.getElementById("segEmb").querySelectorAll("button").forEach(function(x){x.classList.toggle("on",x===b);});embutido=b.dataset.v==="sim";document.getElementById("embWrap").classList.toggle("hide",!embutido);};});
+document.querySelectorAll("input,select").forEach(function(el){el.addEventListener("input",function(){syncLabels();if(step===4)renderResult();});});
+var lead={nome:"",email:"",telefone:""}, leadId="";
+var COLMAP={evento:"evento",leadId:"lead_id",nome:"nome",email:"email",telefone:"telefone",consentimentoLgpd:"consentimento_lgpd",consentimentoEm:"consentimento_em",origem:"origem",objetivo:"objetivo",valorImovel:"valor_imovel",parcelasFin:"parcelas_fin",valorCredito:"valor_credito",parcelasCons:"parcelas_cons",taxaAdm:"taxa_adm",fundoReserva:"fundo_reserva",taxaAdesao:"taxa_adesao",parcelaReduzida:"parcela_reduzida",mesContemplacao:"mes_contemplacao",lanceLiquido:"lance_liquido",amortExtra:"amort_extra",isVip:"is_vip",etiqueta:"etiqueta"};
+function supabaseRow(p){var r={};for(var k in p){if(COLMAP[k])r[COLMAP[k]]=p[k];}return r;}
+function postLead(payload){
+  if(CONFIG.supabaseUrl && CONFIG.supabaseAnonKey){
+    try{fetch(CONFIG.supabaseUrl.replace(/\/+$/,"")+"/rest/v1/"+CONFIG.supabaseTable,{method:"POST",headers:{"apikey":CONFIG.supabaseAnonKey,"Authorization":"Bearer "+CONFIG.supabaseAnonKey,"Content-Type":"application/json","Prefer":"return=minimal"},body:JSON.stringify(supabaseRow(payload))});}catch(e){}
+  } else if(CONFIG.webhookUrl){
+    try{fetch(CONFIG.webhookUrl,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(payload)});}catch(e){}
+  } else { console.log("LEAD (configure CONFIG.supabaseUrl/anonKey ou webhookUrl):",payload); }
+}
+function onCadastro(){
+  var nome=val("leadNome").trim(),email=val("leadEmail").trim(),tel=val("leadTel").trim(),ok=document.getElementById("leadConsent").checked;
+  if(nome.length<2||!email||tel.length<8){alert("Preencha nome, WhatsApp e e-mail válidos.");return;}
+  if(!ok){alert("É necessário aceitar o tratamento dos dados (LGPD).");return;}
+  leadId="L"+Date.now();
+  lead={nome:nome,email:email,telefone:tel};
+  /* Exporta o lead para o dashboard já no cadastro (mesmo que não conclua a simulação) */
+  postLead({evento:"cadastro",leadId:leadId,nome:nome,email:email,telefone:tel,consentimentoLgpd:true,consentimentoEm:new Date().toISOString(),origem:"calculadora"});
+  goStep(1);
+}
+function sendFinal(){
+  if(!lead.email){goStep(0);return;}
+  var imv=num("valorImovel"),isVip=imv>=VIP_THRESHOLD;
+  postLead({evento:"simulacao_concluida",leadId:leadId,nome:lead.nome,email:lead.email,telefone:lead.telefone,objetivo:val("objetivo"),valorImovel:imv,parcelasFin:num("parcelasFin"),valorCredito:num("valorCredito"),parcelasCons:num("parcelasCons"),taxaAdm:num("taxaAdm"),fundoReserva:num("fundoReserva"),taxaAdesao:num("taxaAdesao"),parcelaReduzida:num("parcelaReduzida"),mesContemplacao:num("mesContempl"),lanceLiquido:num("lanceLiquido"),amortExtra:num("amortExtra"),isVip:isVip,etiqueta:isVip?"VIP — Diretoria/Closers":"Padrão"});
+  alert("Pronto, "+lead.nome.split(" ")[0]+"! Sua análise foi gerada e enviada. (Configure o destino em CONFIG.webhookUrl para receber no seu dashboard.)");
+}
+document.getElementById("yr").textContent=new Date().getFullYear();
+try{var t=localStorage.getItem("tema");if(t==="dark"){document.documentElement.setAttribute("data-theme","dark");document.getElementById("themeBtn").textContent="☀ Claro";}}catch(e){}
+syncLabels();goStep(0);
+</script>
+</body>
+</html>

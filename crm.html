@@ -161,10 +161,13 @@ label.fl{display:flex;flex-direction:column;gap:5px;font-size:12px;color:var(--m
   <nav id="nav">
     <button data-v="inicio" class="on">Início</button>
     <button data-v="dash">Dashboard</button>
+    <button data-v="conv" data-see="1">Taxa de conversão</button>
     <button data-v="pipe">Pipeline</button>
     <button data-v="pos">Pós-venda</button>
     <button data-v="leads">Leads &amp; Clientes</button>
+    <button data-v="clientes">Clientes</button>
     <button data-v="sim">Simulador</button>
+    <button data-v="fincalc">Financiamento</button>
     <button data-v="vend" data-see="1">Vendedores</button>
     <button data-v="ativ">Atividades</button>
     <button data-v="tracao" data-see="1">Tração</button>
@@ -199,7 +202,6 @@ label.fl{display:flex;flex-direction:column;gap:5px;font-size:12px;color:var(--m
   </div>
   <div class="grid cards2" style="margin-top:14px">
     <div class="card"><h3><span class="dot"></span>Funil de vendas</h3><div class="h3sub">Valor por etapa em aberto · <select id="dashLinha" onchange="renderDash()" style="padding:3px 8px;font-size:12px"></select></div><div id="funnel"></div></div>
-    <div class="card" id="cardVend" data-see="1"><h3><span class="dot" style="background:var(--vio)"></span>Pipeline ponderado por vendedor</h3><div class="h3sub">Top 8 · valor × probabilidade</div><div id="dashVend"></div></div>
     <div class="card" data-see="1"><h3><span class="dot" style="background:var(--ac2)"></span>Ganhos por vendedor</h3><div class="h3sub">Top 8 · valor fechado (todas as vendas)</div><div id="dashWonVend"></div></div>
   </div>
   <div class="grid cards2" style="margin-top:14px">
@@ -208,16 +210,49 @@ label.fl{display:flex;flex-direction:column;gap:5px;font-size:12px;color:var(--m
   </div>
   <div class="grid cards2" style="margin-top:14px">
     <div class="card" id="cardVel" data-see="1"><h3><span class="dot" style="background:var(--vio)"></span>Velocidade do funil</h3><div class="h3sub">Tempo até o fechamento e idade por etapa</div><div id="velBox"></div></div>
-    <div class="card" id="cardConv" data-see="1"><h3><span class="dot" style="background:var(--ac)"></span>Conversão por etapa</h3><div class="h3sub">% que avança entre etapas · <span id="convLinha"></span></div><div id="convBox"></div></div>
-  </div>
-  <div class="grid cards2" style="margin-top:14px">
     <div class="card"><h3><span class="dot" style="background:var(--red)"></span>🔴 Gargalo: Qualificação → Proposta</h3><div class="h3sub">Onde o funil mais perde — negócios parados em Qualificação (avance ou destrave)</div><div id="gargaloBox"></div></div>
   </div>
-  <div class="grid cards2" style="margin-top:14px">
-    <div class="card"><h3><span class="dot" style="background:var(--ac)"></span>Previsão ponderada por mês</h3><div class="h3sub">Pela data prevista de fechamento</div><div id="forecast"></div></div>
-    <div class="card"><h3><span class="dot" style="background:var(--ac2)"></span>Comissões previstas</h3><div class="h3sub">Sobre negócios ganhos</div><div id="commBox"></div></div>
+</section>
+
+<!-- TAXA DE CONVERSÃO -->
+<section class="view" id="v-conv">
+  <div class="filters">
+    <select id="convLinha2" onchange="renderConvView()"></select>
+    <select id="convVend2" onchange="renderConvView()"></select>
+    <span class="pill" id="convStat"></span>
   </div>
-  <div class="grid cards2" style="margin-top:14px"><div class="card"><h3><span class="dot" style="background:var(--ac2)"></span>Forecast — Commit vs Upside</h3><div class="h3sub">Commit = Negociação &middot; Upside = Proposta &middot; provável = ponderado do pipeline</div><div id="commitBox"></div></div></div>
+  <div class="grid cards2">
+    <div class="card"><h3><span class="dot" style="background:var(--ac)"></span>Passagem entre etapas</h3><div class="h3sub">% que avança de uma etapa para a próxima · <span id="convLinhaLbl"></span></div><div id="convBox2"></div></div>
+    <div class="card"><h3><span class="dot" style="background:var(--ac2)"></span>Conversão geral</h3><div class="h3sub">Do primeiro contato até a venda</div><div id="convResumo"></div></div>
+  </div>
+  <div class="card" style="margin-top:14px" data-see="1"><h3><span class="dot" style="background:var(--vio)"></span>Conversão por vendedor</h3><div class="h3sub">Lead → venda (sem inativos)</div><div id="convVendBox"></div></div>
+</section>
+
+<!-- CLIENTES (CARTEIRA) -->
+<section class="view" id="v-clientes">
+  <div class="filters">
+    <select id="cliVend" onchange="renderClientes()"></select>
+    <select id="cliStatus" onchange="renderClientes()"><option value="">Todos os status</option></select>
+    <input id="cliSearch" placeholder="Buscar cliente, telefone..." oninput="renderClientes()" style="min-width:240px">
+    <span class="pill" id="cliStat"></span>
+  </div>
+  <div class="grid kpis" id="cliKpis" style="margin-bottom:14px"></div>
+  <div class="card" style="padding:8px 8px 0">
+    <table id="tCli"><thead><tr>
+      <th class="l">Cliente</th><th class="l">Vendedor</th><th class="l">Produto</th>
+      <th>Valor</th><th class="l">Status pós-venda</th><th class="l">Fechado em</th><th class="l">Recompra</th><th></th>
+    </tr></thead><tbody></tbody></table>
+    <div class="empty" id="cliEmpty" style="display:none">Nenhum cliente na carteira ainda.</div>
+  </div>
+</section>
+
+<!-- FINANCIAMENTO (CALCULADORA) -->
+<section class="view" id="v-fincalc">
+  <div class="card" style="padding:10px 12px">
+    <h3 style="margin:0"><span class="dot" style="background:var(--ac2)"></span>Financiamento × Consórcio</h3>
+    <div class="h3sub">Calculadora de alavancagem patrimonial — compare financiamento (SAC/PRICE) e consórcio</div>
+    <iframe id="finFrame" src="calculadora.html" style="width:100%;height:78vh;border:1px solid var(--bd);border-radius:12px;margin-top:8px;background:#fff"></iframe>
+  </div>
 </section>
 
 <!-- PIPELINE -->
@@ -280,6 +315,10 @@ label.fl{display:flex;flex-direction:column;gap:5px;font-size:12px;color:var(--m
 
 <!-- SIMULADOR -->
 <section class="view" id="v-sim">
+  <div class="card" style="margin-bottom:14px;display:flex;align-items:center;gap:12px;flex-wrap:wrap">
+    <div style="flex:1;min-width:220px"><b>Financiamento × Consórcio</b><div class="h3sub" style="margin:2px 0 0">Precisa comparar com financiamento bancário (SAC/PRICE)? Abra a calculadora completa.</div></div>
+    <button class="btn primary" onclick="abrirFinCalc()">🏦 Abrir calculadora Financiamento × Consórcio</button>
+  </div>
   <div class="grid cards2">
     <div class="card">
       <h3><span class="dot"></span>Simulador de consórcio</h3>
@@ -692,9 +731,9 @@ function fillSelects(){
  var sNames=sellers().map(function(p){return p.nome});
  el('mVend').innerHTML='<option value="">Selecione...</option>'+sNames.map(function(v){return '<option>'+esc(v)+'</option>'}).join('');
  var vFilter='<option value="">Todos os vendedores</option>'+sNames.map(function(v){return '<option>'+esc(v)+'</option>'}).join('');
- el('fVend').innerHTML=vFilter;el('lVend').innerHTML=vFilter;el('posVend').innerHTML=vFilter;
+ el('fVend').innerHTML=vFilter;el('lVend').innerHTML=vFilter;el('posVend').innerHTML=vFilter;if(el('cliVend'))el('cliVend').innerHTML=vFilter;if(el('convVend2'))el('convVend2').innerHTML=vFilter;
  var lOpts=LINHAS.map(function(l){return '<option>'+l+'</option>'}).join('');
- el('mLinha').innerHTML=lOpts;el('lLinha').innerHTML='<option value="">Todas as linhas</option>'+lOpts;el('pLinha').innerHTML=lOpts;el('dashLinha').innerHTML=lOpts;el('qLinha').innerHTML=lOpts;el('qVend').innerHTML='<option value="">Selecione...</option>'+sNames.map(function(v){return '<option>'+esc(v)+'</option>'}).join('');
+ el('mLinha').innerHTML=lOpts;el('lLinha').innerHTML='<option value="">Todas as linhas</option>'+lOpts;el('pLinha').innerHTML=lOpts;el('dashLinha').innerHTML=lOpts;if(el('convLinha2'))el('convLinha2').innerHTML=lOpts;el('qLinha').innerHTML=lOpts;el('qVend').innerHTML='<option value="">Selecione...</option>'+sNames.map(function(v){return '<option>'+esc(v)+'</option>'}).join('');
  el('sAdm').innerHTML=CFG().adm.map(function(a){return '<option>'+esc(a.nome)+'</option>'}).join('');el('mAdm').innerHTML='<option value="">—</option>'+CFG().adm.map(function(a){return '<option>'+esc(a.nome)+'</option>'}).join('');
 }
 
@@ -713,11 +752,8 @@ function renderDash(){
  var atrasados=open.filter(overdue).length;
  var kp=[
   ['Pipeline aberto',BRLk(pipeTot),open.length+' negócios'],
-  ['Previsão ponderada',BRLk(pondTot),'valor × probabilidade'],
   [canSeeAll()?'Fechado no mês':'Meus fechados no mês',BRLk(wonMonthV),wonMonth.length+' negócios'],
   [canSeeAll()?'Fechado total (ganhos)':'Meu total fechado',BRLk(won.reduce(function(a,d){return a+(d.valor||0)},0)),won.length+' ganhos'],
-  ['Taxa de conversão',convRate+'%',won.length+' ganhos / '+decided+' decididos (s/ inativos)'],
-  ['Comissões previstas',BRLk(commPrev),'sobre ganhos'],
   ['Follow-ups atrasados',String(atrasados),atrasados?'⚠ exige ação':'em dia']
  ];
  el('kpis').innerHTML=kp.map(function(k){return '<div class="kpi"><div class="lbl">'+k[0]+'</div><div class="val">'+k[1]+'</div><div class="sub">'+k[2]+'</div></div>'}).join('');
@@ -725,7 +761,7 @@ function renderDash(){
  var meta=canSeeAll()?(CFG().meta||0):((memberByName(ME.nome)||{}).meta||0);
  var realPct=meta?Math.round(wonMonthV/meta*100):0;var pct=Math.min(100,realPct);var col=realPct>=100?'var(--ac2)':realPct>=60?'var(--ac)':'var(--warn)';
  el('metaSub').textContent=(canSeeAll()?'Empresa · ':'Sua meta · ')+'mês de '+mlabel(ym);
- el('metaBox').innerHTML=meta?('<div class="meta-track"><div class="meta-fill" style="width:'+pct+'%;background:'+col+'"></div><div class="meta-lbl">'+BRLk(wonMonthV)+' / '+BRLk(meta)+' ('+realPct+'%)</div></div><div style="font-size:12px;color:var(--mut);margin-top:8px">Faltam '+BRLk(Math.max(0,meta-wonMonthV))+' para a meta. Pipeline ponderado de '+BRLk(pondTot)+' sustenta o restante.</div>'):'<div class="empty">Defina a meta em Config.</div>';
+ el('metaBox').innerHTML=meta?('<div class="meta-track"><div class="meta-fill" style="width:'+pct+'%;background:'+col+'"></div><div class="meta-lbl">'+BRLk(wonMonthV)+' / '+BRLk(meta)+' ('+realPct+'%)</div></div><div style="font-size:12px;color:var(--mut);margin-top:8px">Faltam '+BRLk(Math.max(0,meta-wonMonthV))+' para a meta.</div>'):'<div class="empty">Defina a meta em Config.</div>';
 
  if(canSeeAll()){
   // canal/origem
@@ -746,17 +782,17 @@ function renderDash(){
 
  var byM={};open.forEach(function(d){var m=(d.dataProximoPasso||todayStr()).slice(0,7);byM[m]=(byM[m]||0)+pond(d);});
  var msv=Object.keys(byM).sort();var maxM=Math.max.apply(null,msv.map(function(m){return byM[m]}).concat([1]));
- el('forecast').innerHTML=msv.length?msv.map(function(m){var w=Math.round(byM[m]/maxM*100);return '<div class="hbar"><div class="hname">'+mlabel(m)+'</div><div class="htrack"><div class="hfill" style="width:'+w+'%"></div></div><div class="hval">'+BRLk(byM[m])+'</div></div>';}).join(''):'<div class="empty">Defina datas de próximo passo.</div>';
+ if(el('forecast'))el('forecast').innerHTML=msv.length?msv.map(function(m){var w=Math.round(byM[m]/maxM*100);return '<div class="hbar"><div class="hname">'+mlabel(m)+'</div><div class="htrack"><div class="hfill" style="width:'+w+'%"></div></div><div class="hval">'+BRLk(byM[m])+'</div></div>';}).join(''):'<div class="empty">Defina datas de próximo passo.</div>';
 
  if(canSeeAll()){
   var wbv={};won.forEach(function(d){if(!d.vendedor)return;wbv[d.vendedor]=(wbv[d.vendedor]||0)+(d.valor||0);});var wvs=Object.keys(wbv).sort(function(a,b){return wbv[b]-wbv[a]}).slice(0,8);var maxWV=Math.max.apply(null,wvs.map(function(v){return wbv[v]}).concat([1]));var _gw=el('dashWonVend');if(_gw)_gw.innerHTML=wvs.length?wvs.map(function(v){var w=Math.round(wbv[v]/maxWV*100);return '<div class="hbar"><div class="hname" title="'+esc(v)+'">'+esc(v)+(isExternal(v)?' <span class="ext">ext</span>':'')+'</div><div class="htrack"><div class="hfill" style="width:'+w+'%;background:var(--ac2)"></div></div><div class="hval">'+BRLk(wbv[v])+'</div></div>';}).join(''):'<div class="empty">Sem ganhos ainda.</div>';
   var byV={};open.forEach(function(d){if(!d.vendedor)return;byV[d.vendedor]=(byV[d.vendedor]||0)+pond(d);});
   var vs=Object.keys(byV).sort(function(a,b){return byV[b]-byV[a]}).slice(0,8);var maxV=Math.max.apply(null,vs.map(function(v){return byV[v]}).concat([1]));
-  el('dashVend').innerHTML=vs.length?vs.map(function(v){var w=Math.round(byV[v]/maxV*100);return '<div class="hbar"><div class="hname" title="'+esc(v)+'">'+esc(v)+(isExternal(v)?' <span class="ext">ext</span>':'')+'</div><div class="htrack"><div class="hfill" style="width:'+w+'%;background:var(--vio)"></div></div><div class="hval">'+BRLk(byV[v])+'</div></div>';}).join(''):'<div class="empty">Sem pipeline atribuído.</div>';
+  if(el('dashVend'))el('dashVend').innerHTML=vs.length?vs.map(function(v){var w=Math.round(byV[v]/maxV*100);return '<div class="hbar"><div class="hname" title="'+esc(v)+'">'+esc(v)+(isExternal(v)?' <span class="ext">ext</span>':'')+'</div><div class="htrack"><div class="hfill" style="width:'+w+'%;background:var(--vio)"></div></div><div class="hval">'+BRLk(byV[v])+'</div></div>';}).join(''):'<div class="empty">Sem pipeline atribuído.</div>';
  }
 
  var commL={};won.forEach(function(d){commL[d.linha]=(commL[d.linha]||0)+commission(d)});var ls=Object.keys(commL);
- el('commBox').innerHTML=(ls.length?ls.map(function(l){return '<div style="display:flex;justify-content:space-between;padding:7px 0;border-bottom:1px solid var(--bd);font-size:13px"><span>'+l+' <span class="pill">'+commPct(l)+'%</span></span><b>'+BRL(commL[l])+'</b></div>'}).join(''):'<div class="empty">Sem ganhos ainda.</div>')+'<div class="note">Percentuais editáveis em Config.</div>';
+ if(el('commBox'))el('commBox').innerHTML=(ls.length?ls.map(function(l){return '<div style="display:flex;justify-content:space-between;padding:7px 0;border-bottom:1px solid var(--bd);font-size:13px"><span>'+l+' <span class="pill">'+commPct(l)+'%</span></span><b>'+BRL(commL[l])+'</b></div>'}).join(''):'<div class="empty">Sem ganhos ainda.</div>')+'<div class="note">Percentuais editáveis em Config.</div>';
 
  var stuck=open.filter(function(d){return daysSince(d.atualizadoEm)>14}).length;
  var noNext=open.filter(function(d){return !d.dataProximoPasso}).length;
@@ -764,7 +800,7 @@ function renderDash(){
  var noSim=open.filter(function(d){return !d.sim&&['Qualificação','Proposta','Negociação'].indexOf(d.estagio)>=0}).length;
  var h=[[atrasados,'follow-ups atrasados',atrasados?'bad':'ok'],[stuck,'negócios parados há +14 dias',stuck?'warn':'ok'],[noNext,'sem próximo passo definido',noNext?'warn':'ok'],[noSim,'em proposta sem simulação salva',noSim?'warn':'ok'],[risco,'atendimentos com risco de compliance',risco?'bad':'ok']];
  el('health').innerHTML=h.map(function(x){return '<div style="display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid var(--bd)"><span style="font-size:13px;color:var(--mut)">'+x[1]+'</span><span class="badge b-'+x[2]+'">'+x[0]+'</span></div>'}).join('');
- if(canSeeAll()){renderVelocity(ds,open);renderConv(ds);}
+ if(canSeeAll()){renderVelocity(ds,open);}
 }
 function renderVelocity(ds,open){
  var wonAll=ds.filter(isWon);var ttw=wonAll.map(timeToWin).filter(function(x){return x!=null;});var stl=ds.map(speedToLeadH).filter(function(x){return x!=null;});
@@ -785,6 +821,36 @@ function renderConv(ds){
  var cum=seq.map(function(st){var si=idxOf(st);return ds.filter(function(d){return d.linha===L&&!isLost(d)&&idxOf(d.estagio)>=si;}).length;});
  var rows='';for(var i=1;i<seq.length;i++){var pc=cum[i-1]?Math.round(cum[i]/cum[i-1]*100):0;rows+='<div class="fbar"><div class="fname" style="font-size:12px">'+seq[i-1]+' → '+seq[i]+'</div><div class="ftrack"><div class="ffill" style="width:'+Math.min(100,pc)+'%;background:var(--ac)"></div></div><div class="fval">'+pc+'%</div></div>';}
  el('convBox').innerHTML=cum[0]?rows+'<div class="note">Baseado na distribuição atual dos negócios em '+L+'.</div>':'<div class="empty">Sem negócios em '+L+'.</div>';
+}
+/* ===== TAXA DE CONVERSÃO (aba própria) ===== */
+function renderConvView(){
+ if(!el('convBox2'))return;
+ var L=(el('convLinha2')&&el('convLinha2').value)||LINHAS[0];var fv=el('convVend2')?el('convVend2').value:'';
+ if(el('convLinhaLbl'))el('convLinhaLbl').textContent=L;
+ var base=scope(DB.deals).filter(function(d){return d.linha===L&&(!fv||d.vendedor===fv);});
+ var ord=stages(L);function idxOf(k){for(var i=0;i<ord.length;i++)if(ord[i].k===k)return i;return -1;}
+ var seq=openStages(L).concat(['Ganho']);
+ var cum=seq.map(function(st){var si=idxOf(st);return base.filter(function(d){return !isLost(d)&&idxOf(d.estagio)>=si;}).length;});
+ var rows='';for(var i=1;i<seq.length;i++){var pc=cum[i-1]?Math.round(cum[i]/cum[i-1]*100):0;rows+='<div class="fbar"><div class="fname" style="font-size:12px">'+seq[i-1]+' → '+seq[i]+'</div><div class="ftrack"><div class="ffill" style="width:'+Math.min(100,pc)+'%;background:var(--ac)"></div></div><div class="fval">'+pc+'%</div></div>';}
+ el('convBox2').innerHTML=cum[0]?rows:'<div class="empty">Sem negócios em '+L+'.</div>';
+ if(el('convStat'))el('convStat').textContent=cum[0]+' na esteira';
+ var won=base.filter(isWon),lost=base.filter(function(d){return isLost(d)&&!isInativo(d);});var dec=won.length+lost.length;var overall=dec?Math.round(won.length/dec*100):0;var leadToWin=cum[0]?Math.round(cum[seq.length-1]/cum[0]*100):0;
+ if(el('convResumo'))el('convResumo').innerHTML='<div class="grid kpis"><div class="kpi"><div class="lbl">Lead → Venda</div><div class="val">'+leadToWin+'%</div><div class="sub">'+cum[seq.length-1]+' de '+cum[0]+' na esteira</div></div><div class="kpi"><div class="lbl">Win rate</div><div class="val">'+overall+'%</div><div class="sub">'+won.length+' ganhos / '+dec+' decididos</div></div></div>';
+ if(el('convVendBox')&&canSeeAll()){var names=sellers().map(function(s){return s.nome;});var arr=names.map(function(n){var b=DB.deals.filter(function(d){return d.vendedor===n&&d.linha===L;});var w=b.filter(isWon).length;var l=b.filter(function(d){return isLost(d)&&!isInativo(d);}).length;var dd=w+l;return {n:n,w:w,dd:dd,pc:dd?Math.round(w/dd*100):0,total:b.length};}).filter(function(x){return x.total;}).sort(function(a,b){return b.pc-a.pc;});el('convVendBox').innerHTML=arr.length?('<table><thead><tr><th class="l">Vendedor</th><th>Ganhos</th><th>Decididos</th><th>Conversão</th></tr></thead><tbody>'+arr.map(function(x){return '<tr><td class="l">'+esc(x.n)+'</td><td>'+x.w+'</td><td>'+x.dd+'</td><td><span class="badge '+(x.pc>=50?'b-ok':x.pc>=25?'b-warn':'b-bad')+'">'+x.pc+'%</span></td></tr>';}).join('')+'</tbody></table>'):'<div class="empty">Sem dados.</div>';}
+}
+/* ===== CLIENTES (carteira de quem fechou) ===== */
+function renderClientes(){
+ if(!el('tCli'))return;
+ var fv=el('cliVend')?el('cliVend').value:'';var fs=(el('cliSearch')?el('cliSearch').value:'').toLowerCase();var fst=el('cliStatus')?el('cliStatus').value:'';
+ var won=scope(DB.deals).filter(isWon);
+ if(el('cliStatus')){var sts={};won.forEach(function(d){sts[d.posStage||'Contratado']=1;});var cur=el('cliStatus').value;el('cliStatus').innerHTML='<option value="">Todos os status</option>'+Object.keys(sts).map(function(s){return '<option>'+esc(s)+'</option>';}).join('');el('cliStatus').value=cur;fst=el('cliStatus').value;}
+ var rows=won.filter(function(d){if(fv&&d.vendedor!==fv)return false;if(fst&&(d.posStage||'Contratado')!==fst)return false;if(fs){var hay=((d.cliente||'')+' '+(d.telefone||'')+' '+(d.cpf||'')).toLowerCase();if(hay.indexOf(fs)<0)return false;}return true;});
+ rows.sort(function(a,b){return String(b.ganhoEm||'').localeCompare(String(a.ganhoEm||''));});
+ var totV=rows.reduce(function(a,d){return a+(d.valor||0);},0);
+ if(el('cliKpis'))el('cliKpis').innerHTML='<div class="kpi"><div class="lbl">Clientes na carteira</div><div class="val">'+rows.length+'</div></div><div class="kpi"><div class="lbl">Valor contratado</div><div class="val">'+BRLk(totV)+'</div></div><div class="kpi"><div class="lbl">Ticket médio</div><div class="val">'+BRLk(rows.length?totV/rows.length:0)+'</div></div>';
+ if(el('cliStat'))el('cliStat').textContent=rows.length+' clientes';
+ var tb=el('tCli').querySelector('tbody');el('cliEmpty').style.display=rows.length?'none':'block';
+ tb.innerHTML=rows.map(function(d){var sug=(typeof crossSuggest==='function')?crossSuggest(d):'';var wl=waLink(d);return '<tr><td class="l"><span class="lnk" onclick="openDeal(\''+d.id+'\')">'+esc(d.cliente||'(sem nome)')+'</span></td><td class="l">'+esc(d.vendedor||'—')+'</td><td class="l"><span class="linha-chip">'+esc(d.linha)+'</span> '+bemTag(d.bem)+'</td><td>'+BRL(d.valor||0)+'</td><td class="l">'+esc(d.posStage||'Contratado')+'</td><td class="l">'+(d.ganhoEm?fmtFull(d.ganhoEm):'—')+'</td><td class="l" style="font-size:12px">'+sug+'</td><td class="l">'+(wl?'<a class="wapp" href="'+wl+'" target="_blank">WhatsApp</a> ':'')+'<span class="lnk" onclick="novaOp(\''+d.id+'\')">recompra</span></td></tr>';}).join('');
 }
 
 /* ===================== KANBAN VENDAS ===================== */
@@ -921,6 +987,7 @@ function runSim(){var cred=el('sCred').value,prazo=el('sPrazo').value;var r=simC
 function fillSimDealSelect(){var cur=el('sDeal').value;el('sDeal').innerHTML='<option value="">Vincular a um negócio... (opcional)</option>'+scope(DB.deals).map(function(d){return '<option value="'+d.id+'">'+esc(d.cliente||'(sem nome)')+' · '+esc(d.linha)+'</option>'}).join('');if(cur)el('sDeal').value=cur;}
 function attachSim(){var id=el('sDeal').value;if(!id){alert('Selecione um negócio para vincular a simulação.');return;}var d=DB.deals.find(function(x){return x.id===id});if(!d)return;d.sim={cred:+el('sCred').value,prazo:+el('sPrazo').value,adm:el('sAdm').value,tadm:+el('sTadm').value,fr:+el('sFr').value,seg:+el('sSeg').value,lance:+el('sLance').value,incc:+el('sIncc').value,em:nowISO()};d.atualizadoEm=nowISO();save();alert('Simulação salva no negócio de '+(d.cliente||'cliente')+'.');renderAll();}
 function simFromDeal(){var id=el('mId').value;var cred=+el('mValor').value||300000;el('sCred').value=cred;closeModal();document.querySelector('#nav button[data-v="sim"]').click();runSim();if(id)el('sDeal').value=id;}
+function abrirFinCalc(){var b=document.querySelector('#nav button[data-v="fincalc"]');if(b)b.click();}
 
 /* ===================== PROPOSTA + WHATSAPP ===================== */
 function gerarProposta(){var id=el('mId').value;var d=id?DB.deals.find(function(x){return x.id===id}):null;var cliente=el('mCliente').value||'Cliente';var vend=el('mVend').value||'Osher Capital';var linha=el('mLinha').value,bem=el('mBem').value,cred=+el('mValor').value||0;var sim=d&&d.sim?d.sim:null;var r=sim?simCompute(sim.cred,sim.prazo,sim.tadm,sim.fr,sim.seg,sim.lance,sim.incc):null;var L=['*OSHER CAPITAL — Proposta*','','Cliente: '+cliente,'Produto: '+linha+' · '+bem,'Crédito: '+BRL(cred)];if(r){L.push('Prazo: '+sim.prazo+' meses ('+sim.adm+')','Parcela estimada: '+BRL(r.parcela),'Custo total: '+BRL(r.total),'Lance sugerido: '+BRL(r.lance));}else L.push('(gere uma simulação no simulador para incluir parcela e custo)');L.push('','Consultor(a): '+vend,'Valores estimados — sujeitos às condições da administradora.');var texto=L.join('\n');if(d){d.proposta={data:todayStr(),texto:texto,cred:cred};var ost=openStages(d.linha);if(ost.indexOf('Proposta')>=0&&ost.indexOf(d.estagio)<ost.indexOf('Proposta')){d.estagio='Proposta';d.prob=stageP(d.linha,'Proposta');d.stageSince=nowISO();d.hist=d.hist||[];d.hist.push({st:'Proposta',em:nowISO()});}d.atualizadoEm=nowISO();save();el('mEst').value=d.estagio;el('mProb').value=d.prob;}var n=waNum(el('mTel').value);if(n)window.open('https://wa.me/'+n+'?text='+encodeURIComponent(texto),'_blank');else if(navigator.clipboard){navigator.clipboard.writeText(texto);alert('Proposta gerada e copiada (sem telefone para WhatsApp).');}else alert(texto);if(d){simInfoRender(d);renderAll();}}
@@ -1023,7 +1090,7 @@ function rotinaVendedor(){var r=weekRangeSun(0);var av=weekActivity(ME.nome,r[0]
 function rotinaDiretor(){var r=weekRangeSun(0);var names=sellers().map(function(s){return s.nome;});var today=todayStr();var huddle=names.map(function(n){var nv=DB.deals.filter(function(d){return d.vendedor===n&&dDate(d.criadoEm)===today;}).length;var rh=0;DB.deals.forEach(function(d){if(d.vendedor!==n)return;(d.reunioes||[]).forEach(function(x){if(x.data===today)rh++;});});var lh=(DB.atividades||[]).filter(function(a){return a.v===n&&dDate(a.em)===today&&a.tipo==='ligacao';}).length;var atr=DB.deals.filter(function(d){return d.vendedor===n&&overdue(d);}).length;if(!(nv||rh||lh||atr))return null;return '<tr><td class="l">'+esc(n)+'</td><td>'+lh+'</td><td>'+nv+'</td><td>'+rh+'</td><td>'+(atr?'<span class="badge b-bad">'+atr+'</span>':'0')+'</td></tr>';}).filter(Boolean).join('')||'<tr><td class="l" colspan="5"><div class="empty">Sem atividade hoje ainda.</div></td></tr>';var um=names.map(function(n){var av=weekActivity(n,r[0],r[1]);var pipe=DB.deals.filter(function(d){return d.vendedor===n&&isOpen(d);});if(!(pipe.length||av.novos||av.fechados))return null;var pv=pipe.reduce(function(a,d){return a+(d.valor||0)},0);var neg=pipe.filter(function(d){return d.estagio==='Negociação'}).length;var par=pipe.filter(function(d){return daysSince(d.stageSince)>14}).length;var m=memberByName(n)||{};var pm=(m.metaWkNovos||0)?Math.round(av.novos/(m.metaWkNovos)*100):null;return '<tr><td class="l">'+esc(n)+'</td><td>'+BRLk(pv)+'</td><td>'+neg+'</td><td>'+(par?'<span class="badge b-bad">'+par+'</span>':'0')+'</td><td>'+av.novos+'</td><td>'+av.reunioes+'</td><td>'+av.propostas+'</td><td>'+(pm==null?'—':'<span class="badge '+(pm>=100?'b-ok':pm>=60?'b-warn':'b-bad')+'">'+pm+'%</span>')+'</td></tr>';}).filter(Boolean).join('')||'<tr><td class="l" colspan="8"><div class="empty">Sem pipeline ativo.</div></td></tr>';var tot={lig:0,reun:0,prop:0,novos:0,qual:0,fech:0};names.forEach(function(n){var a=weekActivity(n,r[0],r[1]);tot.lig+=a.ligacoes;tot.reun+=a.reunioes;tot.prop+=a.propostas;tot.novos+=a.novos;tot.qual+=a.qualif;tot.fech+=a.fechados;});var convT=tot.novos?Math.round(tot.qual/tot.novos*100):0;var valT=names.reduce(function(s,n){return s+DB.deals.filter(function(d){return d.vendedor===n&&isWon(d)&&inRange(d.ganhoEm,r[0],r[1]);}).reduce(function(a,d){return a+(d.valor||0)},0);},0);var pir='<div class="card"><h3><span class="dot" style="background:var(--vio)"></span>Atividades → Objetivos → Resultados</h3><div class="h3sub">Foque no que é gerenciável (semana)</div><div style="display:flex;flex-direction:column;gap:8px"><div style="background:var(--card2);border-radius:10px;padding:10px 12px;font-size:13px"><b>Atividades</b> · '+tot.lig+' ligações · '+tot.reun+' reuniões · '+tot.prop+' propostas</div><div style="background:var(--card2);border-radius:10px;padding:10px 12px;font-size:13px;margin-left:18px"><b>Objetivos</b> · '+tot.novos+' novos · '+tot.qual+' qualificados · '+convT+'% qualif.</div><div style="background:var(--card2);border-radius:10px;padding:10px 12px;font-size:13px;margin-left:36px"><b>Resultados</b> · '+tot.fech+' fechados · '+BRLk(valT)+'</div></div></div>';return '<div style="font-size:21px;font-weight:800;margin-bottom:4px">Rotina da Equipe</div><div style="font-size:13px;color:var(--mut);margin-bottom:16px">Cadência: Daily Huddle, 1:1 semanal e foco em atividade</div><div class="grid cards2"><div class="card" style="padding:8px 10px 0"><h3><span class="dot"></span>Pauta do Daily Huddle (hoje)</h3><div class="h3sub">Métricas do dia · onde destravar</div><table><thead><tr><th class="l">Vendedor</th><th>Ligações</th><th>Novos</th><th>Reuniões</th><th>Atrasados</th></tr></thead><tbody>'+huddle+'</tbody></table></div>'+pir+'</div><div class="card" style="padding:8px 10px 0;margin-top:14px"><h3><span class="dot" style="background:var(--ac2)"></span>Pauta do 1:1 semanal</h3><div class="h3sub">Pipeline + atividade vs. meta — pronto para a reunião</div><table><thead><tr><th class="l">Vendedor</th><th>Pipeline</th><th>Negoc.</th><th>Parados</th><th>Novos(sem)</th><th>Reuniões</th><th>Propostas</th><th>Pace novos</th></tr></thead><tbody>'+um+'</tbody></table></div>';}
 function renderRotina(){var b=el('rotinaBody');if(!b||!ME)return;b.innerHTML=canSeeAll()?rotinaDiretor():rotinaVendedor();}
 
-function renderAll(){if(!ME)return;renderInicio();renderDash();renderBoard();renderPos();renderLeads();renderVend();renderAtiv();renderTracao();renderRotina();if(el('v-sim').classList.contains('on'))runSim();else fillSimDealSelect();el('foot').innerHTML='OSHER CAPITAL · CRM Comercial — dados salvos localmente neste navegador. '+DB.deals.length+' negócios · meta '+BRLk(CFG().meta)+'. '+(canSeeAll()?'<b>Exportar</b> para backup/compartilhar. ':'')+'Funciona offline.';}
+function renderAll(){if(!ME)return;renderInicio();renderDash();renderConvView();renderClientes();renderBoard();renderPos();renderLeads();renderVend();renderAtiv();renderTracao();renderRotina();if(el('v-sim').classList.contains('on'))runSim();else fillSimDealSelect();el('foot').innerHTML='OSHER CAPITAL · CRM Comercial — dados salvos localmente neste navegador. '+DB.deals.length+' negócios · meta '+BRLk(CFG().meta)+'. '+(canSeeAll()?'<b>Exportar</b> para backup/compartilhar. ':'')+'Funciona offline.';}
 
 /* ===================== BOOT ===================== */
 if(!load()){DB=JSON.parse(JSON.stringify(SEED_DATA));ensureCfg();save();}
