@@ -98,19 +98,6 @@
   </div>
   <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(330px,1fr));gap:16px">
     <div class="card">
-      <h3 style="font-family:'Playfair Display',serif;font-size:21px;margin:0 0 12px">Financiamento</h3>
-      <div class="inputs" style="grid-template-columns:1fr">
-        <div><label class="f">Valor do imóvel</label><input type="number" id="valorImovel" value="1000000" step="50000"></div>
-        <div><label class="f">Para que serve este imóvel?</label><select id="objetivo"><option value="moradia">Moradia</option><option value="troca">Troca de imóvel</option><option value="investimento">Investimento (renda)</option><option value="futura">Compra futura</option></select><div class="help">Define o que mais importa na decisão.</div></div>
-        <div><label class="f">Entrada que você dá</label><input type="number" id="valorEntrada" value="200000" step="10000"><div class="help">Quanto você paga à vista. Pode ser 0.</div></div>
-        <div><label class="f">Taxa de juros (% ao ano)</label><input type="number" id="jurosAnual" value="11.5" step="0.1"></div>
-        <div><label class="f">Indexador do financiamento</label><select id="indexador"><option value="0">Sem correção</option><option value="1.5">TR (~1,5% a.a.)</option><option value="4.5" selected>IPCA (~4,5% a.a.)</option><option value="6.5">Poupança (~6,5% a.a.)</option></select><div class="help">Corrige o saldo devedor ao longo do tempo.</div></div>
-        <div><label class="f">CDI (% ao ano)</label><input type="number" id="cdiAnual" value="10.5" step="0.1"><div class="help">Para medir quanto seu dinheiro renderia investido.</div></div>
-        <div><label class="f">Amortização extra por ano (R$)</label><input type="number" id="amortExtra" value="0" step="5000"><div class="help">Pagamento extra anual abatido do saldo (13º, FGTS, bônus). 0 = sem amortização extra.</div></div>
-        <div><div class="rowlab"><span>Número de parcelas</span><b id="parcFinLab">360 meses</b></div><input type="range" id="parcelasFin" min="60" max="420" step="12" value="360"><div class="help">Prazo do financiamento (máx. 420 meses).</div></div>
-      </div>
-    </div>
-    <div class="card">
       <h3 style="font-family:'Playfair Display',serif;font-size:21px;margin:0 0 12px">Consórcio</h3>
       <div class="inputs" style="grid-template-columns:1fr">
         <div><label class="f">Valor do crédito (carta)</label><input type="number" id="valorCredito" value="1000000" step="50000"><div class="help">O valor que você quer receber para o imóvel.</div></div>
@@ -130,7 +117,20 @@
         </div>
       </div>
     </div>
-  </div>
+  <div class="card">
+      <h3 style="font-family:'Playfair Display',serif;font-size:21px;margin:0 0 12px">Financiamento</h3>
+      <div class="inputs" style="grid-template-columns:1fr">
+        <div><label class="f">Valor do imóvel</label><input type="number" id="valorImovel" value="1000000" step="50000"></div>
+        <div><label class="f">Para que serve este imóvel?</label><select id="objetivo"><option value="moradia">Moradia</option><option value="troca">Troca de imóvel</option><option value="investimento">Investimento (renda)</option><option value="futura">Compra futura</option></select><div class="help">Define o que mais importa na decisão.</div></div>
+        <div><label class="f">Entrada que você dá</label><input type="number" id="valorEntrada" value="200000" step="10000"><div class="help">Quanto você paga à vista. Pode ser 0.</div></div>
+        <div><label class="f">Taxa de juros (% ao ano)</label><input type="number" id="jurosAnual" value="11.5" step="0.1"></div>
+        <div><label class="f">Indexador do financiamento</label><select id="indexador"><option value="0">Sem correção</option><option value="1.5">TR (~1,5% a.a.)</option><option value="4.5" selected>IPCA (~4,5% a.a.)</option><option value="6.5">Poupança (~6,5% a.a.)</option></select><div class="help">Corrige o saldo devedor ao longo do tempo.</div></div>
+        <div><label class="f">CDI (% ao ano)</label><input type="number" id="cdiAnual" value="10.5" step="0.1"><div class="help">Para medir quanto seu dinheiro renderia investido.</div></div>
+        <div><label class="f">Amortização extra por ano (R$)</label><input type="number" id="amortExtra" value="0" step="5000"><div class="help">Pagamento extra anual abatido do saldo (13º, FGTS, bônus). 0 = sem amortização extra.</div></div>
+        <div><div class="rowlab"><span>Número de parcelas</span><b id="parcFinLab">360 meses</b></div><input type="range" id="parcelasFin" min="60" max="420" step="12" value="360"><div class="help">Prazo do financiamento (máx. 420 meses).</div></div>
+      </div>
+    </div>
+    </div>
   <div class="card" style="margin-top:16px">
     <h3 style="font-family:'Playfair Display',serif;font-size:21px;margin:0 0 12px">Resultado</h3>
     <div id="out"></div>
