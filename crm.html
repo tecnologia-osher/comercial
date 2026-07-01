@@ -532,6 +532,7 @@ label.fl{display:flex;flex-direction:column;gap:5px;font-size:12px;color:var(--m
     <div class="mfoot">
       <button class="btn" style="margin-right:auto" onclick="abrirFichaCompleta()">Ficha completa</button>
       <button class="btn" onclick="closeStage()">Fechar</button>
+      <button class="btn" id="seSave" onclick="stageSave()">Salvar sem avançar</button>
       <button class="btn primary" id="seAdv" onclick="stageAdvance()">Avançar</button>
     </div>
   </div>
@@ -860,6 +861,8 @@ function advanceDeal(id,ev){if(ev&&ev.stopPropagation)ev.stopPropagation();abrir
 var seId=null;
 function seRow(lbl,inner,full){return '<label class="fl'+(full!==false?' full':'')+'">'+lbl+inner+'</label>';}
 function seSec(t){return '<div class="section-title" style="grid-column:1/-1;border-top:1px dashed var(--bd);padding-top:8px;margin-top:2px">'+t+'</div>';}
+var PROXOPTS=['Ligar de novo','Agendar reunião','Reunião de qualificação','Apresentar proposta','Reunião de negociação','Reunião de fechamento','Follow-up','Falar com o indicador','Outro'];
+function proxDefault(est,d){if(d&&d.proximoPasso&&PROXOPTS.indexOf(d.proximoPasso)>=0)return d.proximoPasso;var m={'Prospecção':'Ligar de novo','Ligação':'Reunião de qualificação','Qualificação':'Apresentar proposta','Proposta':'Reunião de negociação','Negociação':'Reunião de fechamento'};return m[est]||'Follow-up';}
 function abrirEtapa(id,ev){if(ev&&ev.stopPropagation)ev.stopPropagation();var d=DB.deals.find(function(x){return x.id===id});if(!d)return;if(!canSeeAll()&&d.vendedor!==ME.nome){alert('Você só pode abrir seus próprios negócios.');return;}
  seId=id;var est=d.estagio;var nx=nextOpenStage(d);var nxWon=nx&&stageType(d.linha,nx)==='won';
  el('seTitle').textContent=d.cliente||'(sem nome)';
@@ -875,7 +878,7 @@ function abrirEtapa(id,ev){if(ev&&ev.stopPropagation)ev.stopPropagation();var d=
  if(nx==='Negociação'){H+=seSec('🤝 Iniciar negociação (para avançar):');H+=seRow('Crédito confirmado (R$)','<input id="seVal" type="number" value="'+(d.valor||'')+'">');}
  /* NEGOCIAÇÃO → GANHO: fechar */
  if(nxWon){H+=seSec('🏆 Fechar negócio (para ganhar):');H+=seRow('Valor final do crédito (R$)','<input id="seVal" type="number" value="'+(d.valor||'')+'">',false);H+=seRow('CPF do cliente','<input id="seCpf" value="'+esc(d.cpf||'')+'">',false);H+=seRow('Administradora','<input id="seAdm2" value="'+esc(d.administradora||'')+'">',false);H+=seRow('Nº do contrato','<input id="seContrato" value="'+esc(d.contrato||'')+'">',false);}
- if(!nxWon){H+=seRow('📅 Data prevista da próxima atividade'+(nx?' ('+nx+')':''),'<input type="date" id="seNext" value="'+(d.dataProximoPasso||cadenceDate(est))+'">');}
+ if(!nxWon){var defPP=proxDefault(est,d);H+=seSec('📅 Próximo passo (atividade — não precisa ser a próxima etapa):');H+=seRow('O que fazer','<select id="seProx">'+PROXOPTS.map(function(o){return '<option'+(defPP===o?' selected':'')+'>'+o+'</option>';}).join('')+'</select>',false);H+=seRow('Data','<input type="date" id="seNext" value="'+(d.dataProximoPasso||cadenceDate(est))+'">',false);}
  el('seBody').innerHTML=H;
  el('seMeet').innerHTML=meetSchedulerHTML();
  el('seAdv').textContent=nx?(nxWon?'Fechar negócio ✓':'Avançar → '+nx):'Salvar';
@@ -900,11 +903,31 @@ function stageAdvance(){var d=DB.deals.find(function(x){return x.id===seId});if(
  if(nx==='Negociação'){var v=+((el('seVal')&&el('seVal').value)||0);if(!(v>0)){alert('Confirme o valor do crédito para iniciar a negociação.');return;}d.valor=v;}
  /* Negociação → Ganho */
  if(nxWon){var vf=+((el('seVal')&&el('seVal').value)||0),cpf=((el('seCpf')&&el('seCpf').value)||'').trim(),adm=((el('seAdm2')&&el('seAdm2').value)||'').trim(),ct=((el('seContrato')&&el('seContrato').value)||'').trim();var m2=[];if(!(vf>0))m2.push('Valor final');if(!cpf)m2.push('CPF');if(!adm)m2.push('Administradora');if(!ct)m2.push('Nº do contrato');if(m2.length){alert('Para fechar, preencha: '+m2.join(', ')+'.');return;}d.valor=vf;d.cpf=cpf;d.administradora=adm;d.contrato=ct;}
- /* próxima atividade obrigatória (exceto no fechamento) */
- if(!nxWon){var nd=_seNextVal();if(!nd){alert('Defina a data prevista da próxima atividade.');return;}d.dataProximoPasso=nd;if(nx)d.proximoPasso=nx;}
+ /* próximo passo (atividade escolhida) + data — obrigatório (exceto no fechamento) */
+ if(!nxWon){var nd=_seNextVal();var pp=el('seProx')?el('seProx').value:'';if(!pp||!nd){alert('Defina o próximo passo e a data.');return;}d.dataProximoPasso=nd;d.proximoPasso=pp;}
  d.atualizadoEm=nowISO();
  if(nx){if(!moveStage(d,nx)){save();return;}}
  save();closeStage();renderAll();
+}
+function _captureSoft(d){
+ if(el('seNome'))d.cliente=el('seNome').value.trim()||d.cliente;
+ if(el('seTel'))d.telefone=el('seTel').value.trim()||d.telefone;
+ if(el('seVal')&&(+el('seVal').value||0)>0)d.valor=+el('seVal').value;
+ if(el('seBem'))d.bem=el('seBem').value;
+ if(el('seProf'))d.profissao=el('seProf').value.trim()||d.profissao;
+ if(el('seExp')&&el('seExp').value)d.expectativa=el('seExp').value;
+ if(el('sePropDate')&&el('sePropDate').value)d.dataPropostaEnvio=el('sePropDate').value;
+ if(el('seCpf'))d.cpf=el('seCpf').value.trim()||d.cpf;
+ if(el('seAdm2'))d.administradora=el('seAdm2').value.trim()||d.administradora;
+ if(el('seContrato'))d.contrato=el('seContrato').value.trim()||d.contrato;
+}
+/* Salvar sem avançar: registra o resultado + agenda a próxima atividade, mantém a etapa. */
+function stageSave(){var d=DB.deals.find(function(x){return x.id===seId});if(!d)return;
+ if(el('seCall'))d.dataLigacao=el('seCall').value||d.dataLigacao;
+ if(el('seStatus')){var s=el('seStatus').value;if(!s){alert('Selecione o status da ligação.');return;}d.statusLigacao=s;}
+ _captureSoft(d);
+ if(el('seProx')){var pp=el('seProx').value,nd=_seNextVal();if(!pp||!nd){alert('Defina o próximo passo e a data.');return;}d.proximoPasso=pp;d.dataProximoPasso=nd;}
+ d.atualizadoEm=nowISO();save();closeStage();renderAll();
 }
 el('ovStage').addEventListener('click',function(e){if(e.target===el('ovStage'))closeStage();});
 function fmtMonth(v){if(!v)return '';var p=String(v).split('-');return p.length>=2?(p[1]+'/'+p[0]):v;}
