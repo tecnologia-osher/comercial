@@ -91,64 +91,15 @@
 </div></header>
 
 <div class="wrap">
-  <div class="steps" id="steps">
-    <div class="sdot" data-s="1"><div class="n">1</div><span>Entender</span></div><div class="sline"></div>
-    <div class="sdot" data-s="2"><div class="n">2</div><span>Financiamento</span></div><div class="sline"></div>
-    <div class="sdot" data-s="3"><div class="n">3</div><span>Consórcio</span></div><div class="sline"></div>
-    <div class="sdot" data-s="4"><div class="n">4</div><span>Decisão</span></div>
+  <div style="margin:22px 0 16px">
+    <div class="kicker">Inteligência Imobiliária</div>
+    <h2 class="t" style="font-size:26px">Financiamento × Consórcio</h2>
+    <p class="lead">Preencha os dois lados — o comparativo atualiza sozinho logo abaixo. Análise, não venda.</p>
   </div>
-
-  <div class="card">
-    <!-- ETAPA 0 — CADASTRO / INTRODUÇÃO -->
-    <div class="stepc" data-step="0">
-      <div class="kicker">Inteligência Imobiliária · Análise gratuita</div>
-      <h2 class="t" style="font-size:30px;max-width:700px">Antes de assinar com o banco ou a administradora, descubra o caminho que menos compromete o seu patrimônio.</h2>
-      <p class="lead">Em 4 passos, você compara financiamento e consórcio com transparência total — custo real, liquidez e capacidade de aporte. Análise, não venda.</p>
-      <div class="filtros" style="margin-bottom:24px">
-        <div class="filtro"><div class="fn" style="font-size:20px">✓</div><h3>Comparação honesta</h3><p>SAC, PRICE e consórcio lado a lado, com o custo total real (CET).</p></div>
-        <div class="filtro"><div class="fn" style="font-size:20px">✓</div><h3>Impacto patrimonial</h3><p>Não só o que custa menos — o que preserva sua liquidez e seus aportes.</p></div>
-        <div class="filtro"><div class="fn" style="font-size:20px">✓</div><h3>Relatório em PDF</h3><p>Receba a análise do seu cenário e, se quiser, fale com um especialista.</p></div>
-      </div>
-      <div class="card" style="background:var(--bg);margin:0;padding:22px">
-        <div style="font-family:'Playfair Display',serif;font-size:18px;margin-bottom:4px">Comece sua análise gratuita</div>
-        <div style="font-size:12.5px;color:var(--muted);margin-bottom:16px">É rápido. Pedimos só o essencial para enviar o seu relatório.</div>
-        <div class="inputs">
-          <div><label class="f">Nome completo</label><input type="text" id="leadNome" placeholder="Seu nome"></div>
-          <div><label class="f">WhatsApp</label><input type="text" id="leadTel" placeholder="(11) 99999-9999"></div>
-          <div style="grid-column:1/-1"><label class="f">E-mail</label><input type="email" id="leadEmail" placeholder="voce@email.com"></div>
-        </div>
-        <label class="chk2" style="margin-top:14px"><input type="checkbox" id="leadConsent"> Autorizo o contato e o tratamento dos meus dados para esta análise, conforme a LGPD.</label>
-        <div class="nav"><span></span><button class="btn" onclick="onCadastro()">Começar minha análise →</button></div>
-      </div>
-      <p style="font-size:11.5px;color:var(--muted);text-align:center;margin-top:14px">Leva cerca de 2 minutos · seus dados ficam protegidos.</p>
-    </div>
-
-    <!-- ETAPA 1 -->
-    <div class="stepc hide" data-step="1">
-      <div class="kicker">Antes de simular</div>
-      <h2 class="t">A decisão certa não é a mais barata.</h2>
-      <p class="lead">É a que cumpre a função do imóvel com o menor impacto na sua liquidez, nos seus aportes e no seu patrimônio. Toda boa decisão passa por três filtros — é por eles que vamos olhar.</p>
-      <div class="filtros">
-        <div class="filtro"><div class="fn">01</div><h3>Liquidez depois da compra</h3><p>Quanto dinheiro continua disponível para emergências e oportunidades — a reserva fica preservada?</p></div>
-        <div class="filtro"><div class="fn">02</div><h3>Capacidade de aporte</h3><p>Depois da compra, você continua construindo patrimônio — ou passa apenas a pagar a compra?</p></div>
-        <div class="filtro"><div class="fn">03</div><h3>Prazo e objetivo</h3><p>Para que serve este imóvel e quando você precisa dele? Sem isso, comparar é comparar no escuro.</p></div>
-      </div>
-      <div class="caminhos">
-        <div class="row"><b style="min-width:130px">À vista</b><span>elimina dívida, mas pode concentrar patrimônio e consumir liquidez.</span></div>
-        <div class="row"><b style="min-width:130px">Financiamento</b><span>entrega o imóvel agora e distribui o custo — com juros.</span></div>
-        <div class="row"><b style="min-width:130px">Consórcio</b><span>sem juros, só taxa de administração — a troca é esperar a contemplação.</span></div>
-        <div class="row"><b style="min-width:130px">Espera estratégica</b><span>às vezes, organizar 12–18 meses melhora muito a decisão.</span></div>
-      </div>
-      <p class="pos">Esta ferramenta compara financiamento e consórcio em números — sem empurrar nenhum dos dois. O objetivo é mostrar o caminho com o menor dano ao seu plano. Análise, não venda.</p>
-      <div class="nav"><span></span><button class="btn" onclick="goStep(2)">Começar análise →</button></div>
-    </div>
-
-    <!-- ETAPA 2 -->
-    <div class="stepc hide" data-step="2">
-      <div class="kicker">Etapa 2 de 4</div>
-      <h2 class="t">Dados do financiamento</h2>
-      <p class="lead">Como o banco faria a sua operação.</p>
-      <div class="inputs">
+  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(330px,1fr));gap:16px">
+    <div class="card">
+      <h3 style="font-family:'Playfair Display',serif;font-size:21px;margin:0 0 12px">Financiamento</h3>
+      <div class="inputs" style="grid-template-columns:1fr">
         <div><label class="f">Valor do imóvel</label><input type="number" id="valorImovel" value="1000000" step="50000"></div>
         <div><label class="f">Para que serve este imóvel?</label><select id="objetivo"><option value="moradia">Moradia</option><option value="troca">Troca de imóvel</option><option value="investimento">Investimento (renda)</option><option value="futura">Compra futura</option></select><div class="help">Define o que mais importa na decisão.</div></div>
         <div><label class="f">Entrada que você dá</label><input type="number" id="valorEntrada" value="200000" step="10000"><div class="help">Quanto você paga à vista. Pode ser 0.</div></div>
@@ -158,44 +109,31 @@
         <div><label class="f">Amortização extra por ano (R$)</label><input type="number" id="amortExtra" value="0" step="5000"><div class="help">Pagamento extra anual abatido do saldo (13º, FGTS, bônus). 0 = sem amortização extra.</div></div>
         <div><div class="rowlab"><span>Número de parcelas</span><b id="parcFinLab">360 meses</b></div><input type="range" id="parcelasFin" min="60" max="420" step="12" value="360"><div class="help">Prazo do financiamento (máx. 420 meses).</div></div>
       </div>
-      <div class="nav"><button class="btn ghost" onclick="goStep(1)">← Voltar</button><button class="btn" onclick="goStep(3)">Continuar →</button></div>
     </div>
-
-    <!-- ETAPA 3 -->
-    <div class="stepc hide" data-step="3">
-      <div class="kicker">Etapa 3 de 4</div>
-      <h2 class="t">Dados do consórcio</h2>
-      <p class="lead">Use os números da carta da sua administradora.</p>
-      <div class="inputs">
+    <div class="card">
+      <h3 style="font-family:'Playfair Display',serif;font-size:21px;margin:0 0 12px">Consórcio</h3>
+      <div class="inputs" style="grid-template-columns:1fr">
         <div><label class="f">Valor do crédito (carta)</label><input type="number" id="valorCredito" value="1000000" step="50000"><div class="help">O valor que você quer receber para o imóvel.</div></div>
         <div><div class="rowlab"><span>Número de parcelas</span><b id="parcConsLab">200 meses</b></div><input type="range" id="parcelasCons" min="60" max="240" step="12" value="200"><div class="help">Prazo do consórcio (máx. 240 meses).</div></div>
         <div><label class="f">Taxa de administração (%)</label><input type="number" id="taxaAdm" value="18" step="0.5"><div class="help">Total do contrato. Mercado: 9,5% a 25%.</div></div>
         <div><label class="f">Fundo de reserva (%)</label><input type="number" id="fundoReserva" value="2" step="0.5"><div class="help">Mercado: 1% a 5%.</div></div>
-        <div><label class="f">Taxa de adesão (%)</label><input type="number" id="taxaAdesao" value="1" step="0.5"><div class="help">1% a 2%, paga na assinatura. Antecipa parte da taxa de adm — não é custo extra.</div></div>
+        <div><label class="f">Taxa de adesão (%)</label><input type="number" id="taxaAdesao" value="1" step="0.5"><div class="help">1% a 2%, paga na assinatura. Antecipa parte da taxa de adm.</div></div>
         <div><label class="f">Reajuste anual — INCC (%)</label><input type="number" id="inccAnual" value="4.5" step="0.1"><div class="help">Corrige a carta e as parcelas.</div></div>
-        <div><label class="f">Parcela reduzida (%)</label><input type="number" id="parcelaReduzida" value="0" step="5"><div class="help">Algumas administradoras oferecem 20% a 50% até a contemplação. Depois, a parcela sobe (saldo maior). 0 = sem redução.</div></div>
+        <div><label class="f">Parcela reduzida (%)</label><input type="number" id="parcelaReduzida" value="0" step="5"><div class="help">Algumas administradoras oferecem 20% a 50% até a contemplação. 0 = sem redução.</div></div>
         <div><div class="rowlab"><span>Contemplação no mês</span><b id="mesContLab">24</b></div><input type="range" id="mesContempl" min="1" max="240" step="1" value="24"></div>
-        <div style="grid-column:1/-1;border-top:1px solid var(--border);padding-top:16px">
+        <div style="border-top:1px solid var(--border);padding-top:14px">
           <div class="switch" style="margin-bottom:12px">Tem lance embutido?
             <div class="seg" id="segEmb"><button data-v="nao" class="on">Não</button><button data-v="sim">Sim</button></div>
           </div>
-          <div class="inputs">
-            <div id="embWrap" class="hide"><label class="f">Lance embutido (% da carta)</label><input type="number" id="embutidoPct" value="25" step="1"><div class="help">Sai da própria carta: você contrata um crédito maior para receber líquido o valor desejado.</div></div>
-            <div><label class="f">Lance líquido (R$, do bolso)</label><input type="number" id="lanceLiquido" value="0" step="10000"><div class="help">Dinheiro seu ofertado como lance.</div></div>
-          </div>
+          <div id="embWrap" class="hide" style="margin-bottom:10px"><label class="f">Lance embutido (% da carta)</label><input type="number" id="embutidoPct" value="25" step="1"><div class="help">Sai da própria carta: você contrata um crédito maior para receber líquido o valor desejado.</div></div>
+          <div><label class="f">Lance líquido (R$, do bolso)</label><input type="number" id="lanceLiquido" value="0" step="10000"><div class="help">Dinheiro seu ofertado como lance.</div></div>
         </div>
       </div>
-      <div class="nav"><button class="btn ghost" onclick="goStep(2)">← Voltar</button><button class="btn" onclick="goStep(4)">Ver a decisão →</button></div>
     </div>
-
-    <!-- ETAPA 4 -->
-    <div class="stepc hide" data-step="4">
-      <div class="kicker">Etapa 4 de 4 · sua decisão</div>
-      <h2 class="t">Financiamento × Consórcio</h2>
-      <p class="lead">Não só o que custa menos — o que compromete menos o seu patrimônio.</p>
-      <div id="out"></div>
-      <div class="nav"><button class="btn ghost" onclick="goStep(3)">← Ajustar dados</button><button class="btn" onclick="sendFinal()">Receber análise em PDF</button></div>
-    </div>
+  </div>
+  <div class="card" style="margin-top:16px">
+    <h3 style="font-family:'Playfair Display',serif;font-size:21px;margin:0 0 12px">Resultado</h3>
+    <div id="out"></div>
   </div>
 </div>
 
@@ -329,9 +267,9 @@ function goStep(s){
   document.querySelectorAll(".sdot").forEach(function(d){var ds=parseInt(d.dataset.s,10);d.classList.toggle("on",ds===s);d.classList.toggle("done",ds<s);});
   window.scrollTo({top:0,behavior:"smooth"});
 }
-function toggleTheme(){var h=document.documentElement,d=h.getAttribute("data-theme")==="dark";h.setAttribute("data-theme",d?"light":"dark");document.getElementById("themeBtn").textContent=d?"☾ Escuro":"☀ Claro";try{localStorage.setItem("tema",d?"light":"dark");}catch(e){}if(step===4)renderResult();}
-document.getElementById("segEmb").querySelectorAll("button").forEach(function(b){b.onclick=function(){document.getElementById("segEmb").querySelectorAll("button").forEach(function(x){x.classList.toggle("on",x===b);});embutido=b.dataset.v==="sim";document.getElementById("embWrap").classList.toggle("hide",!embutido);};});
-document.querySelectorAll("input,select").forEach(function(el){el.addEventListener("input",function(){syncLabels();if(step===4)renderResult();});});
+function toggleTheme(){var h=document.documentElement,d=h.getAttribute("data-theme")==="dark";h.setAttribute("data-theme",d?"light":"dark");document.getElementById("themeBtn").textContent=d?"☾ Escuro":"☀ Claro";try{localStorage.setItem("tema",d?"light":"dark");}catch(e){}renderResult();}
+document.getElementById("segEmb").querySelectorAll("button").forEach(function(b){b.onclick=function(){document.getElementById("segEmb").querySelectorAll("button").forEach(function(x){x.classList.toggle("on",x===b);});embutido=b.dataset.v==="sim";document.getElementById("embWrap").classList.toggle("hide",!embutido);renderResult();};});
+document.querySelectorAll("input,select").forEach(function(el){el.addEventListener("input",function(){syncLabels();renderResult();});});
 var lead={nome:"",email:"",telefone:""}, leadId="";
 var COLMAP={evento:"evento",leadId:"lead_id",nome:"nome",email:"email",telefone:"telefone",consentimentoLgpd:"consentimento_lgpd",consentimentoEm:"consentimento_em",origem:"origem",objetivo:"objetivo",valorImovel:"valor_imovel",parcelasFin:"parcelas_fin",valorCredito:"valor_credito",parcelasCons:"parcelas_cons",taxaAdm:"taxa_adm",fundoReserva:"fundo_reserva",taxaAdesao:"taxa_adesao",parcelaReduzida:"parcela_reduzida",mesContemplacao:"mes_contemplacao",lanceLiquido:"lance_liquido",amortExtra:"amort_extra",isVip:"is_vip",etiqueta:"etiqueta"};
 function supabaseRow(p){var r={};for(var k in p){if(COLMAP[k])r[COLMAP[k]]=p[k];}return r;}
@@ -360,7 +298,7 @@ function sendFinal(){
 }
 document.getElementById("yr").textContent=new Date().getFullYear();
 try{var t=localStorage.getItem("tema");if(t==="dark"){document.documentElement.setAttribute("data-theme","dark");document.getElementById("themeBtn").textContent="☀ Claro";}}catch(e){}
-syncLabels();goStep(0);
+syncLabels();renderResult();
 </script>
 </body>
 </html>
