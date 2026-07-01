@@ -162,6 +162,7 @@ label.fl{display:flex;flex-direction:column;gap:5px;font-size:12px;color:var(--m
     <button data-v="inicio" class="on">Início</button>
     <button data-v="dash">Dashboard</button>
     <button data-v="conv" data-see="1">Taxa de conversão</button>
+    <button data-v="funil">Funil</button>
     <button data-v="pipe">Pipeline</button>
     <button data-v="pos">Pós-venda</button>
     <button data-v="leads">Leads &amp; Clientes</button>
@@ -227,6 +228,21 @@ label.fl{display:flex;flex-direction:column;gap:5px;font-size:12px;color:var(--m
   <div class="card" style="margin-top:14px" data-see="1"><h3><span class="dot" style="background:var(--vio)"></span>Conversão por vendedor</h3><div class="h3sub">Lead → venda (sem inativos)</div><div id="convVendBox"></div></div>
 </section>
 
+<!-- FUNIL -->
+<section class="view" id="v-funil">
+  <div class="filters">
+    <select id="funilLinha" onchange="renderFunil()"></select>
+    <select id="funilVend" onchange="renderFunil()" data-see="1"></select>
+    <span class="pill" id="funilStat"></span>
+  </div>
+  <div class="card">
+    <h3><span class="dot" style="background:var(--ac2)"></span>Meu funil de vendas</h3>
+    <div class="h3sub">Quantos passam de uma etapa para a próxima — quanto mais estreita a base, mais estão vazando no meio</div>
+    <div id="funilBox" style="margin-top:6px"></div>
+  </div>
+  <div class="grid kpis" id="funilKpis" style="margin-top:14px"></div>
+</section>
+
 <!-- CLIENTES (CARTEIRA) -->
 <section class="view" id="v-clientes">
   <div class="filters">
@@ -236,10 +252,11 @@ label.fl{display:flex;flex-direction:column;gap:5px;font-size:12px;color:var(--m
     <span class="pill" id="cliStat"></span>
   </div>
   <div class="grid kpis" id="cliKpis" style="margin-bottom:14px"></div>
+  <div class="card" id="cliAnivCard" style="margin-bottom:14px;display:none"><h3><span class="dot" style="background:var(--ac2)"></span>🎂 Aniversariantes</h3><div class="h3sub">Lembre de parabenizar e presentear — relacionamento gera indicação</div><div id="cliAniv"></div></div>
   <div class="card" style="padding:8px 8px 0">
     <table id="tCli"><thead><tr>
       <th class="l">Cliente</th><th class="l">Vendedor</th><th class="l">Produto</th>
-      <th>Valor</th><th class="l">Status pós-venda</th><th class="l">Fechado em</th><th class="l">Recompra</th><th></th>
+      <th>Valor</th><th class="l">Status pós-venda</th><th class="l">Fechado em</th><th class="l">🎂 Nascimento</th><th class="l">Recompra</th><th></th>
     </tr></thead><tbody></tbody></table>
     <div class="empty" id="cliEmpty" style="display:none">Nenhum cliente na carteira ainda.</div>
   </div>
@@ -270,7 +287,11 @@ label.fl{display:flex;flex-direction:column;gap:5px;font-size:12px;color:var(--m
     <button class="btn sm qf" data-qf="hot" onclick="toggleQF('hot')">🔥 Quentes</button>
     <button class="btn sm qf" data-qf="over" onclick="toggleQF('over')">⏰ Atrasados</button>
     <button class="btn sm qf" data-qf="nonext" onclick="toggleQF('nonext')">📭 Sem próximo passo</button>
-    <button class="btn sm qf" data-qf="high" onclick="toggleQF('high')">💎 Alto valor (≥ R$300 mil)</button>
+    <button class="btn sm qf" data-qf="ligar" onclick="toggleQF('ligar')">📞 Ligar de novo</button>
+    <button class="btn sm qf" data-qf="naoatend" onclick="toggleQF('naoatend')">📵 Não atendida</button>
+    <button class="btn sm qf" data-qf="retornar" onclick="toggleQF('retornar')">🔁 Retornar depois</button>
+    <button class="btn sm qf" data-qf="reuniao" onclick="toggleQF('reuniao')">📅 Reunião agendada</button>
+    <button class="btn sm qf" data-qf="high" onclick="toggleQF('high')">💎 Alto valor (≥ R$700 mil)</button>
     <button class="btn sm qf" data-qf="vivos" onclick="toggleQF('vivos')">🟢 Vivos (ativos)</button>
     <button class="btn sm" onclick="clearQF()" style="margin-left:auto">Limpar filtros</button>
   </div>
@@ -522,6 +543,17 @@ label.fl{display:flex;flex-direction:column;gap:5px;font-size:12px;color:var(--m
   </div>
 </div>
 
+<!-- POP-UP DE CELEBRAÇÃO (VENDA GANHA) -->
+<div class="ov" id="ovWin">
+  <canvas id="winConfetti" style="position:fixed;inset:0;pointer-events:none;z-index:1"></canvas>
+  <div class="modal" style="width:400px;text-align:center;position:relative;z-index:2">
+    <div style="font-size:56px;line-height:1">🎉</div>
+    <div style="font-size:24px;font-weight:800;margin:6px 0">Venda fechada!</div>
+    <div id="winMsg" style="font-size:15px;color:var(--mut);line-height:1.6"></div>
+    <div class="mfoot" style="justify-content:center"><button class="btn primary" onclick="fecharWin()">🏆 Comemorar</button></div>
+  </div>
+</div>
+
 <!-- POPUP COMPACTO POR ETAPA -->
 <div class="ov" id="ovStage">
   <div class="modal" style="width:470px">
@@ -726,9 +758,9 @@ function fillSelects(){
  var sNames=sellers().map(function(p){return p.nome});
  el('mVend').innerHTML='<option value="">Selecione...</option>'+sNames.map(function(v){return '<option>'+esc(v)+'</option>'}).join('');
  var vFilter='<option value="">Todos os vendedores</option>'+sNames.map(function(v){return '<option>'+esc(v)+'</option>'}).join('');
- el('fVend').innerHTML=vFilter;el('lVend').innerHTML=vFilter;el('posVend').innerHTML=vFilter;if(el('cliVend'))el('cliVend').innerHTML=vFilter;if(el('convVend2'))el('convVend2').innerHTML=vFilter;
+ el('fVend').innerHTML=vFilter;el('lVend').innerHTML=vFilter;el('posVend').innerHTML=vFilter;if(el('cliVend'))el('cliVend').innerHTML=vFilter;if(el('convVend2'))el('convVend2').innerHTML=vFilter;if(el('funilVend'))el('funilVend').innerHTML=vFilter;
  var lOpts=LINHAS.map(function(l){return '<option>'+l+'</option>'}).join('');
- el('mLinha').innerHTML=lOpts;el('lLinha').innerHTML='<option value="">Todas as linhas</option>'+lOpts;el('pLinha').innerHTML=lOpts;el('dashLinha').innerHTML=lOpts;if(el('convLinha2'))el('convLinha2').innerHTML=lOpts;el('qLinha').innerHTML=lOpts;el('qVend').innerHTML='<option value="">Selecione...</option>'+sNames.map(function(v){return '<option>'+esc(v)+'</option>'}).join('');
+ el('mLinha').innerHTML=lOpts;el('lLinha').innerHTML='<option value="">Todas as linhas</option>'+lOpts;el('pLinha').innerHTML=lOpts;el('dashLinha').innerHTML=lOpts;if(el('convLinha2'))el('convLinha2').innerHTML=lOpts;if(el('funilLinha'))el('funilLinha').innerHTML=lOpts;el('qLinha').innerHTML=lOpts;el('qVend').innerHTML='<option value="">Selecione...</option>'+sNames.map(function(v){return '<option>'+esc(v)+'</option>'}).join('');
  el('sAdm').innerHTML=CFG().adm.map(function(a){return '<option>'+esc(a.nome)+'</option>'}).join('');el('mAdm').innerHTML='<option value="">—</option>'+CFG().adm.map(function(a){return '<option>'+esc(a.nome)+'</option>'}).join('');
 }
 
@@ -833,7 +865,26 @@ function renderConvView(){
  if(el('convResumo'))el('convResumo').innerHTML='<div class="grid kpis"><div class="kpi"><div class="lbl">Lead → Venda</div><div class="val">'+leadToWin+'%</div><div class="sub">'+cum[seq.length-1]+' de '+cum[0]+' na esteira</div></div><div class="kpi"><div class="lbl">Win rate</div><div class="val">'+overall+'%</div><div class="sub">'+won.length+' ganhos / '+dec+' decididos</div></div></div>';
  if(el('convVendBox')&&canSeeAll()){var names=sellers().map(function(s){return s.nome;});var arr=names.map(function(n){var b=DB.deals.filter(function(d){return d.vendedor===n&&d.linha===L;});var w=b.filter(isWon).length;var l=b.filter(function(d){return isLost(d)&&!isInativo(d);}).length;var dd=w+l;return {n:n,w:w,dd:dd,pc:dd?Math.round(w/dd*100):0,total:b.length};}).filter(function(x){return x.total;}).sort(function(a,b){return b.pc-a.pc;});el('convVendBox').innerHTML=arr.length?('<table><thead><tr><th class="l">Vendedor</th><th>Ganhos</th><th>Decididos</th><th>Conversão</th></tr></thead><tbody>'+arr.map(function(x){return '<tr><td class="l">'+esc(x.n)+'</td><td>'+x.w+'</td><td>'+x.dd+'</td><td><span class="badge '+(x.pc>=50?'b-ok':x.pc>=25?'b-warn':'b-bad')+'">'+x.pc+'%</span></td></tr>';}).join('')+'</tbody></table>'):'<div class="empty">Sem dados.</div>';}
 }
+/* ===== FUNIL (visão do vendedor) ===== */
+function renderFunil(){
+ if(!el('funilBox'))return;
+ var L=(el('funilLinha')&&el('funilLinha').value)||LINHAS[0];
+ var fv=(canSeeAll()&&el('funilVend'))?el('funilVend').value:'';
+ var base=scope(DB.deals).filter(function(d){return d.linha===L&&(!fv||d.vendedor===fv);});
+ var ord=stages(L);function idxOf(k){for(var i=0;i<ord.length;i++)if(ord[i].k===k)return i;return -1;}
+ var seq=openStages(L).concat(['Ganho']);
+ var cum=seq.map(function(st){var si=idxOf(st);return base.filter(function(d){return !isLost(d)&&idxOf(d.estagio)>=si;}).length;});
+ var top=cum[0]||1;
+ var rows=seq.map(function(st,i){var n=cum[i];var w=Math.max(6,Math.round(n/top*100));var pc=i>0?(cum[i-1]?Math.round(n/cum[i-1]*100):0):100;var col=stageC(L,st);return '<div style="display:flex;align-items:center;gap:12px;margin:7px 0"><div style="width:120px;text-align:right;font-size:13px;font-weight:600">'+st+'</div><div style="flex:1;display:flex;justify-content:center"><div style="width:'+w+'%;min-width:54px;background:'+col+';color:#fff;border-radius:9px;padding:10px;text-align:center;font-weight:800;font-size:15px;box-shadow:0 1px 5px rgba(0,0,0,.18)">'+n+'</div></div><div style="width:78px;font-size:12px;color:var(--mut)">'+(i>0?('▼ '+pc+'%'):'entradas')+'</div></div>';}).join('');
+ el('funilBox').innerHTML=cum[0]?rows:'<div class="empty">Sem negócios em '+L+'. Cadastre leads para ver seu funil.</div>';
+ if(el('funilStat'))el('funilStat').textContent=cum[0]+' na esteira';
+ var leadWin=cum[0]?Math.round(cum[seq.length-1]/cum[0]*100):0;
+ var won=base.filter(isWon),lost=base.filter(function(d){return isLost(d)&&!isInativo(d);});var dec=won.length+lost.length;var wr=dec?Math.round(won.length/dec*100):0;
+ var worst='',worstDrop=101;for(var k=1;k<seq.length;k++){var p=cum[k-1]?Math.round(cum[k]/cum[k-1]*100):100;if(p<worstDrop){worstDrop=p;worst=seq[k-1]+' → '+seq[k];}}
+ if(el('funilKpis'))el('funilKpis').innerHTML='<div class="kpi"><div class="lbl">Lead → Venda</div><div class="val">'+leadWin+'%</div></div><div class="kpi"><div class="lbl">Win rate</div><div class="val">'+wr+'%</div><div class="sub">'+won.length+'/'+dec+' decididos</div></div><div class="kpi"><div class="lbl">Maior gargalo</div><div class="val" style="font-size:15px">'+(worst||'—')+'</div><div class="sub">passa só '+(worstDrop<=100?worstDrop:0)+'%</div></div>';
+}
 /* ===== CLIENTES (carteira de quem fechou) ===== */
+function setNasc(id,v){var d=DB.deals.find(function(x){return x.id===id;});if(!d)return;d.nascimento=v;d.atualizadoEm=nowISO();save();renderClientes();}
 function renderClientes(){
  if(!el('tCli'))return;
  var fv=el('cliVend')?el('cliVend').value:'';var fs=(el('cliSearch')?el('cliSearch').value:'').toLowerCase();var fst=el('cliStatus')?el('cliStatus').value:'';
@@ -844,17 +895,17 @@ function renderClientes(){
  var totV=rows.reduce(function(a,d){return a+(d.valor||0);},0);
  if(el('cliKpis'))el('cliKpis').innerHTML='<div class="kpi"><div class="lbl">Clientes na carteira</div><div class="val">'+rows.length+'</div></div><div class="kpi"><div class="lbl">Valor contratado</div><div class="val">'+BRLk(totV)+'</div></div><div class="kpi"><div class="lbl">Ticket médio</div><div class="val">'+BRLk(rows.length?totV/rows.length:0)+'</div></div>';
  if(el('cliStat'))el('cliStat').textContent=rows.length+' clientes';
- var tb=el('tCli').querySelector('tbody');el('cliEmpty').style.display=rows.length?'none':'block';
- tb.innerHTML=rows.map(function(d){var sug=(typeof crossSuggest==='function')?crossSuggest(d):'';var wl=waLink(d);return '<tr><td class="l"><span class="lnk" onclick="openDeal(\''+d.id+'\')">'+esc(d.cliente||'(sem nome)')+'</span></td><td class="l">'+esc(d.vendedor||'—')+'</td><td class="l"><span class="linha-chip">'+esc(d.linha)+'</span> '+bemTag(d.bem)+'</td><td>'+BRL(d.valor||0)+'</td><td class="l">'+esc(d.posStage||'Contratado')+'</td><td class="l">'+(d.ganhoEm?fmtFull(d.ganhoEm):'—')+'</td><td class="l" style="font-size:12px">'+sug+'</td><td class="l">'+(wl?'<a class="wapp" href="'+wl+'" target="_blank">WhatsApp</a> ':'')+'<span class="lnk" onclick="novaOp(\''+d.id+'\')">recompra</span></td></tr>';}).join('');
+ var mm=todayStr().slice(5,7);var aniv=rows.filter(function(d){return d.nascimento&&d.nascimento.slice(5,7)===mm;}).sort(function(a,b){return a.nascimento.slice(8,10).localeCompare(b.nascimento.slice(8,10));});if(el('cliAnivCard')){el('cliAnivCard').style.display=aniv.length?'':'none';if(el('cliAniv'))el('cliAniv').innerHTML=aniv.map(function(d){var dia=d.nascimento.slice(8,10)+'/'+d.nascimento.slice(5,7);var hoje=d.nascimento.slice(5,10)===todayStr().slice(5,10);var wl=waLink(d);return '<div style="display:flex;align-items:center;gap:8px;padding:6px 0;border-bottom:1px solid var(--bd);font-size:13px"><span class="badge '+(hoje?'b-ok':'b-mut')+'">'+dia+(hoje?' 🎉 hoje':'')+'</span><span class="lnk" onclick="openDeal(\''+d.id+'\')">'+esc(d.cliente||'')+'</span><span style="margin-left:auto;color:var(--mut);font-size:11px">'+esc(d.vendedor||'')+'</span>'+(wl?'<a class="wapp" href="'+wl+'" target="_blank">Parabenizar</a>':'')+'</div>';}).join('');}var tb=el('tCli').querySelector('tbody');el('cliEmpty').style.display=rows.length?'none':'block';
+ tb.innerHTML=rows.map(function(d){var sug=(typeof crossSuggest==='function')?crossSuggest(d):'';var wl=waLink(d);return '<tr><td class="l"><span class="lnk" onclick="openDeal(\''+d.id+'\')">'+esc(d.cliente||'(sem nome)')+'</span></td><td class="l">'+esc(d.vendedor||'—')+'</td><td class="l"><span class="linha-chip">'+esc(d.linha)+'</span> '+bemTag(d.bem)+'</td><td>'+BRL(d.valor||0)+'</td><td class="l">'+esc(d.posStage||'Contratado')+'</td><td class="l">'+(d.ganhoEm?fmtFull(d.ganhoEm):'—')+'</td><td class="l"><input type="date" value="'+(d.nascimento||'')+'" onchange="setNasc(\''+d.id+'\',this.value)" style="font-size:12px;padding:3px 5px;width:130px"></td><td class="l" style="font-size:12px">'+sug+'</td><td class="l">'+(wl?'<a class="wapp" href="'+wl+'" target="_blank">WhatsApp</a> ':'')+'<span class="lnk" onclick="novaOp(\''+d.id+'\')">recompra</span></td></tr>';}).join('');
 }
 
 /* ===================== KANBAN VENDAS ===================== */
-var QF={mine:false,hot:false,over:false,nonext:false,high:false,vivos:false};
+var QF={mine:false,hot:false,over:false,nonext:false,high:false,vivos:false,ligar:false,naoatend:false,retornar:false,reuniao:false};
 function toggleQF(k){QF[k]=!QF[k];syncQFUI();renderBoard();}
 function clearQF(){Object.keys(QF).forEach(function(k){QF[k]=false;});if(el('fSearch'))el('fSearch').value='';if(el('fBem'))el('fBem').value='';if(canSeeAll()&&el('fVend'))el('fVend').value='';syncQFUI();renderBoard();}
 function syncQFUI(){[].forEach.call(document.querySelectorAll('#qfilters .qf'),function(b){var k=b.dataset.qf;if(!k)return;if(QF[k]){b.style.background='var(--ac)';b.style.color='#fff';b.style.borderColor='var(--ac)';}else{b.style.background='';b.style.color='';b.style.borderColor='';}});}
 function higienizar(){var alvo=scope(DB.deals).filter(function(d){return isOpen(d)&&stageAge(d)>90;});if(!alvo.length){alert('Nenhum negócio parado há +90 dias. Funil limpo!');return;}if(!confirm('Marcar como PERDIDO '+alvo.length+' negócio(s) parados há mais de 90 dias sem evolução?\n\nIsso limpa o funil e os relatórios. Dá para reabrir individualmente depois.'))return;var now=nowISO();alvo.forEach(function(d){d.estagio='Perdido';d.prob=0;if(!d.perdaCat)d.perdaCat='Inativo (higienização +90d)';d.ganhoEm=null;d.stageSince=d.stageSince||d.criadoEm;d.atualizadoEm=now;});save();renderAll();alert(alvo.length+' negócios marcados como perdidos (Inativo +90d). Funil atualizado.');}
-function filtered(){var L=el('pLinha').value||LINHAS[0];var fv=el('fVend').value,fb=el('fBem').value,fs=(el('fSearch').value||'').toLowerCase();var fm=(el('fMes')&&el('fMes').value)||'';return scope(DB.deals).filter(function(d){if(d.linha!==L)return false;if(fm&&String(d.criadoEm||'').slice(0,7)!==fm)return false;if(QF.vivos&&isOpen(d)&&stageAge(d)>90&&!((d.valor||0)>0)&&!(d.dataProximoPasso&&d.dataProximoPasso>=todayStr()))return false;if(canSeeAll()&&fv&&d.vendedor!==fv)return false;if(fb&&d.bem!==fb)return false;if(fs&&((d.cliente||'').toLowerCase().indexOf(fs)<0)&&((d.telefone||'').toLowerCase().indexOf(fs)<0))return false;if(QF.mine&&ME&&d.vendedor!==ME.nome)return false;if(QF.hot&&!(isOpen(d)&&scoreLead(d)>=70))return false;if(QF.over&&!overdue(d))return false;if(QF.nonext&&d.dataProximoPasso)return false;if(QF.high&&!((d.valor||0)>=300000))return false;return true;});}
+function filtered(){var L=el('pLinha').value||LINHAS[0];var fv=el('fVend').value,fb=el('fBem').value,fs=(el('fSearch').value||'').toLowerCase();var fm=(el('fMes')&&el('fMes').value)||'';return scope(DB.deals).filter(function(d){if(d.linha!==L)return false;if(fm&&String(d.criadoEm||'').slice(0,7)!==fm)return false;if(QF.vivos&&isOpen(d)&&stageAge(d)>90&&!((d.valor||0)>0)&&!(d.dataProximoPasso&&d.dataProximoPasso>=todayStr()))return false;if(canSeeAll()&&fv&&d.vendedor!==fv)return false;if(fb&&d.bem!==fb)return false;if(fs&&((d.cliente||'').toLowerCase().indexOf(fs)<0)&&((d.telefone||'').toLowerCase().indexOf(fs)<0))return false;if(QF.mine&&ME&&d.vendedor!==ME.nome)return false;if(QF.hot&&!(isOpen(d)&&scoreLead(d)>=70))return false;if(QF.over&&!overdue(d))return false;if(QF.nonext&&d.dataProximoPasso)return false;if(QF.ligar&&d.proximoPasso!=='Ligar de novo')return false;if(QF.naoatend&&d.statusLigacao!=='Ligação não atendida')return false;if(QF.retornar&&d.statusLigacao!=='Retornar depois')return false;if(QF.reuniao&&d.statusLigacao!=='Reunião agendada')return false;if(QF.high&&!((d.valor||0)>=700000))return false;return true;});}
 function nextOpenStage(d){var o=openStages(d.linha);var i=o.indexOf(d.estagio);return (i>=0&&i<o.length-1)?o[i+1]:null;}
 function advanceDeal(id,ev){if(ev&&ev.stopPropagation)ev.stopPropagation();abrirEtapa(id,ev);}
 /* ===== POPUP COMPACTO POR ETAPA ===== */
@@ -908,7 +959,11 @@ function stageAdvance(){var d=DB.deals.find(function(x){return x.id===seId});if(
  d.atualizadoEm=nowISO();
  if(nx){if(!moveStage(d,nx)){save();return;}}
  save();closeStage();renderAll();
+ if(nxWon)celebrarVenda(d);
 }
+function celebrarVenda(d){var nome=(d.vendedor||'').split(' ')[0]||'';el('winMsg').innerHTML=(d.cliente?'<b>'+esc(d.cliente)+'</b><br>':'')+esc(d.linha||'Consórcio')+' '+esc(d.bem||'')+' · <b>'+BRL(d.valor||0)+'</b><br>Parabéns'+(nome?', '+esc(nome):'')+'! 🚀';el('ovWin').classList.add('on');confettiBurst();}
+function fecharWin(){el('ovWin').classList.remove('on');}
+function confettiBurst(){var c=el('winConfetti');if(!c)return;var ctx=c.getContext('2d');c.width=window.innerWidth;c.height=window.innerHeight;var P=[];for(var i=0;i<140;i++)P.push({x:c.width/2,y:c.height/3,vx:(Math.random()-.5)*13,vy:Math.random()*-13-3,g:.32,col:'hsl('+Math.floor(Math.random()*360)+',90%,60%)',s:5+Math.random()*7});var t0=Date.now();(function loop(){var e=Date.now()-t0;ctx.clearRect(0,0,c.width,c.height);P.forEach(function(p){p.vy+=p.g;p.x+=p.vx;p.y+=p.vy;ctx.fillStyle=p.col;ctx.fillRect(p.x,p.y,p.s,p.s);});if(e<2400&&el('ovWin').classList.contains('on'))requestAnimationFrame(loop);else ctx.clearRect(0,0,c.width,c.height);})();}
 function _captureSoft(d){
  if(el('seNome'))d.cliente=el('seNome').value.trim()||d.cliente;
  if(el('seTel'))d.telefone=el('seTel').value.trim()||d.telefone;
@@ -1123,7 +1178,7 @@ function rotinaVendedor(){var r=weekRangeSun(0);var av=weekActivity(ME.nome,r[0]
 function rotinaDiretor(){var r=weekRangeSun(0);var names=sellers().map(function(s){return s.nome;});var today=todayStr();var huddle=names.map(function(n){var nv=DB.deals.filter(function(d){return d.vendedor===n&&dDate(d.criadoEm)===today;}).length;var rh=0;DB.deals.forEach(function(d){if(d.vendedor!==n)return;(d.reunioes||[]).forEach(function(x){if(x.data===today)rh++;});});var lh=(DB.atividades||[]).filter(function(a){return a.v===n&&dDate(a.em)===today&&a.tipo==='ligacao';}).length;var atr=DB.deals.filter(function(d){return d.vendedor===n&&overdue(d);}).length;if(!(nv||rh||lh||atr))return null;return '<tr><td class="l">'+esc(n)+'</td><td>'+lh+'</td><td>'+nv+'</td><td>'+rh+'</td><td>'+(atr?'<span class="badge b-bad">'+atr+'</span>':'0')+'</td></tr>';}).filter(Boolean).join('')||'<tr><td class="l" colspan="5"><div class="empty">Sem atividade hoje ainda.</div></td></tr>';var um=names.map(function(n){var av=weekActivity(n,r[0],r[1]);var pipe=DB.deals.filter(function(d){return d.vendedor===n&&isOpen(d);});if(!(pipe.length||av.novos||av.fechados))return null;var pv=pipe.reduce(function(a,d){return a+(d.valor||0)},0);var neg=pipe.filter(function(d){return d.estagio==='Negociação'}).length;var par=pipe.filter(function(d){return daysSince(d.stageSince)>14}).length;var m=memberByName(n)||{};var pm=(m.metaWkNovos||0)?Math.round(av.novos/(m.metaWkNovos)*100):null;return '<tr><td class="l">'+esc(n)+'</td><td>'+BRLk(pv)+'</td><td>'+neg+'</td><td>'+(par?'<span class="badge b-bad">'+par+'</span>':'0')+'</td><td>'+av.novos+'</td><td>'+av.reunioes+'</td><td>'+av.propostas+'</td><td>'+(pm==null?'—':'<span class="badge '+(pm>=100?'b-ok':pm>=60?'b-warn':'b-bad')+'">'+pm+'%</span>')+'</td></tr>';}).filter(Boolean).join('')||'<tr><td class="l" colspan="8"><div class="empty">Sem pipeline ativo.</div></td></tr>';var tot={lig:0,reun:0,prop:0,novos:0,qual:0,fech:0};names.forEach(function(n){var a=weekActivity(n,r[0],r[1]);tot.lig+=a.ligacoes;tot.reun+=a.reunioes;tot.prop+=a.propostas;tot.novos+=a.novos;tot.qual+=a.qualif;tot.fech+=a.fechados;});var convT=tot.novos?Math.round(tot.qual/tot.novos*100):0;var valT=names.reduce(function(s,n){return s+DB.deals.filter(function(d){return d.vendedor===n&&isWon(d)&&inRange(d.ganhoEm,r[0],r[1]);}).reduce(function(a,d){return a+(d.valor||0)},0);},0);var pir='<div class="card"><h3><span class="dot" style="background:var(--vio)"></span>Atividades → Objetivos → Resultados</h3><div class="h3sub">Foque no que é gerenciável (semana)</div><div style="display:flex;flex-direction:column;gap:8px"><div style="background:var(--card2);border-radius:10px;padding:10px 12px;font-size:13px"><b>Atividades</b> · '+tot.lig+' ligações · '+tot.reun+' reuniões · '+tot.prop+' propostas</div><div style="background:var(--card2);border-radius:10px;padding:10px 12px;font-size:13px;margin-left:18px"><b>Objetivos</b> · '+tot.novos+' novos · '+tot.qual+' qualificados · '+convT+'% qualif.</div><div style="background:var(--card2);border-radius:10px;padding:10px 12px;font-size:13px;margin-left:36px"><b>Resultados</b> · '+tot.fech+' fechados · '+BRLk(valT)+'</div></div></div>';return '<div style="font-size:21px;font-weight:800;margin-bottom:4px">Rotina da Equipe</div><div style="font-size:13px;color:var(--mut);margin-bottom:16px">Cadência: Daily Huddle, 1:1 semanal e foco em atividade</div><div class="grid cards2"><div class="card" style="padding:8px 10px 0"><h3><span class="dot"></span>Pauta do Daily Huddle (hoje)</h3><div class="h3sub">Métricas do dia · onde destravar</div><table><thead><tr><th class="l">Vendedor</th><th>Ligações</th><th>Novos</th><th>Reuniões</th><th>Atrasados</th></tr></thead><tbody>'+huddle+'</tbody></table></div>'+pir+'</div><div class="card" style="padding:8px 10px 0;margin-top:14px"><h3><span class="dot" style="background:var(--ac2)"></span>Pauta do 1:1 semanal</h3><div class="h3sub">Pipeline + atividade vs. meta — pronto para a reunião</div><table><thead><tr><th class="l">Vendedor</th><th>Pipeline</th><th>Negoc.</th><th>Parados</th><th>Novos(sem)</th><th>Reuniões</th><th>Propostas</th><th>Pace novos</th></tr></thead><tbody>'+um+'</tbody></table></div>';}
 function renderRotina(){var b=el('rotinaBody');if(!b||!ME)return;b.innerHTML=canSeeAll()?rotinaDiretor():rotinaVendedor();}
 
-function renderAll(){if(!ME)return;renderInicio();renderDash();renderConvView();renderClientes();renderBoard();renderPos();renderLeads();renderVend();renderAtiv();renderTracao();renderRotina();if(el('v-sim').classList.contains('on'))runSim();else fillSimDealSelect();el('foot').innerHTML='OSHER CAPITAL · CRM Comercial — dados salvos localmente neste navegador. '+DB.deals.length+' negócios · meta '+BRLk(CFG().meta)+'. '+(canSeeAll()?'<b>Exportar</b> para backup/compartilhar. ':'')+'Funciona offline.';}
+function renderAll(){if(!ME)return;renderInicio();renderDash();renderConvView();renderFunil();renderClientes();renderBoard();renderPos();renderLeads();renderVend();renderAtiv();renderTracao();renderRotina();if(el('v-sim').classList.contains('on'))runSim();else fillSimDealSelect();el('foot').innerHTML='OSHER CAPITAL · CRM Comercial — dados salvos localmente neste navegador. '+DB.deals.length+' negócios · meta '+BRLk(CFG().meta)+'. '+(canSeeAll()?'<b>Exportar</b> para backup/compartilhar. ':'')+'Funciona offline.';}
 
 /* ===================== BOOT ===================== */
 if(!load()){DB=JSON.parse(JSON.stringify(SEED_DATA));ensureCfg();save();}
