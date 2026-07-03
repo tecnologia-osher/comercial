@@ -194,8 +194,8 @@ label.fl{display:flex;flex-direction:column;gap:5px;font-size:12px;color:var(--m
     <div class="pgtitle" id="pgTitle">Início</div>
     <div class="actions">
       <button class="btn" id="themeBtn" onclick="toggleTheme()" title="Alternar tema claro/escuro" aria-label="Alternar tema" style="padding:8px 10px"></button>
-      <button class="btn" onclick="window.open('painel.html','_blank')" style="background:var(--ac);color:#fff;border-color:var(--ac)">↗ Painel Comercial</button>
-      <button class="btn primary" onclick="openQuick()">⚡ Lead rápido</button>
+      <button class="btn" onclick="window.open('painel.html','_blank')" style="background:var(--ac);color:#fff;border-color:var(--ac)"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>Painel Comercial</button>
+      <button class="btn primary" onclick="openQuick()"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>Lead rápido</button>
       <button class="btn" id="btnConfig" data-admin="1" onclick="openConfig()">Config</button>
       <button class="btn" id="btnExport" data-see="1" onclick="exportJSON()">Exportar</button>
       <button class="btn" id="btnImport" data-admin="1" onclick="document.getElementById('imp').click()">Importar</button>
@@ -281,7 +281,7 @@ label.fl{display:flex;flex-direction:column;gap:5px;font-size:12px;color:var(--m
   <div class="card" style="padding:10px 12px">
     <h3 style="margin:0"><span class="dot" style="background:var(--ac2)"></span>Simulador — Consórcio × Financiamento</h3>
     <div class="h3sub">Consórcio de um lado, financiamento do outro; o comparativo sai embaixo</div>
-    <iframe id="finFrame" src="calculadora.html" style="width:100%;height:82vh;border:1px solid var(--bd);border-radius:12px;margin-top:8px;background:#fff"></iframe>
+    <iframe id="finFrame" src="calculadora.html" onload="syncFinTheme()" style="width:100%;height:82vh;border:1px solid var(--bd);border-radius:12px;margin-top:8px;background:var(--card)"></iframe>
   </div>
 </section>
 
@@ -343,7 +343,7 @@ label.fl{display:flex;flex-direction:column;gap:5px;font-size:12px;color:var(--m
       <th data-k="valor">Crédito</th><th class="l" data-k="estagio">Etapa</th><th data-k="prob">Prob.</th>
       <th class="l" data-k="dataProximoPasso">Próximo passo</th><th class="l">Origem</th><th class="l">Indicado por</th><th class="l">Score</th><th class="l">Qual.</th><th></th>
     </tr></thead><tbody></tbody></table>
-    <div class="empty" id="leadEmpty" style="display:none">Nenhum negócio. Clique em "⚡ Lead rápido".</div>
+    <div class="empty" id="leadEmpty" style="display:none">Nenhum negócio. Clique em "<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px;margin-right:5px"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>Lead rápido".</div>
   </div>
 </section>
 
@@ -542,7 +542,7 @@ label.fl{display:flex;flex-direction:column;gap:5px;font-size:12px;color:var(--m
 
 <div class="ov" id="ovQuick">
   <div class="modal" style="width:430px">
-    <h3>⚡ Lead rápido</h3>
+    <h3><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px;margin-right:5px"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>Lead rápido</h3>
     <div class="mgrid">
       <label class="fl full">Cliente<input id="qCliente" placeholder="Nome do cliente"></label>
       <label class="fl full">Telefone / WhatsApp<input id="qTel" placeholder="(00) 00000-0000"></label>
@@ -1201,7 +1201,8 @@ function renderAll(){if(!ME)return;renderInicio();renderDash();renderConvView();
 function _themeIcon(dark){return dark
  ?'<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><line x1="12" y1="2" x2="12" y2="4"/><line x1="12" y1="20" x2="12" y2="22"/><line x1="4.9" y1="4.9" x2="6.3" y2="6.3"/><line x1="17.7" y1="17.7" x2="19.1" y2="19.1"/><line x1="2" y1="12" x2="4" y2="12"/><line x1="20" y1="12" x2="22" y2="12"/><line x1="4.9" y1="19.1" x2="6.3" y2="17.7"/><line x1="17.7" y1="6.3" x2="19.1" y2="4.9"/></svg>'
  :'<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg>';}
-function applyTheme(t){document.documentElement.setAttribute('data-theme',t);try{localStorage.setItem('osher_theme',t);}catch(e){}var b=document.getElementById('themeBtn');if(b)b.innerHTML=_themeIcon(t==='dark');}
+function syncFinTheme(){var t=document.documentElement.getAttribute('data-theme')==='light'?'light':'dark';var f=document.getElementById('finFrame');if(f&&f.contentDocument){try{f.contentDocument.documentElement.setAttribute('data-theme',t);var tb=f.contentDocument.getElementById('themeBtn');if(tb)tb.textContent=(t==='dark')?'☀ Claro':'☾ Escuro';}catch(e){}}}
+function applyTheme(t){document.documentElement.setAttribute('data-theme',t);try{localStorage.setItem('osher_theme',t);}catch(e){}var b=document.getElementById('themeBtn');if(b)b.innerHTML=_themeIcon(t==='dark');syncFinTheme();}
 function initTheme(){var t='dark';try{t=localStorage.getItem('osher_theme')||'dark';}catch(e){}applyTheme(t);}
 function toggleTheme(){var cur=document.documentElement.getAttribute('data-theme')==='light'?'light':'dark';applyTheme(cur==='light'?'dark':'light');}
 
