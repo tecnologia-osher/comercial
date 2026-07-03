@@ -3,11 +3,18 @@
 <head>
 <meta charset="UTF-8"><meta http-equiv="Cache-Control" content="no-store">
 <base target="_top">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
-:root{--bg:#0f1117;--card:#1a1d27;--card2:#222634;--txt:#e8eaf0;--mut:#8b91a5;--ac:#5b8cff;--ac2:#34d399;--warn:#fbbf24;--red:#f87171;--vio:#a78bfa;--bd:#2a2f3e;}
+:root{--bg:#0b1220;--card:#111b2e;--card2:#18253c;--txt:#e9eef7;--mut:#94a3b8;--ac:#3f6fe6;--ac2:#2fb383;--warn:#e6a94b;--red:#ec6a6a;--vio:#7b83e0;--bd:#243149;--gold:#d9b45c;--shadow:0 1px 3px rgba(0,0,0,.35);--topbar:rgba(11,18,32,.9);}
+[data-theme="light"]{--bg:#f4f7fb;--card:#ffffff;--card2:#eef2f8;--txt:#111c2e;--mut:#5b6b83;--ac:#2f5fd6;--ac2:#1e9b6b;--warn:#b8790f;--red:#d64545;--vio:#5b63c9;--bd:#dbe3ef;--gold:#a97f20;--shadow:0 1px 3px rgba(15,23,42,.10);--topbar:rgba(244,247,251,.9);}
 *{box-sizing:border-box;margin:0;padding:0}
-body{background:var(--bg);color:var(--txt);font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;line-height:1.5}
-.topbar{position:sticky;top:0;z-index:20;background:rgba(15,17,23,.92);backdrop-filter:blur(8px);border-bottom:1px solid var(--bd);padding:16px 28px 0}
+body{background:var(--bg);color:var(--txt);font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;line-height:1.5;-webkit-font-smoothing:antialiased}
+.tile,.tabs button,.seg button,.btn{transition:background .15s ease,border-color .15s ease,color .15s ease,filter .15s ease}
+*:focus-visible{outline:2px solid var(--ac);outline-offset:2px}
+input:focus,select:focus,textarea:focus{outline:none;border-color:var(--ac)}
+.card{box-shadow:var(--shadow)}
+.topbar{position:sticky;top:0;z-index:20;background:var(--topbar);backdrop-filter:blur(8px);border-bottom:1px solid var(--bd);padding:16px 28px 0}
 .topbar h1{font-size:21px;font-weight:700;letter-spacing:-.3px}
 .topbar .sub{color:var(--mut);font-size:12.5px;margin-top:2px}
 .tabs{display:flex;gap:4px;margin-top:14px;flex-wrap:wrap}
@@ -158,7 +165,7 @@ th.l,td.l{text-align:left}tbody tr:hover{background:var(--card2)}
           <button class="on" data-v="all" onclick="setTipo('all')">Todos</button>
           <button data-v="int" onclick="setTipo('int')">Internos</button>
           <button data-v="ext" onclick="setTipo('ext')">Externos</button></div></div>
-      <div class="cseg"><button class="tile" onclick="reload()">↻ Atualizar</button> <button class="tile" onclick="window.open('crm.html','_blank')" style="background:var(--vio);color:#fff;border-color:var(--vio)">↗ Abrir CRM</button></div>
+      <div class="cseg"><button class="tile" id="themeBtn" onclick="toggleTheme()" title="Alternar tema claro/escuro" aria-label="Alternar tema"></button> <button class="tile" onclick="reload()">↻ Atualizar</button> <button class="tile" onclick="window.open('crm.html','_blank')" style="background:var(--vio);color:#fff;border-color:var(--vio)">↗ Abrir CRM</button></div>
       <span id="userChip" style="margin-left:auto;font-size:12px;color:var(--mut)"></span>
     </div>
     <div class="crow crow-period"><span class="cglbl">Período</span><div class="tiles" id="periodTiles"></div></div>
@@ -797,7 +804,12 @@ async function _loadData(){
 }
 function reload(){_loadData();}
 window.onload=null;
-function _boot(){if(typeof showLogin==='function')showLogin();else{var l=el('loading');if(l)l.style.display='none';var o=el('ovLogin');if(o)o.style.display='flex';}}
+/* ===== TEMA (claro/escuro) ===== */
+function _themeIcon(dark){return dark?'<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><line x1="12" y1="2" x2="12" y2="4"/><line x1="12" y1="20" x2="12" y2="22"/><line x1="4.9" y1="4.9" x2="6.3" y2="6.3"/><line x1="17.7" y1="17.7" x2="19.1" y2="19.1"/><line x1="2" y1="12" x2="4" y2="12"/><line x1="20" y1="12" x2="22" y2="12"/><line x1="4.9" y1="19.1" x2="6.3" y2="17.7"/><line x1="17.7" y1="6.3" x2="19.1" y2="4.9"/></svg>':'<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg>';}
+function applyTheme(t){document.documentElement.setAttribute('data-theme',t);try{localStorage.setItem('osher_theme',t);}catch(e){}var b=el('themeBtn');if(b)b.innerHTML=_themeIcon(t==='dark');}
+function initTheme(){var t='dark';try{t=localStorage.getItem('osher_theme')||'dark';}catch(e){}applyTheme(t);}
+function toggleTheme(){var cur=document.documentElement.getAttribute('data-theme')==='light'?'light':'dark';applyTheme(cur==='light'?'dark':'light');}
+function _boot(){initTheme();if(typeof showLogin==='function')showLogin();else{var l=el('loading');if(l)l.style.display='none';var o=el('ovLogin');if(o)o.style.display='flex';}}
 if(document.readyState!=='loading')_boot();else document.addEventListener('DOMContentLoaded',_boot);
 </script>
 </body>

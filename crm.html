@@ -4,10 +4,21 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>OSHER CAPITAL — CRM Comercial</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
-:root{--bg:#0f1117;--card:#1a1d27;--card2:#222634;--txt:#e8eaf0;--mut:#8b91a5;--ac:#5b8cff;--ac2:#34d399;--warn:#fbbf24;--red:#f87171;--vio:#a78bfa;--bd:#2a2f3e;}
+:root{--bg:#0b1220;--card:#111b2e;--card2:#18253c;--txt:#e9eef7;--mut:#94a3b8;--ac:#3f6fe6;--ac2:#2fb383;--warn:#e6a94b;--red:#ec6a6a;--vio:#7b83e0;--bd:#243149;--gold:#d9b45c;--shadow:0 1px 3px rgba(0,0,0,.35);}
+[data-theme="light"]{--bg:#f4f7fb;--card:#ffffff;--card2:#eef2f8;--txt:#111c2e;--mut:#5b6b83;--ac:#2f5fd6;--ac2:#1e9b6b;--warn:#b8790f;--red:#d64545;--vio:#5b63c9;--bd:#dbe3ef;--gold:#a97f20;--shadow:0 1px 3px rgba(15,23,42,.10);}
 *{box-sizing:border-box}
-body{background:var(--bg);color:var(--txt);font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;margin:0;line-height:1.5}
+body{background:var(--bg);color:var(--txt);font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;margin:0;line-height:1.5;-webkit-font-smoothing:antialiased}
+.brand .b1{color:var(--gold)}
+.btn,nav button,.qf{transition:background .15s ease,border-color .15s ease,color .15s ease,filter .15s ease,box-shadow .15s ease}
+.btn.primary{box-shadow:var(--shadow)}
+.card{box-shadow:var(--shadow)}
+*:focus-visible{outline:2px solid var(--ac);outline-offset:2px}
+input:focus,select:focus,textarea:focus{outline:none;border-color:var(--ac)}
+button{font-family:inherit}
+.val,.sv{font-variant-numeric:tabular-nums}
 .wrap{max-width:1440px;margin:0 auto;padding:20px 28px 60px}
 header{display:flex;align-items:center;gap:14px;flex-wrap:wrap;padding:18px 0 14px;border-bottom:1px solid var(--bd);margin-bottom:20px}
 .brand .b1{font-size:20px;font-weight:800;letter-spacing:-.4px}
@@ -182,7 +193,8 @@ label.fl{display:flex;flex-direction:column;gap:5px;font-size:12px;color:var(--m
   <div class="topbar">
     <div class="pgtitle" id="pgTitle">Início</div>
     <div class="actions">
-      <button class="btn" onclick="window.open('painel.html','_blank')" style="background:#5b8cff;color:#fff;border-color:#5b8cff">↗ Painel Comercial</button>
+      <button class="btn" id="themeBtn" onclick="toggleTheme()" title="Alternar tema claro/escuro" aria-label="Alternar tema" style="padding:8px 10px"></button>
+      <button class="btn" onclick="window.open('painel.html','_blank')" style="background:var(--ac);color:#fff;border-color:var(--ac)">↗ Painel Comercial</button>
       <button class="btn primary" onclick="openQuick()">⚡ Lead rápido</button>
       <button class="btn" id="btnConfig" data-admin="1" onclick="openConfig()">Config</button>
       <button class="btn" id="btnExport" data-see="1" onclick="exportJSON()">Exportar</button>
@@ -1185,11 +1197,20 @@ function renderRotina(){var b=el('rotinaBody');if(!b||!ME)return;b.innerHTML=can
 
 function renderAll(){if(!ME)return;renderInicio();renderDash();renderConvView();renderFunil();renderClientes();renderBoard();renderPos();renderLeads();renderVend();renderAtiv();renderTracao();renderRotina();if(el('v-sim').classList.contains('on'))runSim();else fillSimDealSelect();el('foot').innerHTML='OSHER CAPITAL · CRM Comercial — dados salvos localmente neste navegador. '+DB.deals.length+' negócios · meta '+BRLk(CFG().meta)+'. '+(canSeeAll()?'<b>Exportar</b> para backup/compartilhar. ':'')+'Funciona offline.';}
 
+/* ===================== TEMA (claro/escuro) ===================== */
+function _themeIcon(dark){return dark
+ ?'<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><line x1="12" y1="2" x2="12" y2="4"/><line x1="12" y1="20" x2="12" y2="22"/><line x1="4.9" y1="4.9" x2="6.3" y2="6.3"/><line x1="17.7" y1="17.7" x2="19.1" y2="19.1"/><line x1="2" y1="12" x2="4" y2="12"/><line x1="20" y1="12" x2="22" y2="12"/><line x1="4.9" y1="19.1" x2="6.3" y2="17.7"/><line x1="17.7" y1="6.3" x2="19.1" y2="4.9"/></svg>'
+ :'<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg>';}
+function applyTheme(t){document.documentElement.setAttribute('data-theme',t);try{localStorage.setItem('osher_theme',t);}catch(e){}var b=document.getElementById('themeBtn');if(b)b.innerHTML=_themeIcon(t==='dark');}
+function initTheme(){var t='dark';try{t=localStorage.getItem('osher_theme')||'dark';}catch(e){}applyTheme(t);}
+function toggleTheme(){var cur=document.documentElement.getAttribute('data-theme')==='light'?'light':'dark';applyTheme(cur==='light'?'dark':'light');}
+
 /* ===================== BOOT ===================== */
 if(!load()){DB=JSON.parse(JSON.stringify(SEED_DATA));ensureCfg();save();}
 ensureCfg();
 fillSelects();
 initMasks();
+initTheme();
 if(resolveMe()){el('ovLogin').classList.remove('on');el('app').classList.remove('hidden');applyRole();renderAll();cloudPullDeals().then(function(ok){if(ok){save();renderAll();}});}
 else{el('ovLogin').classList.add('on');}
 </script>
