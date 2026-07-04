@@ -8,18 +8,22 @@
 <!-- auditoria 2026-07-03 -->
 <base target="_top">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
-:root{--bg:#0b1220;--card:#111b2e;--card2:#18253c;--txt:#e9eef7;--mut:#94a3b8;--ac:#3f6fe6;--ac2:#2fb383;--warn:#e6a94b;--red:#ec6a6a;--vio:#7b83e0;--bd:#243149;--gold:#d9b45c;--shadow:0 1px 3px rgba(0,0,0,.35);--topbar:rgba(11,18,32,.9);}
-[data-theme="light"]{--bg:#f4f7fb;--card:#ffffff;--card2:#eef2f8;--txt:#111c2e;--mut:#5b6b83;--ac:#2f5fd6;--ac2:#1e9b6b;--warn:#b8790f;--red:#d64545;--vio:#5b63c9;--bd:#dbe3ef;--gold:#a97f20;--shadow:0 1px 3px rgba(15,23,42,.10);--topbar:rgba(244,247,251,.9);}
+:root{--bg:#07203a;--card:#0e2f52;--card2:#173f68;--txt:#f1f2f2;--mut:#9fb2c8;--ac:#c2b083;--on-ac:#0b2c51;--ac2:#34d399;--warn:#e6a94b;--red:#ec6a6a;--vio:#7b83e0;--bd:#22496f;--gold:#a89e86;--shadow:0 1px 3px rgba(0,0,0,.35);--topbar:rgba(7,32,58,.9);}
+[data-theme="light"]{--bg:#f1f2f2;--card:#ffffff;--card2:#e7eaee;--txt:#0b2c51;--mut:#5b6b83;--ac:#8a6f3e;--on-ac:#ffffff;--ac2:#1e9b6b;--warn:#b8790f;--red:#d64545;--vio:#5b63c9;--bd:#d7dde5;--gold:#8a6f3e;--shadow:0 1px 3px rgba(11,44,81,.10);--topbar:rgba(241,242,242,.9);}
 *{box-sizing:border-box;margin:0;padding:0}
-body{background:var(--bg);color:var(--txt);font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;line-height:1.5;-webkit-font-smoothing:antialiased}
+body{background:var(--bg);color:var(--txt);font-family:'Outfit',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;line-height:1.5;-webkit-font-smoothing:antialiased}
 .tile,.tabs button,.seg button,.btn{transition:background .15s ease,border-color .15s ease,color .15s ease,filter .15s ease}
 *:focus-visible{outline:2px solid var(--ac);outline-offset:2px}
 input:focus,select:focus,textarea:focus{outline:none;border-color:var(--ac)}
 .card{box-shadow:var(--shadow)}
 .topbar{position:sticky;top:0;z-index:20;background:var(--topbar);backdrop-filter:blur(8px);border-bottom:1px solid var(--bd);padding:16px 28px 0}
-.topbar h1{font-size:21px;font-weight:700;letter-spacing:-.3px}
+.topbar h1{font-size:21px;font-weight:700;letter-spacing:-.3px;display:flex;align-items:baseline;gap:9px;flex-wrap:wrap}
+.lock{display:inline-flex;align-items:baseline;gap:6px;line-height:1}
+.lock .lgo{font-weight:800;font-size:23px;letter-spacing:-1.2px;color:var(--txt)}
+.lock .lgc{font-weight:600;font-size:11px;letter-spacing:3px;color:var(--gold);text-transform:uppercase}
+.topbar h1 .hsep{font-size:15px;font-weight:600;color:var(--mut);letter-spacing:0}
 .topbar .sub{color:var(--mut);font-size:12.5px;margin-top:2px}
 .tabs{display:flex;gap:4px;margin-top:14px;flex-wrap:wrap}
 .tabs button{background:none;border:none;border-bottom:2px solid transparent;color:var(--mut);padding:10px 16px;font-size:14px;cursor:pointer;font-weight:500}
@@ -58,7 +62,7 @@ input:focus,select:focus,textarea:focus{outline:none;border-color:var(--ac)}
 .legend .sw{width:12px;height:12px;border-radius:3px}.legend .lv{color:var(--mut);margin-left:4px}
 .toggle{display:flex;gap:6px;margin-bottom:14px;flex-wrap:wrap}
 .toggle button{background:var(--card2);border:1px solid var(--bd);color:var(--mut);padding:6px 14px;border-radius:8px;font-size:13px;cursor:pointer}
-.toggle button.on{background:var(--ac);color:#fff;border-color:var(--ac)}
+.toggle button.on{background:var(--ac);color:var(--on-ac);border-color:var(--ac)}
 .callout{background:linear-gradient(135deg,rgba(91,140,255,.12),rgba(167,139,250,.08));border:1px solid var(--bd);border-left:3px solid var(--ac);border-radius:10px;padding:14px 16px;font-size:13px;margin-top:14px}
 .callout.red{border-left-color:var(--red);background:linear-gradient(135deg,rgba(248,113,113,.12),rgba(248,113,113,.04))}
 .callout.green{border-left-color:var(--ac2);background:linear-gradient(135deg,rgba(52,211,153,.12),rgba(52,211,153,.04))}
@@ -75,7 +79,7 @@ th.l,td.l{text-align:left}tbody tr:hover{background:var(--card2)}
 .side h3{font-size:12px;text-transform:uppercase;letter-spacing:1px;color:var(--mut);margin:2px 8px 2px}
 .side .tt{font-size:11px;color:var(--mut);margin:0 8px 10px;padding-bottom:8px;border-bottom:1px solid var(--bd)}
 .vitem{padding:8px 11px;border-radius:9px;cursor:pointer;margin-bottom:2px;display:flex;justify-content:space-between;align-items:center;gap:8px}
-.vitem:hover{background:var(--card2)}.vitem.on{background:var(--ac);color:#fff}
+.vitem:hover{background:var(--card2)}.vitem.on{background:var(--ac);color:var(--on-ac)}
 .vitem .vn{font-size:12.5px;font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .vitem .vr{font-size:11px;color:var(--mut);flex-shrink:0}.vitem.on .vr{color:#dbe4ff}
 .vitem .ico{font-size:10px;margin-right:4px}
@@ -126,7 +130,7 @@ th.l,td.l{text-align:left}tbody tr:hover{background:var(--card2)}
 .seg{display:inline-flex;background:var(--card2);border:1px solid var(--bd);border-radius:11px;overflow:hidden}
 .seg button{background:none;border:none;color:var(--mut);padding:8px 17px;font-size:13px;cursor:pointer;border-right:1px solid var(--bd);font-weight:500}
 .seg button:last-child{border-right:none}
-.seg button.on{background:var(--ac);color:#fff}
+.seg button.on{background:var(--ac);color:var(--on-ac)}
 .seg button:hover:not(.on){color:var(--txt);background:rgba(255,255,255,.03)}
 .tiles{display:flex;flex-wrap:wrap;gap:8px;flex:1}
 .tile{background:var(--card2);border:1px solid var(--bd);border-radius:10px;padding:9px 15px;font-size:13px;cursor:pointer;color:var(--txt);min-width:64px;text-align:center;transition:transform .12s,border-color .12s,background .12s}
@@ -138,7 +142,7 @@ th.l,td.l{text-align:left}tbody tr:hover{background:var(--card2)}
 .fld{display:flex;flex-direction:column;gap:5px}.fld.full{grid-column:1/-1}
 .fld label{font-size:12px;color:var(--mut)}
 .fld input,.fld select{background:var(--card2);color:var(--txt);border:1px solid var(--bd);border-radius:8px;padding:9px 10px;font-size:13px}
-.btn{background:var(--ac);color:#fff;border:none;border-radius:9px;padding:11px 22px;font-size:14px;font-weight:600;cursor:pointer}
+.btn{background:var(--ac);color:var(--on-ac);border:none;border-radius:9px;padding:11px 22px;font-size:14px;font-weight:600;cursor:pointer}
 .btn:disabled{opacity:.5;cursor:default}
 .loading{padding:70px;text-align:center;color:var(--mut)}
 .ovlogin{display:none;position:fixed;inset:0;background:var(--bg);z-index:100;align-items:center;justify-content:center;padding:16px}
@@ -154,7 +158,7 @@ th.l,td.l{text-align:left}tbody tr:hover{background:var(--card2)}
 </head>
 <body>
 <div class="topbar">
-  <h1>Painel Comercial — Osher Capital</h1>
+  <h1><span class="lock"><span class="lgo">osher</span><span class="lgc">Capital</span></span><span class="hsep">Painel Comercial</span></h1>
   <div class="sub" id="subt">Carregando dados…</div>
   <div class="controls">
     <div class="crow">
@@ -187,7 +191,7 @@ th.l,td.l{text-align:left}tbody tr:hover{background:var(--card2)}
 </div>
 
 <div id="loading" class="loading">Carregando…</div>
-<div class="ovlogin" id="ovLogin"><div class="loginbox"><div style="font-size:20px;font-weight:700">OSHER CAPITAL</div><div style="color:var(--mut);font-size:12px">Painel Comercial — Entrar</div><label style="font-size:12px;color:var(--mut);display:block;margin-top:16px">E-mail<input id="liEmail" type="email" placeholder="voce@oshersolucoes.com.br" onkeydown="if(event.key==='Enter')doLogin()"></label><label style="font-size:12px;color:var(--mut);display:block;margin-top:10px">Senha<input id="liPass" type="password" placeholder="••••••" onkeydown="if(event.key==='Enter')doLogin()"></label><button class="btn" style="width:100%;margin-top:16px;justify-content:center" onclick="doLogin()">Entrar</button><div id="liErr" style="color:var(--red);font-size:12px;margin-top:8px;display:none"></div><div class="note">Mesmos acessos do CRM. Vendedor vê apenas os próprios dados; sócios/diretor veem tudo.</div></div></div>
+<div class="ovlogin" id="ovLogin"><div class="loginbox"><div class="lock" style="margin-bottom:2px"><span class="lgo">osher</span><span class="lgc">Capital</span></div><div style="color:var(--mut);font-size:12px">Painel Comercial — Entrar</div><label style="font-size:12px;color:var(--mut);display:block;margin-top:16px">E-mail<input id="liEmail" type="email" placeholder="voce@oshersolucoes.com.br" onkeydown="if(event.key==='Enter')doLogin()"></label><label style="font-size:12px;color:var(--mut);display:block;margin-top:10px">Senha<input id="liPass" type="password" placeholder="••••••" onkeydown="if(event.key==='Enter')doLogin()"></label><button class="btn" style="width:100%;margin-top:16px;justify-content:center" onclick="doLogin()">Entrar</button><div id="liErr" style="color:var(--red);font-size:12px;margin-top:8px;display:none"></div><div class="note">Mesmos acessos do CRM. Vendedor vê apenas os próprios dados; sócios/diretor veem tudo.</div></div></div>
 
 <div class="panel" id="panel-geral">
   <div id="g_alertas"></div>
@@ -264,7 +268,7 @@ th.l,td.l{text-align:left}tbody tr:hover{background:var(--card2)}
 var ROWS=[], LEADS=[], INTERNAL={}, WINDOWS=[], CUR=null, gMetric='n', eMetric='escr';
 var icpSel='';var CURRENT=null; /* login/papéis vêm do Supabase (profiles); TEAM local removido na auditoria 2026-07-03 */
 var state={gran:'M',spec:'',tipo:'all',sel:0};
-var C={ac:'#5b8cff',ac2:'#34d399',warn:'#fbbf24',red:'#f87171',vio:'#a78bfa'};
+var C={ac:'#b08d52',ac2:'#34d399',warn:'#fbbf24',red:'#f87171',vio:'#a78bfa'};
 var MES=['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
 function el(id){return document.getElementById(id);}
 function esc(s){return String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
