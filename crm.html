@@ -280,6 +280,7 @@ label.fl{display:flex;flex-direction:column;gap:5px;font-size:12px;color:var(--m
     <span class="pill" id="filaStat"></span>
   </div>
   <div class="grid kpis" id="filaKpis" style="margin-bottom:14px"></div>
+  <div class="card" id="filaDist" style="display:none;margin-bottom:14px"></div>
   <div class="card" style="padding:8px 8px 0">
     <table id="tFila"><thead><tr>
       <th class="l">Cliente</th><th class="l">Recebido por</th><th class="l">Origem / Campanha</th><th class="l">Chegou</th><th class="l">Etapa</th><th class="l">Ação</th>
@@ -711,6 +712,11 @@ async function cloudPullDeals(){try{var B=SB_URL+'/rest/v1/';if(!_getTok())retur
 /* ===== CONTRATOS (carteira real p/ aniversariantes) — leitura, em memória, sem persistir PII ===== */
 var CONTR=[];
 async function cloudPullContratos(){try{var B=SB_URL+'/rest/v1/';if(!_getTok())return false;var r=await authFetch(B+'contratos?select=cliente,nascimento,vendedor,cidade&limit=5000',{});if(!r.ok)return false;var pg=await r.json();if(!Array.isArray(pg))return false;CONTR=pg;return true;}catch(e){console.warn('cloudPullContratos falhou',e);}return false;}
+/* ===== DISTRIBUIÇÃO DE LEADS: quem está ativo/pausado no rodízio ===== */
+var LEAD_PAUSADOS=[];
+async function cloudPullRouting(){try{if(!canSeeAll()||!_getTok())return false;var r=await authFetch(SB_URL+'/rest/v1/lead_routing?id=eq.1&select=pausados',{});if(!r.ok)return false;var j=await r.json();if(Array.isArray(j)&&j[0]&&Array.isArray(j[0].pausados))LEAD_PAUSADOS=j[0].pausados;return true;}catch(e){console.warn('routing pull falhou',e);}return false;}
+async function toggleFilaVend(nome){if(!canSeeAll())return;var set=LEAD_PAUSADOS.slice();var i=set.indexOf(nome);if(i>=0)set.splice(i,1);else set.push(nome);try{var r=await authFetch(SB_URL+'/rest/v1/lead_routing?id=eq.1',{method:'PATCH',headers:{'Content-Type':'application/json',Prefer:'return=minimal'},body:JSON.stringify({pausados:set})});if(!r.ok){alert('Não foi possível salvar a alteração. Tente novamente.');return;}LEAD_PAUSADOS=set;renderFila();}catch(e){alert('Erro ao salvar: '+e.message);}}
+function renderDistPanel(){var box=el('filaDist');if(!box)return;if(!canSeeAll()){box.style.display='none';return;}var internos=team().filter(function(p){return p.papel==='interno';}).map(function(p){return p.nome;});if(!internos.length){box.style.display='none';return;}box.style.display='';var ativos=internos.filter(function(n){return LEAD_PAUSADOS.indexOf(n)<0;}).length;var chips=internos.map(function(n){var pausado=LEAD_PAUSADOS.indexOf(n)>=0;var cor=pausado?'var(--mut)':'var(--ac2)';return '<button class="btn sm" onclick="toggleFilaVend(\''+n.replace(/'/g,"\\'")+'\')" title="'+(pausado?'Clique para voltar a receber leads':'Clique para pausar o recebimento de leads')+'" style="border-color:'+cor+';color:'+cor+'"><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:'+cor+';margin-right:6px;vertical-align:middle"></span>'+esc(n)+' · '+(pausado?'Pausado':'Recebendo')+'</button>';}).join(' ');box.innerHTML='<h3><span class="dot" style="background:var(--ac)"></span>Distribuição automática de leads ('+ativos+'/'+internos.length+' ativos)</h3><div class="h3sub">Leads de tráfego são distribuídos por rodízio entre os vendedores ativos. Toque para pausar ou retomar — não afeta leads já recebidos.</div><div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:10px">'+chips+'</div>'+(ativos===0?'<div class="note" style="color:var(--red);margin-top:10px">⚠ Todos pausados — novos leads de tráfego ficarão sem responsável até reativar alguém.</div>':'');}
 var _cpT=null;function cloudPush(){clearTimeout(_cpT);_cpT=setTimeout(_cloudPushNow,800);}
 function syncWarn(on,msg){var b=document.getElementById('syncWarn');if(!b){b=document.createElement('div');b.id='syncWarn';b.style.cssText='position:fixed;bottom:14px;left:50%;transform:translateX(-50%);z-index:9999;max-width:92vw;background:var(--card);color:var(--warn);border:1px solid var(--warn);border-radius:10px;padding:8px 14px;font-size:12px;box-shadow:var(--shadow);display:none';document.body.appendChild(b);}b.textContent=msg||'';b.style.display=on?'block':'none';}
 async function _cloudPushNow(){if(!_getTok()){if(ME)syncWarn(true,'Sincronização pendente: saia e entre novamente para enviar suas alterações ao servidor. Por enquanto elas estão salvas só neste navegador.');return;}try{var BASE=SB_URL+'/rest/v1/';var H={'Content-Type':'application/json','Prefer':'resolution=merge-duplicates,return=minimal'};var rows=DB.deals.map(function(d){return {id:d.id,cliente:d.cliente||'',vendedor:d.vendedor||'',origem:d.origem||'',bem:d.bem||'',linha:d.linha||'',valor:+d.valor||0,estagio:d.estagio||'',prob:+d.prob||0,criado_em:d.criadoEm||d.primeiroContatoEm||'',payload:d,atualizado_em:new Date().toISOString()};});var okAll=true;for(var i=0;i<rows.length;i+=200){var resp=await authFetch(BASE+'deals',{method:'POST',headers:H,body:JSON.stringify(rows.slice(i,i+200))});if(!resp.ok)okAll=false;}if(okAll)syncWarn(false);else syncWarn(true,'Aviso: a sincronização falhou — suas alterações estão salvas só neste navegador. Tente novamente em instantes.');}catch(e){console.warn('cloudPush falhou',e);syncWarn(true,'Aviso: a sincronização falhou — suas alterações estão salvas só neste navegador. Verifique a conexão.');}}
@@ -771,7 +777,7 @@ async function doLogin(){
   _saveTok(j);
  }catch(e){err.textContent='Erro ao entrar: '+e.message;err.style.display='block';return;}
  err.style.display='none';ME=m;try{localStorage.setItem(MEKEY,m.email);}catch(e){}
- el('ovLogin').classList.remove('on');el('app').classList.remove('hidden');applyRole();renderAll();await cloudPullDeals();save();renderAll();cloudPullContratos().then(function(ok){if(ok)renderInicio();});
+ el('ovLogin').classList.remove('on');el('app').classList.remove('hidden');applyRole();renderAll();await cloudPullDeals();save();renderAll();cloudPullContratos().then(function(ok){if(ok)renderInicio();});cloudPullRouting().then(function(ok){if(ok)renderFila();});
 }
 function logout(){ME=null;window.__crmtok=null;try{clearTimeout(_refT);}catch(e){}try{localStorage.removeItem(MEKEY);}catch(e){}try{localStorage.removeItem('osher_crm_tok');}catch(e){}try{localStorage.removeItem('osher_crm_rtok');}catch(e){}try{localStorage.removeItem('osher_crm_texp');}catch(e){}el('liPass').value='';el('app').classList.add('hidden');el('ovLogin').classList.add('on');}
 function resolveMe(){try{var e=localStorage.getItem(MEKEY);if(e){var m=memberByEmail(e);if(m&&m.papel!=='externo'){ME=m;return true;}}}catch(e){}return false;}
@@ -940,6 +946,7 @@ function isInbound(d){return d.inbound===true||/tr[aá]fego/i.test(d.origem||'')
 function reatribuirLead(id,v){if(!v||!canSeeAll())return;var d=DB.deals.find(function(x){return x.id===id;});if(!d)return;d.vendedor=v;d.atualizadoEm=nowISO();save();renderAll();}
 function renderFila(){
  if(!el('tFila'))return;
+ renderDistPanel();
  var fv=el('filaVend')?el('filaVend').value:'';var fm=el('filaMes')?el('filaMes').value:'';var fs=(el('filaSearch')?el('filaSearch').value:'').toLowerCase();
  var base=scope(DB.deals).filter(isInbound);
  var rows=base.filter(function(d){if(fv&&d.vendedor!==fv)return false;var when=d.recebidoEm||d.criadoEm||'';if(fm&&String(when).slice(0,7)!==fm)return false;if(fs){var hay=((d.cliente||'')+' '+(d.telefone||'')+' '+(d.campanha||'')+' '+(d.origem||'')).toLowerCase();if(hay.indexOf(fs)<0)return false;}return true;});
@@ -1312,7 +1319,7 @@ ensureCfg();
 fillSelects();
 initMasks();
 initTheme();
-if(resolveMe()){el('ovLogin').classList.remove('on');el('app').classList.remove('hidden');applyRole();renderAll();try{_scheduleRefresh(+localStorage.getItem('osher_crm_texp')||0);}catch(e){}cloudPullDeals().then(function(ok){if(ok){save();renderAll();}});cloudPullContratos().then(function(ok){if(ok)renderInicio();});}
+if(resolveMe()){el('ovLogin').classList.remove('on');el('app').classList.remove('hidden');applyRole();renderAll();try{_scheduleRefresh(+localStorage.getItem('osher_crm_texp')||0);}catch(e){}cloudPullDeals().then(function(ok){if(ok){save();renderAll();}});cloudPullContratos().then(function(ok){if(ok)renderInicio();});cloudPullRouting().then(function(ok){if(ok)renderFila();});}
 else{el('ovLogin').classList.add('on');}
 </script>
 </body>
