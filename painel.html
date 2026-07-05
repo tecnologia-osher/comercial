@@ -4,14 +4,14 @@
 <meta charset="UTF-8"><meta http-equiv="Cache-Control" content="no-store">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Painel Comercial — Osher Capital</title>
-<!-- painel v9 -->
+<!-- painel v10 · idv 2026-07-04 -->
 <!-- auditoria 2026-07-03 -->
 <base target="_top">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300..800&display=swap" rel="stylesheet">
 <style>
-:root{--bg:#07203a;--card:#0e2f52;--card2:#173f68;--txt:#f1f2f2;--mut:#9fb2c8;--ac:#c2b083;--on-ac:#0b2c51;--ac2:#34d399;--warn:#e6a94b;--red:#ec6a6a;--vio:#7b83e0;--bd:#22496f;--gold:#a89e86;--shadow:0 1px 3px rgba(0,0,0,.35);--topbar:rgba(7,32,58,.9);}
-[data-theme="light"]{--bg:#f1f2f2;--card:#ffffff;--card2:#e7eaee;--txt:#0b2c51;--mut:#5b6b83;--ac:#8a6f3e;--on-ac:#ffffff;--ac2:#1e9b6b;--warn:#b8790f;--red:#d64545;--vio:#5b63c9;--bd:#d7dde5;--gold:#8a6f3e;--shadow:0 1px 3px rgba(11,44,81,.10);--topbar:rgba(241,242,242,.9);}
+:root{--bg:#081d36;--card:#0e2743;--card2:#16375a;--txt:#f1f2f2;--mut:#9fb2c8;--ac:#a89e86;--on-ac:#0b2c51;--ac2:#34d399;--warn:#e6a94b;--red:#ec6a6a;--vio:#7b83e0;--bd:#22496f;--gold:#c2b89e;--goldbd:#a89e86;--shadow:0 1px 3px rgba(0,0,0,.35);--topbar:rgba(8,29,54,.9);}
+[data-theme="light"]{--bg:#f1f2f2;--card:#ffffff;--card2:#e7eaee;--txt:#0b2c51;--mut:#5b6b83;--ac:#0b2c51;--on-ac:#f1f2f2;--ac2:#1e9b6b;--warn:#b8790f;--red:#d64545;--vio:#5b63c9;--bd:#d7dde5;--gold:#8a6f3e;--goldbd:#a89e86;--shadow:0 1px 3px rgba(11,44,81,.10);--topbar:rgba(241,242,242,.9);}
 *{box-sizing:border-box;margin:0;padding:0}
 body{background:var(--bg);color:var(--txt);font-family:'Outfit',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;line-height:1.5;-webkit-font-smoothing:antialiased}
 .tile,.tabs button,.seg button,.btn{transition:background .15s ease,border-color .15s ease,color .15s ease,filter .15s ease}
@@ -25,6 +25,7 @@ input:focus,select:focus,textarea:focus{outline:none;border-color:var(--ac)}
 .lock .lgc{font-weight:600;font-size:11px;letter-spacing:3px;color:var(--gold);text-transform:uppercase}
 .topbar h1 .hsep{font-size:15px;font-weight:600;color:var(--mut);letter-spacing:0}
 .topbar .sub{color:var(--mut);font-size:12.5px;margin-top:2px}
+.slogan{color:var(--gold);font-size:11px;font-style:italic;letter-spacing:.3px;margin-top:2px}
 .tabs{display:flex;gap:4px;margin-top:14px;flex-wrap:wrap}
 .tabs button{background:none;border:none;border-bottom:2px solid transparent;color:var(--mut);padding:10px 16px;font-size:14px;cursor:pointer;font-weight:500}
 .tabs button:hover{color:var(--txt)}
@@ -81,7 +82,7 @@ th.l,td.l{text-align:left}tbody tr:hover{background:var(--card2)}
 .vitem{padding:8px 11px;border-radius:9px;cursor:pointer;margin-bottom:2px;display:flex;justify-content:space-between;align-items:center;gap:8px}
 .vitem:hover{background:var(--card2)}.vitem.on{background:var(--ac);color:var(--on-ac)}
 .vitem .vn{font-size:12.5px;font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.vitem .vr{font-size:11px;color:var(--mut);flex-shrink:0}.vitem.on .vr{color:#dbe4ff}
+.vitem .vr{font-size:11px;color:var(--mut);flex-shrink:0}.vitem.on .vr{color:var(--on-ac);opacity:.8}
 .vitem .ico{font-size:10px;margin-right:4px}
 .oo-main{flex:1;min-width:0}
 .pname{font-size:22px;font-weight:700}
@@ -115,10 +116,10 @@ th.l,td.l{text-align:left}tbody tr:hover{background:var(--card2)}
 .tlegend span{display:inline-flex;align-items:center;gap:6px}
 .tlegend i{width:11px;height:11px;border-radius:3px;display:inline-block}
 .kpi{position:relative;overflow:hidden;transition:transform .15s ease,border-color .15s ease,box-shadow .15s ease}
-.kpi:hover{transform:translateY(-2px);border-color:var(--ac);box-shadow:var(--shadow)}
+.kpi:hover{transform:translateY(-2px);border-color:var(--goldbd);box-shadow:var(--shadow)}
 .kpis4{grid-template-columns:repeat(4,1fr);gap:16px}
 .kpis4 .kpi{border-radius:16px;padding:18px 18px 16px;min-height:104px;display:flex;flex-direction:column;justify-content:center;background:var(--card)}
-.kpis4 .kpi::before{content:"";position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--ac),var(--vio));opacity:.85}
+.kpis4 .kpi::before{content:"";position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--goldbd),var(--ac));opacity:.85}
 .kpis4 .kpi .lbl{font-size:11px}.kpis4 .kpi .val{font-size:26px;letter-spacing:-.5px;margin-top:8px}.kpis4 .kpi .sub{margin-top:5px}
 @media(max-width:980px){.kpis4{grid-template-columns:repeat(2,1fr)}}
 @media(max-width:520px){.kpis4{grid-template-columns:1fr}}
@@ -134,10 +135,10 @@ th.l,td.l{text-align:left}tbody tr:hover{background:var(--card2)}
 .seg button:hover:not(.on){color:var(--txt);background:rgba(255,255,255,.03)}
 .tiles{display:flex;flex-wrap:wrap;gap:8px;flex:1}
 .tile{background:var(--card2);border:1px solid var(--bd);border-radius:10px;padding:9px 15px;font-size:13px;cursor:pointer;color:var(--txt);min-width:64px;text-align:center;transition:transform .12s,border-color .12s,background .12s}
-.tile:hover{border-color:var(--ac);transform:translateY(-1px)}
-.tile.on{background:linear-gradient(180deg,#5b8cff,#4a7ae8);color:#fff;border-color:var(--ac);font-weight:600;box-shadow:0 3px 12px rgba(91,140,255,.3)}
+.tile:hover{border-color:var(--goldbd);transform:translateY(-1px)}
+.tile.on{background:var(--ac);color:var(--on-ac);border-color:var(--ac);font-weight:600;box-shadow:var(--shadow)}
 .tile.macro{border-style:dashed;color:var(--mut);font-weight:600}
-.tile.macro.on{color:#fff;border-style:solid}
+.tile.macro.on{color:var(--on-ac);border-style:solid}
 .form-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;max-width:820px}
 .fld{display:flex;flex-direction:column;gap:5px}.fld.full{grid-column:1/-1}
 .fld label{font-size:12px;color:var(--mut)}
@@ -159,6 +160,7 @@ th.l,td.l{text-align:left}tbody tr:hover{background:var(--card2)}
 <body>
 <div class="topbar">
   <h1><span class="lock"><span class="lgo">osher</span><span class="lgc">Capital</span></span><span class="hsep">Painel Comercial</span></h1>
+  <div class="slogan">Investir com segurança, conquistar com muita inteligência.</div>
   <div class="sub" id="subt">Carregando dados…</div>
   <div class="controls">
     <div class="crow">
@@ -191,7 +193,7 @@ th.l,td.l{text-align:left}tbody tr:hover{background:var(--card2)}
 </div>
 
 <div id="loading" class="loading">Carregando…</div>
-<div class="ovlogin" id="ovLogin"><div class="loginbox"><div class="lock" style="margin-bottom:2px"><span class="lgo">osher</span><span class="lgc">Capital</span></div><div style="color:var(--mut);font-size:12px">Painel Comercial — Entrar</div><label style="font-size:12px;color:var(--mut);display:block;margin-top:16px">E-mail<input id="liEmail" type="email" placeholder="voce@oshersolucoes.com.br" onkeydown="if(event.key==='Enter')doLogin()"></label><label style="font-size:12px;color:var(--mut);display:block;margin-top:10px">Senha<input id="liPass" type="password" placeholder="••••••" onkeydown="if(event.key==='Enter')doLogin()"></label><button class="btn" style="width:100%;margin-top:16px;justify-content:center" onclick="doLogin()">Entrar</button><div id="liErr" style="color:var(--red);font-size:12px;margin-top:8px;display:none"></div><div class="note">Mesmos acessos do CRM. Vendedor vê apenas os próprios dados; sócios/diretor veem tudo.</div></div></div>
+<div class="ovlogin" id="ovLogin"><div class="loginbox"><div class="lock" style="margin-bottom:2px"><span class="lgo">osher</span><span class="lgc">Capital</span></div><div style="color:var(--mut);font-size:12px">Painel Comercial — Entrar</div><div class="slogan">Investir com segurança, conquistar com muita inteligência.</div><label style="font-size:12px;color:var(--mut);display:block;margin-top:16px">E-mail<input id="liEmail" type="email" placeholder="voce@oshersolucoes.com.br" onkeydown="if(event.key==='Enter')doLogin()"></label><label style="font-size:12px;color:var(--mut);display:block;margin-top:10px">Senha<input id="liPass" type="password" placeholder="••••••" onkeydown="if(event.key==='Enter')doLogin()"></label><button class="btn" style="width:100%;margin-top:16px;justify-content:center" onclick="doLogin()">Entrar</button><div id="liErr" style="color:var(--red);font-size:12px;margin-top:8px;display:none"></div><div class="note">Mesmos acessos do CRM. Vendedor vê apenas os próprios dados; sócios/diretor veem tudo.</div></div></div>
 
 <div class="panel" id="panel-geral">
   <div id="g_alertas"></div>
@@ -268,7 +270,7 @@ th.l,td.l{text-align:left}tbody tr:hover{background:var(--card2)}
 var ROWS=[], LEADS=[], INTERNAL={}, WINDOWS=[], CUR=null, gMetric='n', eMetric='escr';
 var icpSel='';var CURRENT=null; /* login/papéis vêm do Supabase (profiles); TEAM local removido na auditoria 2026-07-03 */
 var state={gran:'M',spec:'',tipo:'all',sel:0};
-var C={ac:'#b08d52',ac2:'#34d399',warn:'#fbbf24',red:'#f87171',vio:'#a78bfa'};
+var C={ac:'#5b8cff',ac2:'#34d399',warn:'#fbbf24',red:'#f87171',vio:'#a78bfa'};
 var MES=['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
 function el(id){return document.getElementById(id);}
 function esc(s){return String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}

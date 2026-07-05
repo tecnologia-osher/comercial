@@ -4,14 +4,14 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>OSHER CAPITAL — CRM Comercial</title>
-<!-- crm v8 · auditoria 2026-07-03 -->
+<!-- crm v9 · idv 2026-07-04 -->
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300..800&display=swap" rel="stylesheet">
 <style>
-:root{--bg:#07203a;--card:#0e2f52;--card2:#173f68;--txt:#f1f2f2;--mut:#9fb2c8;--ac:#c2b083;--on-ac:#0b2c51;--ac2:#34d399;--warn:#e6a94b;--red:#ec6a6a;--vio:#7b83e0;--bd:#22496f;--gold:#a89e86;--shadow:0 1px 3px rgba(0,0,0,.35);}
-[data-theme="light"]{--bg:#f1f2f2;--card:#ffffff;--card2:#e7eaee;--txt:#0b2c51;--mut:#5b6b83;--ac:#8a6f3e;--on-ac:#ffffff;--ac2:#1e9b6b;--warn:#b8790f;--red:#d64545;--vio:#5b63c9;--bd:#d7dde5;--gold:#8a6f3e;--shadow:0 1px 3px rgba(11,44,81,.10);}
+:root{--bg:#081d36;--card:#0e2743;--card2:#16375c;--txt:#f1f2f2;--mut:#9fb2c8;--ac:#c2b89e;--on-ac:#0b2c51;--pri:#c2b89e;--on-pri:#0b2c51;--acb:#a89e86;--ac2:#34d399;--warn:#e6a94b;--red:#ec6a6a;--vio:#7b83e0;--bd:#1e3d61;--gold:#a89e86;--shadow:0 1px 3px rgba(0,0,0,.35);}
+[data-theme="light"]{--bg:#f1f2f2;--card:#ffffff;--card2:#e7eaee;--txt:#0b2c51;--mut:#5b6b83;--ac:#8a6f3e;--on-ac:#ffffff;--pri:#0b2c51;--on-pri:#f1f2f2;--acb:#a89e86;--ac2:#1e9b6b;--warn:#b8790f;--red:#d64545;--vio:#5b63c9;--bd:#d7dde5;--gold:#8a6f3e;--shadow:0 1px 3px rgba(11,44,81,.10);}
 *{box-sizing:border-box}
-body{background:var(--bg);color:var(--txt);font-family:'Outfit',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;margin:0;line-height:1.5;-webkit-font-smoothing:antialiased}
+body{background:var(--bg);color:var(--txt);font-family:'Outfit','Inter',system-ui,-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;margin:0;line-height:1.5;-webkit-font-smoothing:antialiased}
 .brand .b1{color:var(--gold)}
 .brand .lock{display:flex;align-items:baseline;gap:6px;line-height:1}
 .brand .lgo{font-weight:800;font-size:23px;letter-spacing:-1.2px;color:var(--txt)}
@@ -30,11 +30,11 @@ header{display:flex;align-items:center;gap:14px;flex-wrap:wrap;padding:18px 0 14
 nav{display:flex;gap:4px;flex-wrap:wrap;margin-left:6px}
 nav button{background:transparent;border:1px solid transparent;color:var(--mut);padding:8px 12px;border-radius:9px;font-size:13px;font-weight:600;cursor:pointer}
 nav button:hover{background:var(--card2);color:var(--txt)}
-nav button.on{background:var(--ac);color:var(--on-ac)}
+nav button.on{background:var(--pri);color:var(--on-pri)}
 .actions{margin-left:auto;display:flex;gap:8px;flex-wrap:wrap;align-items:center}
 .btn{background:var(--card2);border:1px solid var(--bd);color:var(--txt);padding:8px 14px;border-radius:9px;font-size:13px;font-weight:600;cursor:pointer;display:inline-flex;align-items:center;gap:6px;text-decoration:none}
-.btn:hover{border-color:var(--ac)}
-.btn.primary{background:var(--ac);border-color:var(--ac);color:var(--on-ac)}
+.btn:hover{border-color:var(--acb)}
+.btn.primary{background:var(--pri);border-color:var(--pri);color:var(--on-pri)}
 .btn.primary:hover{filter:brightness(1.08)}
 .btn.danger:hover{border-color:var(--red);color:var(--red)}
 .btn.sm{padding:5px 10px;font-size:12px}
@@ -70,13 +70,13 @@ h2.sec{font-size:15px;font-weight:700;margin:22px 0 12px}
 .hbar .hval{text-align:right;color:var(--mut);font-variant-numeric:tabular-nums}
 .board{display:flex;gap:12px;overflow-x:auto;padding-bottom:14px}
 .col{background:var(--card);border:1px solid var(--bd);border-radius:14px;min-width:222px;width:222px;flex:0 0 auto;display:flex;flex-direction:column}
-.col.drag{border-color:var(--ac);box-shadow:0 0 0 1px var(--ac)}
+.col.drag{border-color:var(--acb);box-shadow:0 0 0 1px var(--acb)}
 .colhead{padding:11px 13px;border-bottom:1px solid var(--bd)}
 .colhead .ct{font-size:12px;font-weight:700;display:flex;align-items:center;gap:7px}
 .colhead .cs{font-size:11px;color:var(--mut);margin-top:3px;font-variant-numeric:tabular-nums}
 .collist{padding:10px;display:flex;flex-direction:column;gap:9px;min-height:60px;flex:1}
 .deal{background:var(--card2);border:1px solid var(--bd);border-radius:11px;padding:11px 12px;cursor:grab;font-size:13px}
-.deal:hover{border-color:var(--ac)}
+.deal:hover{border-color:var(--acb)}
 .deal.dragging{opacity:.45}
 .deal .dn{font-weight:700;display:flex;justify-content:space-between;gap:8px;align-items:flex-start}
 .deal .dv{color:var(--ac2);font-weight:700;font-size:13px;font-variant-numeric:tabular-nums}
@@ -114,7 +114,7 @@ label.fl{display:flex;flex-direction:column;gap:5px;font-size:12px;color:var(--m
 .pill{font-size:11px;padding:3px 9px;border-radius:20px;background:var(--card2);color:var(--mut);border:1px solid var(--bd)}
 .wapp,.callb{display:inline-flex;align-items:center;gap:5px;font-size:11px;font-weight:700;padding:4px 9px;border-radius:8px;text-decoration:none;cursor:pointer;border:1px solid transparent}
 .wapp{background:rgba(37,211,102,.16);color:#25d366}.wapp:hover{background:rgba(37,211,102,.28)}
-.callb{background:var(--card2);color:var(--mut);border-color:var(--bd)}.callb:hover{border-color:var(--ac);color:var(--txt)}
+.callb{background:var(--card2);color:var(--mut);border-color:var(--bd)}.callb:hover{border-color:var(--acb);color:var(--txt)}
 .wapp.off,.callb.off{opacity:.35;pointer-events:none}
 .contactbar{display:flex;gap:8px;align-items:center;background:var(--card2);border:1px solid var(--bd);border-radius:10px;padding:10px 12px;margin-bottom:14px;flex-wrap:wrap}
 .contactbar .ci{font-size:12px;color:var(--mut);margin-right:auto}
@@ -161,6 +161,7 @@ label.fl{display:flex;flex-direction:column;gap:5px;font-size:12px;color:var(--m
 <div class="ov" id="ovLogin">
   <div class="modal" style="width:420px">
     <div class="brand" style="margin-bottom:4px"><div class="lock"><span class="lgo">osher</span><span class="lgc">Capital</span></div><div class="b2">CRM Comercial</div></div>
+    <div style="font-size:12px;color:var(--mut);font-weight:300;letter-spacing:.2px;margin-top:6px">Investir com segurança, conquistar com muita inteligência.</div>
     <h3 style="margin-top:14px">Entrar</h3>
     <label class="fl">E-mail<input id="liEmail" type="email" placeholder="voce@oshersolucoes.com.br" onkeydown="if(event.key==='Enter')doLogin()"></label>
     <label class="fl" style="margin-top:12px">Senha<input id="liPass" type="password" placeholder="••••••" onkeydown="if(event.key==='Enter')doLogin()"></label>
@@ -200,7 +201,7 @@ label.fl{display:flex;flex-direction:column;gap:5px;font-size:12px;color:var(--m
     <div class="pgtitle" id="pgTitle">Início</div>
     <div class="actions">
       <button class="btn" id="themeBtn" onclick="toggleTheme()" title="Alternar tema claro/escuro" aria-label="Alternar tema" style="padding:8px 10px"></button>
-      <button class="btn" onclick="window.open('painel.html','_blank')" style="background:var(--ac);color:var(--on-ac);border-color:var(--ac)"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>Painel Comercial</button>
+      <button class="btn" onclick="window.open('painel.html','_blank')" style="background:var(--pri);color:var(--on-pri);border-color:var(--pri)"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>Painel Comercial</button>
       <button class="btn primary" onclick="openQuick()"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>Lead rápido</button>
       <button class="btn" id="btnConfig" data-admin="1" onclick="openConfig()">Config</button>
       <button class="btn" id="btnExport" data-see="1" onclick="exportJSON()">Exportar</button>
@@ -982,7 +983,7 @@ function renderClientes(){
 var QF={mine:false,hot:false,over:false,nonext:false,high:false,vivos:false,ligar:false,naoatend:false,retornar:false,reuniao:false};
 function toggleQF(k){QF[k]=!QF[k];syncQFUI();renderBoard();}
 function clearQF(){Object.keys(QF).forEach(function(k){QF[k]=false;});if(el('fSearch'))el('fSearch').value='';if(el('fBem'))el('fBem').value='';if(canSeeAll()&&el('fVend'))el('fVend').value='';syncQFUI();renderBoard();}
-function syncQFUI(){[].forEach.call(document.querySelectorAll('#qfilters .qf'),function(b){var k=b.dataset.qf;if(!k)return;if(QF[k]){b.style.background='var(--ac)';b.style.color='#fff';b.style.borderColor='var(--ac)';}else{b.style.background='';b.style.color='';b.style.borderColor='';}});}
+function syncQFUI(){[].forEach.call(document.querySelectorAll('#qfilters .qf'),function(b){var k=b.dataset.qf;if(!k)return;if(QF[k]){b.style.background='var(--pri)';b.style.color='var(--on-pri)';b.style.borderColor='var(--pri)';}else{b.style.background='';b.style.color='';b.style.borderColor='';}});}
 function higienizar(){var alvo=scope(DB.deals).filter(function(d){return isOpen(d)&&stageAge(d)>90;});if(!alvo.length){alert('Nenhum negócio parado há +90 dias. Funil limpo!');return;}if(!confirm('Marcar como PERDIDO '+alvo.length+' negócio(s) parados há mais de 90 dias sem evolução?\n\nIsso limpa o funil e os relatórios. Dá para reabrir individualmente depois.'))return;var now=nowISO();alvo.forEach(function(d){d.estagio='Perdido';d.prob=0;if(!d.perdaCat)d.perdaCat='Inativo (higienização +90d)';d.ganhoEm=null;d.stageSince=d.stageSince||d.criadoEm;d.atualizadoEm=now;});save();renderAll();alert(alvo.length+' negócios marcados como perdidos (Inativo +90d). Funil atualizado.');}
 function filtered(){var L=el('pLinha').value||LINHAS[0];var fv=el('fVend').value,fb=el('fBem').value,fs=(el('fSearch').value||'').toLowerCase();var fm=(el('fMes')&&el('fMes').value)||'';return scope(DB.deals).filter(function(d){if(d.linha!==L)return false;if(fm&&String(d.criadoEm||'').slice(0,7)!==fm)return false;if(QF.vivos&&isOpen(d)&&stageAge(d)>90&&!((d.valor||0)>0)&&!(d.dataProximoPasso&&d.dataProximoPasso>=todayStr()))return false;if(canSeeAll()&&fv&&d.vendedor!==fv)return false;if(fb&&d.bem!==fb)return false;if(fs&&((d.cliente||'').toLowerCase().indexOf(fs)<0)&&((d.telefone||'').toLowerCase().indexOf(fs)<0))return false;if(QF.mine&&ME&&d.vendedor!==ME.nome)return false;if(QF.hot&&!(isOpen(d)&&scoreLead(d)>=70))return false;if(QF.over&&!overdue(d))return false;if(QF.nonext&&d.dataProximoPasso)return false;if(QF.ligar&&d.proximoPasso!=='Ligar de novo')return false;if(QF.naoatend&&d.statusLigacao!=='Ligação não atendida')return false;if(QF.retornar&&d.statusLigacao!=='Retornar depois')return false;if(QF.reuniao&&d.statusLigacao!=='Reunião agendada')return false;if(QF.high&&!((d.valor||0)>=700000))return false;return true;});}
 function nextOpenStage(d){var o=openStages(d.linha);var i=o.indexOf(d.estagio);return (i>=0&&i<o.length-1)?o[i+1]:null;}
