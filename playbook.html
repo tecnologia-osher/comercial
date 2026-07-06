@@ -1,0 +1,2043 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Playbook Comercial · Osher Capital</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ink:#0b2c51;
+  --graphite:#2b4763;
+  --soft:#5a6c7f;
+  --paper:#f1f2f2;
+  --card:#ffffff;
+  --line:#dfdcd3;
+  --line-strong:#cdc8bb;
+  --gold:#a89e86;
+  --gold-text:#c2b89e;
+  --gold-soft:#ebe8df;
+  --shadow:0 1px 2px rgba(11,44,81,.04),0 8px 24px rgba(11,44,81,.06);
+  --shadow-lg:0 12px 40px rgba(11,44,81,.12);
+  --radius:16px;
+  --radius-sm:10px;
+  --maxw:1180px;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  margin:0;font-family:'Outfit',Inter,system-ui,sans-serif;color:var(--ink);
+  background:var(--paper);line-height:1.6;-webkit-font-smoothing:antialiased;
+}
+h1,h2,h3,h4,.wordmark{font-family:'Outfit',Inter,sans-serif}
+
+/* ---------- WORDMARK ---------- */
+.wordmark{display:inline-flex;align-items:baseline;gap:.42em;line-height:1;letter-spacing:-.01em}
+.wordmark .wm-osher{font-weight:700;font-size:1.55rem;color:var(--ink);letter-spacing:.01em}
+.wordmark .wm-cap{font-family:'Outfit',Inter,sans-serif;font-weight:600;font-size:.72rem;letter-spacing:.34em;color:var(--ink);text-transform:uppercase}
+.wordmark.on-dark .wm-osher,.wordmark.on-dark .wm-cap{color:#fff}
+
+/* ---------- HEADER ---------- */
+header.topbar{
+  position:sticky;top:0;z-index:50;background:rgba(241,242,242,.88);
+  backdrop-filter:blur(12px);border-bottom:1px solid var(--line);
+}
+.topbar-inner{max-width:var(--maxw);margin:0 auto;padding:14px 24px;display:flex;align-items:center;gap:20px;flex-wrap:wrap}
+.brand-block{display:flex;flex-direction:column;gap:2px}
+.brand-block .kicker{font-size:.62rem;letter-spacing:.28em;text-transform:uppercase;color:var(--ink);font-weight:600}
+.topbar-spacer{flex:1}
+.mode-toggle{display:inline-flex;background:#e7e5dc;border:1px solid var(--line-strong);border-radius:999px;padding:3px}
+.mode-toggle button{
+  border:0;background:transparent;font-family:'Outfit';font-size:.78rem;font-weight:600;color:var(--soft);
+  padding:7px 15px;border-radius:999px;cursor:pointer;transition:.2s;white-space:nowrap
+}
+.mode-toggle button.active{background:var(--ink);color:#fff;box-shadow:var(--shadow)}
+
+/* ---------- MAIN TABS ---------- */
+nav.tabs{max-width:var(--maxw);margin:0 auto;padding:0 24px;display:flex;gap:6px;flex-wrap:wrap}
+nav.tabs button{
+  border:0;background:transparent;font-family:'Outfit';font-weight:600;font-size:.95rem;color:var(--soft);
+  padding:16px 6px;margin-right:18px;cursor:pointer;position:relative;transition:.2s
+}
+nav.tabs button .num{
+  display:inline-flex;align-items:center;justify-content:center;width:22px;height:22px;border-radius:50%;
+  background:#e7e5dc;color:var(--soft);font-size:.72rem;font-weight:700;margin-right:8px;transition:.2s
+}
+nav.tabs button.active{color:var(--ink)}
+nav.tabs button.active .num{background:var(--ink);color:#fff}
+nav.tabs button.active::after{content:"";position:absolute;left:0;right:18px;bottom:-1px;height:2px;background:var(--gold)}
+
+/* ---------- LAYOUT ---------- */
+.page{max-width:var(--maxw);margin:0 auto;padding:34px 24px 90px}
+.tabpane{display:none;animation:fade .35s ease}
+.tabpane.active{display:block}
+@keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+
+.layout{display:grid;grid-template-columns:238px 1fr;gap:38px;align-items:start}
+aside.rail{position:sticky;top:118px}
+.rail h4{font-size:.62rem;letter-spacing:.22em;text-transform:uppercase;color:var(--soft);margin:0 0 12px;font-family:'Outfit';font-weight:700}
+.rail a{
+  display:flex;gap:11px;align-items:flex-start;text-decoration:none;color:var(--soft);
+  padding:9px 12px;border-radius:var(--radius-sm);font-size:.86rem;font-weight:500;transition:.18s;line-height:1.35
+}
+.rail a .dot{flex:none;width:20px;height:20px;border-radius:50%;border:1.5px solid var(--line-strong);
+  display:flex;align-items:center;justify-content:center;font-size:.66rem;font-weight:700;color:var(--soft);margin-top:1px;transition:.18s}
+.rail a:hover{background:#e9e8e2;color:var(--ink)}
+.rail a.active{background:var(--ink);color:#fff}
+.rail a.active .dot{border-color:#fff;color:#fff}
+
+/* ---------- HERO / OVERVIEW ---------- */
+.hero{background:var(--ink);color:#fff;border-radius:22px;padding:46px 44px;margin-bottom:34px;position:relative;overflow:hidden}
+.hero::after{content:"";position:absolute;right:-60px;top:-60px;width:260px;height:260px;border-radius:50%;
+  background:radial-gradient(circle,rgba(168,158,134,.35),transparent 70%)}
+.hero .kicker{color:var(--gold-text);letter-spacing:.28em;text-transform:uppercase;font-size:.68rem;font-weight:600}
+.hero h1{font-size:2.5rem;margin:.35em 0 .3em;line-height:1.08;letter-spacing:-.02em}
+.hero p{max-width:640px;color:#c6d0dc;font-size:1.02rem;margin:0}
+.hero .meta{display:flex;gap:30px;margin-top:26px;flex-wrap:wrap}
+.hero .meta div{border-left:2px solid var(--gold);padding-left:14px}
+.hero .meta .n{font-family:'Outfit';font-weight:700;font-size:1.35rem}
+.hero .meta .l{font-size:.76rem;color:#9fb0c4}
+.hero .slogan{margin-top:26px;font-family:'Outfit',Inter,sans-serif;font-weight:300;font-size:.94rem;color:#c6d0dc;letter-spacing:.03em}
+
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:22px}
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+
+.panel{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:26px;box-shadow:var(--shadow)}
+.panel h3{margin:0 0 6px;font-size:1.2rem}
+.panel .lead{color:var(--soft);font-size:.9rem;margin:0 0 18px}
+
+.coin-row{display:flex;gap:14px;align-items:flex-start;padding:14px 0;border-top:1px solid var(--line)}
+.coin-row:first-of-type{border-top:0}
+.coin-badge{flex:none;width:38px;height:38px;border-radius:11px;background:var(--gold-soft);color:var(--ink);
+  font-family:'Outfit';font-weight:700;font-size:1.15rem;display:flex;align-items:center;justify-content:center}
+.coin-row .t{font-weight:700;font-size:.92rem}
+.coin-row .d{font-size:.84rem;color:var(--soft)}
+
+.spin-chip{display:flex;gap:10px;align-items:center;padding:11px 0;border-top:1px solid var(--line);font-size:.88rem}
+.spin-chip:first-of-type{border-top:0}
+.spin-chip b{font-family:'Outfit';color:var(--ink)}
+.spin-chip span{color:var(--soft)}
+.letter{flex:none;width:26px;height:26px;border-radius:8px;background:var(--ink);color:#fff;font-weight:700;font-size:.8rem;
+  display:flex;align-items:center;justify-content:center;font-family:'Outfit'}
+
+.howto{list-style:none;padding:0;margin:0;counter-reset:h}
+.howto li{counter-increment:h;position:relative;padding:10px 0 10px 40px;font-size:.9rem;color:var(--graphite);border-top:1px solid var(--line)}
+.howto li:first-child{border-top:0}
+.howto li::before{content:counter(h);position:absolute;left:0;top:9px;width:26px;height:26px;border-radius:50%;
+  background:var(--ink);color:#fff;font-weight:700;font-size:.78rem;display:flex;align-items:center;justify-content:center;font-family:'Outfit'}
+
+/* ---------- STEP CARDS ---------- */
+.step{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:30px 32px;margin-bottom:24px;box-shadow:var(--shadow);scroll-margin-top:130px}
+.step-head{display:flex;align-items:flex-start;gap:16px;margin-bottom:6px}
+.step-index{flex:none;width:44px;height:44px;border-radius:13px;background:var(--ink);color:#fff;
+  font-family:'Outfit';font-weight:700;font-size:1.3rem;display:flex;align-items:center;justify-content:center}
+.step-head h2{margin:0;font-size:1.45rem;letter-spacing:-.01em}
+.step-head .time{display:inline-block;margin-top:5px;font-size:.72rem;font-weight:600;color:var(--ink);
+  background:var(--gold-soft);padding:3px 10px;border-radius:999px;letter-spacing:.02em}
+.step-head .depth{display:inline-block;margin-top:5px;margin-left:6px;font-size:.72rem;font-weight:700;
+  padding:3px 10px;border-radius:999px;letter-spacing:.02em}
+.depth.dctx{background:var(--ink);color:#fff}
+.depth.dprof{background:#e7e5dc;color:var(--soft)}
+.step-goal{color:var(--soft);font-size:.95rem;margin:2px 0 22px}
+
+.block-label{display:flex;align-items:center;gap:9px;font-family:'Outfit';font-weight:700;font-size:.68rem;
+  letter-spacing:.18em;text-transform:uppercase;color:var(--soft);margin:22px 0 12px}
+.block-label .ic{width:22px;height:22px;border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:.8rem}
+.block-label.seller .ic{background:var(--ink);color:#fff}
+.block-label.gold .ic{background:var(--gold-soft);color:var(--ink)}
+
+.action{margin:0 0 14px}
+.action .a-title{font-weight:600;font-size:.92rem;margin-bottom:6px;display:flex;align-items:center;gap:8px}
+.action .a-title .tg{font-size:.66rem;font-weight:700;color:var(--ink);background:var(--gold-soft);padding:2px 8px;border-radius:6px;letter-spacing:.04em}
+.action .a-desc{font-size:.9rem;color:var(--graphite);margin:0 0 8px}
+
+.script{position:relative;background:#f4f3ef;border:1px solid var(--line);border-left:3px solid var(--gold);
+  border-radius:0 var(--radius-sm) var(--radius-sm) 0;padding:15px 46px 15px 18px;font-size:.96rem;color:var(--ink);margin:8px 0}
+.script .q{font-style:italic}
+.script .var{background:var(--gold-soft);color:#0b2c51;padding:0 5px;border-radius:4px;font-style:normal;font-weight:600;font-size:.9em}
+.copy-btn{position:absolute;top:10px;right:10px;border:1px solid var(--line-strong);background:#fff;border-radius:8px;
+  width:30px;height:30px;cursor:pointer;color:var(--soft);display:flex;align-items:center;justify-content:center;transition:.15s}
+.copy-btn:hover{color:var(--ink);border-color:var(--ink)}
+.copy-btn.ok{color:#2e7d4f;border-color:#2e7d4f}
+
+/* client perspective - guide only */
+.client-box{background:#efeeea;border:1px dashed var(--line-strong);border-radius:var(--radius-sm);padding:16px 20px;margin-top:18px}
+.client-box .cb-head{display:flex;align-items:center;gap:9px;font-family:'Outfit';font-weight:700;font-size:.92rem;margin-bottom:10px}
+.client-box .cb-head .av{width:26px;height:26px;border-radius:50%;background:var(--ink);color:#fff;display:flex;align-items:center;justify-content:center;font-size:.8rem}
+.client-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+.client-grid .cg{font-size:.85rem}
+.client-grid .cg .lab{font-size:.64rem;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--ink);margin-bottom:3px}
+.client-grid .cg .val{color:var(--graphite)}
+
+.tip{display:flex;gap:10px;background:#fff;border:1px solid var(--line);border-radius:var(--radius-sm);padding:12px 15px;margin-top:14px;font-size:.86rem;color:var(--graphite)}
+.tip .ti{flex:none;color:var(--ink);font-weight:700}
+
+/* ---------- OBJECTIONS ---------- */
+.obj{border:1px solid var(--line);border-radius:var(--radius-sm);margin-bottom:12px;overflow:hidden;background:var(--card)}
+.obj summary{list-style:none;cursor:pointer;padding:16px 20px;display:flex;align-items:center;gap:13px;font-weight:600;font-size:.98rem}
+.obj summary::-webkit-details-marker{display:none}
+.obj summary .qmark{flex:none;width:30px;height:30px;border-radius:8px;background:#ebe8df;color:var(--ink);font-family:'Outfit';font-weight:700;display:flex;align-items:center;justify-content:center}
+.obj summary .chev{margin-left:auto;color:var(--soft);transition:.2s}
+.obj[open] summary .chev{transform:rotate(180deg)}
+.obj .obj-body{padding:0 20px 20px 63px}
+.obj .obj-body .resp-label{font-size:.64rem;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:var(--ink);margin-bottom:6px}
+
+/* ---------- FUNDAMENTOS / EXPLICADO ---------- */
+.narr{position:relative;background:var(--ink);color:#fff;border-radius:var(--radius-sm);padding:18px 46px 18px 20px;margin:8px 0 18px;font-size:1rem;line-height:1.55}
+.narr::before{content:"🗣 Narração";position:absolute;top:-10px;left:16px;background:var(--gold);color:#0b2c51;font-family:'Outfit';font-weight:700;font-size:.6rem;letter-spacing:.14em;text-transform:uppercase;padding:3px 9px;border-radius:6px}
+.narr .var{background:rgba(168,158,134,.28);color:#e0dacb;padding:0 5px;border-radius:4px;font-weight:600}
+body.mode-present .narr{font-size:1.3rem;padding:26px 52px 26px 26px}
+.fgrid{display:grid;grid-template-columns:repeat(2,1fr);gap:18px;margin:6px 0}
+.fcard{background:#f4f3ef;border:1px solid var(--line);border-radius:var(--radius-sm);padding:18px 20px}
+.fcard .fico{width:40px;height:40px;border-radius:11px;background:var(--gold-soft);color:var(--ink);display:flex;align-items:center;justify-content:center;font-size:1.2rem;margin-bottom:10px}
+.fcard h4{margin:0 0 4px;font-size:1rem}
+.fcard p{margin:0;color:var(--graphite);font-size:.87rem}
+.flow .fstep{display:flex;gap:16px;padding:15px 0;border-top:1px solid var(--line)}
+.flow .fstep:first-child{border-top:0}
+.flow .fnum{flex:none;width:34px;height:34px;border-radius:10px;background:var(--ink);color:#fff;font-family:'Outfit';font-weight:700;display:flex;align-items:center;justify-content:center;margin-top:2px}
+.flow .fstep .ft{font-weight:600;font-size:.95rem;margin-bottom:2px}
+.flow .fstep .fd{font-size:.88rem;color:var(--graphite)}
+.cmp{width:100%;border-collapse:collapse;background:var(--card);border:1px solid var(--line);border-radius:var(--radius);overflow:hidden;font-size:.9rem;margin:6px 0}
+.cmp th,.cmp td{padding:14px 16px;text-align:left;border-bottom:1px solid var(--line);vertical-align:top}
+.cmp thead th{background:var(--ink);color:#fff;font-family:'Outfit';font-size:.92rem;font-weight:700}
+.cmp thead th.hi{background:#0e355c;color:var(--gold-text)}
+.cmp tbody tr:last-child td{border-bottom:0}
+.cmp td.feat{font-weight:600;color:var(--ink);width:24%}
+.cmp td.hi{background:var(--gold-soft)}
+.cmp .yes{color:#2e7d4f;font-weight:700}
+.cmp .no{color:#b5462f;font-weight:700}
+@media(max-width:860px){.fgrid{grid-template-columns:1fr}.cmp{font-size:.8rem}.cmp th,.cmp td{padding:10px}}
+
+/* ---------- ENHANCEMENTS (ESTRATÉGIA / USP / FOLLOW-UP / CASOS) ---------- */
+.osher-box{position:relative;background:linear-gradient(135deg,#0e355c,#123a66);color:#fff;border-radius:var(--radius-sm);padding:24px 24px 22px;margin:22px 0 8px;border-left:3px solid var(--gold)}
+.osher-box::before{content:"◆ A Inteligência Osher";position:absolute;top:-11px;left:16px;background:var(--gold);color:#0b2c51;font-family:'Outfit';font-weight:700;font-size:.6rem;letter-spacing:.14em;text-transform:uppercase;padding:3px 11px;border-radius:6px}
+.osher-box p{margin:6px 0 0;font-size:.98rem;color:#dfe3e8;line-height:1.55}
+.osher-box .var{background:rgba(168,158,134,.28);color:#e0dacb;padding:0 5px;border-radius:4px;font-weight:600}
+
+.strat{background:var(--card);border:1px solid var(--line);border-top:3px solid var(--gold);border-radius:var(--radius);padding:24px;box-shadow:var(--shadow)}
+.strat .stag{font-size:.62rem;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:var(--ink)}
+.strat h4{margin:6px 0 8px;font-size:1.14rem}
+.strat > p{margin:0 0 14px;font-size:.9rem;color:var(--graphite)}
+.strat .how{background:#f4f3ef;border-radius:10px;padding:13px 15px;font-size:.85rem;color:var(--ink);line-height:1.5}
+.strat .how b{color:#0b2c51}
+
+.redflags{background:#fbf1ee;border:1px solid #e8c9c0;border-left:3px solid #b5462f;border-radius:var(--radius-sm);padding:20px 24px;margin-top:6px}
+.redflags .rf-h{display:flex;align-items:center;gap:9px;font-family:'Outfit';font-weight:700;font-size:1.05rem;color:#9a3a26;margin-bottom:12px}
+.rf-list{list-style:none;margin:0;padding:0}
+.rf-list li{padding:9px 0 9px 26px;position:relative;font-size:.9rem;color:var(--graphite);border-top:1px solid #f0dcd5}
+.rf-list li:first-child{border-top:0}
+.rf-list li::before{content:"⚑";position:absolute;left:0;top:8px;color:#b5462f}
+
+.usp{display:flex;gap:14px;align-items:flex-start;padding:16px 0;border-top:1px solid var(--line)}
+.usp:first-of-type{border-top:0}
+.usp .un{flex:none;width:40px;height:40px;border-radius:11px;background:var(--ink);color:#fff;display:flex;align-items:center;justify-content:center;font-size:1.15rem}
+.usp .ut{font-weight:700;font-size:.96rem}
+.usp .ud{font-size:.86rem;color:var(--soft)}
+
+.wa{position:relative;border-left-color:#25a06a!important;background:#f2faf5!important;padding-top:22px}
+.wa::after{content:"WhatsApp";position:absolute;top:-9px;left:14px;background:#25a06a;color:#fff;font-size:.56rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;padding:2px 9px;border-radius:5px}
+.wa-when{font-size:.64rem;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:var(--ink);margin:20px 0 2px;display:flex;align-items:center;gap:8px}
+.wa-when .wd{background:var(--ink);color:#fff;padding:2px 9px;border-radius:6px;font-family:'Outfit'}
+
+.fill-banner{background:var(--gold-soft);border:1px dashed var(--gold);border-radius:var(--radius-sm);padding:14px 18px;font-size:.88rem;color:#0b2c51;margin-bottom:22px;display:flex;gap:10px}
+.casos-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+.caso{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:22px;box-shadow:var(--shadow);position:relative}
+.caso .cat{font-size:.62rem;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--ink)}
+.caso .cval{font-family:'Outfit';font-weight:700;font-size:1.5rem;margin:6px 0 2px}
+.caso .cdesc{font-size:.85rem;color:var(--graphite);margin-bottom:14px;min-height:38px}
+.caso .cstats{display:flex;gap:12px;border-top:1px solid var(--line);padding-top:12px}
+.caso .cstats div{flex:1}
+.caso .cstats .n{font-family:'Outfit';font-weight:700;font-size:1.05rem}
+.caso .cstats .l{font-size:.62rem;color:var(--soft);text-transform:uppercase;letter-spacing:.06em}
+.caso .exemplo{position:absolute;top:12px;right:12px;background:#ebe8df;color:#0b2c51;font-size:.56rem;font-weight:700;padding:3px 8px;border-radius:5px;letter-spacing:.06em}
+@media(max-width:860px){.casos-grid{grid-template-columns:1fr}}
+
+/* ---------- SLIDE DECK (APRESENTADOR) ---------- */
+.deck-launch{display:flex;align-items:center;gap:22px;background:var(--ink);color:#fff;border-radius:18px;padding:22px 26px;margin-bottom:26px;position:relative;overflow:hidden}
+.deck-launch::after{content:"";position:absolute;right:-40px;top:-40px;width:200px;height:200px;border-radius:50%;background:radial-gradient(circle,rgba(168,158,134,.4),transparent 70%)}
+.deck-launch .dl-txt{flex:1;position:relative;z-index:1}
+.deck-launch h3{margin:0 0 3px;font-size:1.14rem;color:#fff}
+.deck-launch p{margin:0;color:#b9c6d6;font-size:.88rem}
+.deck-launch button{position:relative;z-index:1;border:0;background:var(--gold);color:#0b2c51;font-family:'Outfit';font-weight:700;font-size:.95rem;padding:14px 26px;border-radius:999px;cursor:pointer;white-space:nowrap;transition:.2s;box-shadow:0 6px 22px rgba(168,158,134,.45)}
+.deck-launch button:hover{transform:translateY(-2px)}
+
+.deck{position:fixed;inset:0;z-index:2000;background:radial-gradient(120% 120% at 70% 8%,#10335a,#081d36 60%);display:none;color:#fff;overflow:hidden;cursor:pointer;user-select:none}
+.deck.open{display:block}
+.deck-slide{position:absolute;inset:0;display:none;flex-direction:column;align-items:center;justify-content:center;padding:8vh 8vw 12vh;text-align:center}
+.deck-slide.current{display:flex}
+.deck-brand{position:fixed;top:26px;left:36px;z-index:5}
+.deck-close{position:fixed;top:22px;right:28px;z-index:6;border:1px solid rgba(255,255,255,.25);background:rgba(255,255,255,.06);color:#fff;width:44px;height:44px;border-radius:50%;cursor:pointer;font-size:1rem;transition:.2s}
+.deck-close:hover{background:rgba(255,255,255,.16)}
+.deck-nav{position:fixed;bottom:26px;left:0;right:0;display:flex;align-items:center;justify-content:center;gap:20px;z-index:6}
+.deck-arrow{border:1px solid rgba(255,255,255,.25);background:rgba(255,255,255,.06);color:#fff;width:48px;height:48px;border-radius:50%;cursor:pointer;font-size:1.4rem;line-height:1;transition:.2s}
+.deck-arrow:hover{background:var(--gold);border-color:var(--gold);color:#0b2c51}
+.deck-dots{display:flex;gap:9px;align-items:center}
+.deck-dots i{width:9px;height:9px;border-radius:50%;background:rgba(255,255,255,.25);cursor:pointer;transition:.25s}
+.deck-dots i.on{background:var(--gold);width:24px;border-radius:5px}
+.deck-count{position:fixed;bottom:34px;right:36px;z-index:6;font-size:.82rem;color:rgba(255,255,255,.5);font-family:'Outfit';font-weight:600}
+.deck-kicker{color:var(--gold-text);letter-spacing:.3em;text-transform:uppercase;font-size:.8rem;font-weight:600;margin-bottom:14px}
+.deck-slide h2{font-family:'Outfit';font-weight:700;font-size:clamp(1.9rem,5vw,3.6rem);line-height:1.06;margin:0 0 18px;letter-spacing:-.02em}
+.deck-slide p.big{font-size:clamp(1rem,1.9vw,1.45rem);color:#c6d0dc;max-width:840px;margin:0 auto;line-height:1.5}
+.deck-slide .hl{color:var(--gold-text)}
+.deck-hint{margin-top:26px;color:rgba(255,255,255,.4);font-size:.85rem}
+.deck-slogan{margin:18px 0 0;font-family:'Outfit',Inter,sans-serif;font-weight:300;font-size:clamp(.9rem,1.5vw,1.08rem);color:var(--gold-text);letter-spacing:.04em}
+
+/* entrance */
+.deck-slide .an{opacity:0;transform:translateY(26px)}
+.deck-slide.current .an{animation:d-rise .7s cubic-bezier(.2,.7,.2,1) forwards}
+.deck-slide.current .an.d1{animation-delay:.05s}.deck-slide.current .an.d2{animation-delay:.22s}
+.deck-slide.current .an.d3{animation-delay:.4s}.deck-slide.current .an.d4{animation-delay:.58s}
+.deck-slide.current .an.d5{animation-delay:.76s}.deck-slide.current .an.d6{animation-delay:.94s}
+@keyframes d-rise{to{opacity:1;transform:none}}
+
+/* people ring */
+.ring{position:relative;width:300px;height:300px;margin:0 auto 22px}
+.ring .pot{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:90px;height:90px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#d8d1c0,#a89e86);display:flex;align-items:center;justify-content:center;font-size:2rem}
+.deck-slide.current .ring .pot{animation:d-pulse 2.2s .9s infinite}
+@keyframes d-pulse{0%{box-shadow:0 0 0 0 rgba(168,158,134,.55)}70%{box-shadow:0 0 0 38px rgba(168,158,134,0)}100%{box-shadow:0 0 0 0 rgba(168,158,134,0)}}
+.av-p{width:48px;height:48px;border-radius:50%;background:#0e355c;border:2px solid rgba(168,158,134,.75);display:flex;align-items:center;justify-content:center;font-size:1.2rem}
+.ring .av-p{position:absolute;opacity:0;transform:scale(.4)}
+.deck-slide.current .ring .av-p{animation:d-pop .55s cubic-bezier(.2,1.4,.4,1) forwards}
+@keyframes d-pop{to{opacity:1;transform:scale(1)}}
+
+/* badges */
+.badges{display:flex;gap:26px;justify-content:center;flex-wrap:wrap;margin:6px 0 24px}
+.badge-b{background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.16);border-radius:20px;padding:28px 32px;width:min(320px,80vw)}
+.badge-b .bnum{font-family:'Outfit';font-weight:700;font-size:2.6rem;color:var(--gold-text);line-height:1}
+.badge-b .bt{font-size:1.1rem;font-weight:600;margin-top:8px}
+.badge-b .bd{color:#9fb0c4;font-size:.86rem;margin-top:6px}
+
+/* timeline */
+.tl{display:flex;justify-content:space-between;align-items:flex-start;gap:8px;max-width:1020px;width:100%;margin:30px auto 0;position:relative}
+.tl::before{content:"";position:absolute;top:25px;left:8%;right:8%;height:3px;background:rgba(255,255,255,.14)}
+.tl-line{position:absolute;top:25px;left:8%;height:3px;background:var(--gold);width:0}
+.deck-slide.current .tl-line{animation:d-line 1.4s .35s cubic-bezier(.3,.6,.3,1) forwards}
+@keyframes d-line{to{width:84%}}
+.tl-step{position:relative;z-index:2;display:flex;flex-direction:column;align-items:center;gap:11px;width:19%}
+.tl-n{width:52px;height:52px;border-radius:50%;background:#0e355c;border:2px solid var(--gold);color:var(--gold-text);font-family:'Outfit';font-weight:700;font-size:1.3rem;display:flex;align-items:center;justify-content:center}
+.tl-t{font-size:.9rem;color:#c9d3de;line-height:1.3}
+
+/* spotlight */
+.spot{display:flex;gap:20px;align-items:flex-end;justify-content:center;margin:34px 0 6px;position:relative;height:170px}
+.spot .av-p{width:56px;height:56px;font-size:1.35rem}
+.spot .hot{transform:scale(1.4) translateY(-8px);border-color:var(--gold);background:radial-gradient(circle at 35% 30%,#d8d1c0,#a89e86);color:#081d36;box-shadow:0 0 42px rgba(168,158,134,.6)}
+.card-cred{position:absolute;top:-12px;left:50%;transform:translateX(-50%) scale(.6);opacity:0;background:linear-gradient(135deg,#d8d1c0,#a89e86);color:#081d36;border-radius:12px;padding:12px 20px;font-family:'Outfit';font-weight:700;font-size:.95rem;box-shadow:0 14px 34px rgba(0,0,0,.55)}
+.deck-slide.current .card-cred{animation:d-card .6s 1s cubic-bezier(.2,1.4,.4,1) forwards}
+@keyframes d-card{to{opacity:1;transform:translateX(-50%) translateY(-14px) scale(1)}}
+
+/* duo cards */
+.duo{display:flex;gap:26px;justify-content:center;margin-top:24px;flex-wrap:wrap}
+.duo .card{background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.14);border-radius:20px;padding:30px 32px;width:min(300px,82vw)}
+.duo .card .ic{font-size:2.6rem}
+.duo .card h4{font-family:'Outfit';margin:12px 0 6px;font-size:1.35rem}
+.duo .card p{margin:0;color:#aebdcf;font-size:.92rem}
+
+/* comparison bars */
+.bars{display:flex;gap:min(80px,10vw);align-items:flex-end;height:44vh;margin:14px 0 0}
+.bar-wrap{display:flex;flex-direction:column;align-items:center;gap:16px;height:100%;justify-content:flex-end}
+.bar{width:clamp(96px,13vw,150px);border-radius:16px 16px 0 0;position:relative;height:0;display:flex;align-items:flex-end;justify-content:center;padding-bottom:14px;font-family:'Outfit';font-weight:700;font-size:.92rem;overflow:hidden}
+.b-cons{background:linear-gradient(180deg,#d8d1c0,#a89e86);color:#0b2c51}
+.b-fin{background:linear-gradient(180deg,#565656,#2b2b2b);color:#fff}
+.b-fin .juros{position:absolute;left:0;right:0;top:0;height:52%;background:linear-gradient(180deg,#a2432f,#6e2c20);display:flex;align-items:center;justify-content:center;color:#fff;font-size:.82rem;letter-spacing:.04em;opacity:0}
+.deck-slide.current .b-cons{animation:d-grow-c 1s .4s cubic-bezier(.2,.7,.2,1) forwards}
+.deck-slide.current .b-fin{animation:d-grow-f 1.2s .55s cubic-bezier(.2,.7,.2,1) forwards}
+.deck-slide.current .b-fin .juros{animation:d-fade .5s 1.6s forwards}
+@keyframes d-grow-c{to{height:44%}}@keyframes d-grow-f{to{height:94%}}@keyframes d-fade{to{opacity:1}}
+.bar-lab{font-family:'Outfit';font-weight:700;font-size:1.05rem;color:#fff}
+
+/* value chips */
+.chips{display:flex;flex-wrap:wrap;gap:14px;justify-content:center;max-width:860px;margin:26px auto 0}
+.chip-v{background:rgba(168,158,134,.14);border:1px solid rgba(168,158,134,.42);color:#e0dacb;padding:14px 22px;border-radius:999px;font-family:'Outfit';font-weight:600;font-size:1.02rem;display:flex;align-items:center;gap:9px}
+
+/* media slot */
+.media-slot{width:min(760px,82vw);aspect-ratio:16/9;border:2px dashed rgba(168,158,134,.5);border-radius:20px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;color:#9fb0c4;background:rgba(255,255,255,.03);margin:8px auto 0;text-align:center;padding:20px}
+.media-slot .ms-ic{font-size:2.8rem}
+.media-slot small{font-size:.78rem;color:#8496ac;max-width:440px}
+.deck-cta{display:inline-block;margin-top:26px;background:var(--gold);color:#081d36;font-family:'Outfit';font-weight:700;padding:16px 34px;border-radius:999px;font-size:1.1rem}
+@media(max-width:720px){.tl{flex-wrap:wrap;gap:18px}.tl::before,.tl-line{display:none}.tl-step{width:44%}.bars{height:38vh}}
+
+/* ===== DECK PREMIUM UPGRADE (v2) ===== */
+.deck{background:#081d36}
+.deck-bg{position:absolute;inset:0;z-index:0;pointer-events:none;overflow:hidden}
+.deck-bg::before{content:"";position:absolute;inset:0;background-image:radial-gradient(rgba(255,255,255,.045) 1px,transparent 1px);background-size:28px 28px;-webkit-mask-image:radial-gradient(120% 78% at 50% 42%,#000,transparent 74%);mask-image:radial-gradient(120% 78% at 50% 42%,#000,transparent 74%)}
+.deck-bg .orb{position:absolute;border-radius:50%;filter:blur(70px)}
+.deck-bg .o1{width:520px;height:520px;background:radial-gradient(circle,rgba(168,158,134,.42),transparent 65%);top:-150px;right:-110px;animation:d-float 17s ease-in-out infinite}
+.deck-bg .o2{width:440px;height:440px;background:radial-gradient(circle,rgba(56,96,152,.5),transparent 65%);bottom:-160px;left:-120px;animation:d-float 22s ease-in-out infinite reverse}
+@keyframes d-float{0%,100%{transform:translate(0,0)}50%{transform:translate(34px,42px)}}
+.deck-slide{z-index:1}
+.deck-slide h2{font-size:clamp(2rem,5.2vw,3.7rem)}
+.deck-hint{margin-top:30px}
+
+.dsvg{fill:none;stroke:#c2b89e;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
+.fig{margin:0 auto 16px;color:#c2b89e;animation:d-floatY 6s ease-in-out infinite}
+@keyframes d-floatY{0%,100%{transform:translateY(0)}50%{transform:translateY(-9px)}}
+
+.impact{font-family:'Outfit';font-weight:700;font-size:clamp(5rem,17vw,13rem);line-height:.85;background:linear-gradient(180deg,#e3ded1,#a89e86);-webkit-background-clip:text;background-clip:text;color:transparent;margin:0}
+.impact-u{font-family:'Outfit';font-weight:600;font-size:clamp(1.1rem,3vw,1.8rem);color:#c2b89e;margin-bottom:22px;letter-spacing:.02em}
+
+.ring2{width:min(330px,72vw);margin:0 auto 18px}
+.ring2 svg{width:100%;height:auto;overflow:visible}
+.ring2 .spoke{stroke:rgba(194,184,158,.35);stroke-width:1.4;stroke-dasharray:130;stroke-dashoffset:130}
+.deck-slide.current .ring2 .spoke{animation:d-draw 1s .55s forwards}
+@keyframes d-draw{to{stroke-dashoffset:0}}
+.ring2 .node{opacity:0;transform-box:fill-box;transform-origin:center;transform:scale(.3)}
+.deck-slide.current .ring2 .node{animation:d-pop .55s cubic-bezier(.2,1.5,.4,1) forwards}
+.deck-slide.current .ring2 .n1{animation-delay:.55s}.deck-slide.current .ring2 .n2{animation-delay:.65s}.deck-slide.current .ring2 .n3{animation-delay:.75s}.deck-slide.current .ring2 .n4{animation-delay:.85s}.deck-slide.current .ring2 .n5{animation-delay:.95s}.deck-slide.current .ring2 .n6{animation-delay:1.05s}
+.ring2 .core{transform-box:fill-box;transform-origin:center}
+.deck-slide.current .ring2 .core{animation:d-core 2.6s .9s ease-in-out infinite}
+@keyframes d-core{0%,100%{transform:scale(1)}50%{transform:scale(1.05)}}
+
+.steps5{display:flex;justify-content:space-between;gap:8px;max-width:1060px;width:100%;margin:30px auto 0;position:relative}
+.steps5::before{content:"";position:absolute;top:36px;left:9%;right:9%;height:2px;background:rgba(255,255,255,.14)}
+.steps5 .ln{position:absolute;top:36px;left:9%;height:2px;background:#c2b89e;width:0}
+.deck-slide.current .steps5 .ln{animation:d-line2 1.5s .4s cubic-bezier(.3,.6,.3,1) forwards}
+@keyframes d-line2{to{width:82%}}
+.st5{position:relative;z-index:2;width:19%;display:flex;flex-direction:column;align-items:center;gap:13px}
+.st5 .node5{position:relative;width:72px;height:72px;border-radius:50%;background:#0e355c;border:2px solid #c2b89e;display:flex;align-items:center;justify-content:center}
+.st5 .node5 svg{width:32px;height:32px}
+.st5 .node5 .num5{position:absolute;top:-6px;right:-4px;width:24px;height:24px;border-radius:50%;background:#c2b89e;color:#081d36;font-size:.72rem;font-weight:700;display:flex;align-items:center;justify-content:center;font-family:'Outfit'}
+.st5 .t5{font-size:.9rem;color:#c9d3de;line-height:1.3}
+
+.spot2{display:flex;gap:20px;align-items:flex-end;justify-content:center;height:150px;margin:34px 0 6px;position:relative}
+.person{width:58px;height:58px;border-radius:50%;background:#0e355c;border:2px solid rgba(194,184,158,.55);display:flex;align-items:center;justify-content:center}
+.person svg{width:26px;height:26px}
+.person.hot{transform:scale(1.45) translateY(-12px);background:radial-gradient(circle at 35% 30%,#e3ded1,#a89e86);border-color:#e3ded1;box-shadow:0 0 48px rgba(168,158,134,.6)}
+.person.hot svg{stroke:#0b2c51}
+
+.card .cic{width:54px;height:54px;margin:0 auto 2px}
+.duo .card{text-align:center}
+.card.gold{border-color:rgba(194,184,158,.5)!important;background:rgba(194,184,158,.1)!important}
+
+.cbars{display:flex;gap:min(90px,11vw);align-items:flex-end;height:40vh;margin-top:6px}
+.cbar-wrap{display:flex;flex-direction:column;align-items:center;justify-content:flex-end;height:100%;gap:14px}
+.cbar-num{font-family:'Outfit';font-weight:700;font-size:clamp(1.2rem,3vw,2rem)}
+.cbar{width:clamp(112px,14vw,170px);border-radius:14px 14px 0 0;position:relative;height:0;overflow:hidden}
+.cbar.c-good{--h:52%;background:linear-gradient(180deg,#e3ded1,#c2b89e)}
+.cbar.c-bad{--h:92%;background:linear-gradient(180deg,#4f4f4f,#2b2b2b)}
+.deck-slide.current .cbar{animation:d-grow 1.1s .45s cubic-bezier(.2,.7,.2,1) forwards}
+@keyframes d-grow{to{height:var(--h)}}
+.cbar .seg-j{position:absolute;top:0;left:0;right:0;height:56%;background:linear-gradient(180deg,#a5432f,#6e2c20);display:flex;align-items:center;justify-content:center;color:#fff;font-size:.82rem;letter-spacing:.03em;opacity:0}
+.deck-slide.current .cbar .seg-j{animation:d-fade .5s 1.55s forwards}
+.cbar-lab{font-family:'Outfit';font-weight:700;font-size:1.05rem;color:#fff}
+.cbar-sub{font-size:.72rem;color:#9fb0c4;margin-top:-6px}
+.cnote{font-size:.72rem;color:rgba(255,255,255,.42);margin-top:18px}
+
+.usp-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px 30px;max-width:920px;margin:24px auto 0;text-align:left}
+.urow{display:flex;gap:14px;align-items:center}
+.urow .uic{flex:none;width:50px;height:50px;border-radius:13px;background:rgba(194,184,158,.12);border:1px solid rgba(194,184,158,.3);display:flex;align-items:center;justify-content:center}
+.urow .uic svg{width:26px;height:26px}
+.urow .ut2{font-family:'Outfit';font-weight:600;font-size:1.06rem;line-height:1.15}
+.urow .ud2{font-size:.82rem;color:#9fb0c4}
+
+.chip-v svg{width:18px;height:18px}
+@media(max-width:760px){.steps5{flex-wrap:wrap;gap:18px}.steps5::before,.steps5 .ln{display:none}.st5{width:44%}.usp-grid{grid-template-columns:1fr}.cbars{height:34vh}}
+
+/* ---------- PRESENTATION MODE ---------- */
+body.mode-present .guide-only{display:none!important}
+body.mode-present .page{max-width:960px}
+body.mode-present .step{padding:40px 46px}
+body.mode-present .step-head h2{font-size:1.9rem}
+body.mode-present .script{font-size:1.28rem;padding:22px 52px 22px 24px;line-height:1.55}
+body.mode-present .action .a-desc{font-size:1rem}
+body.mode-present .layout{grid-template-columns:1fr}
+body.mode-present aside.rail{display:none}
+body.mode-present .action .a-title{font-size:1.05rem}
+
+.present-note{display:none}
+body.mode-present .present-note{display:flex;gap:10px;align-items:center;background:var(--gold-soft);border-radius:var(--radius-sm);
+  padding:10px 16px;font-size:.82rem;color:#0b2c51;margin-bottom:20px}
+
+/* ---------- MISC ---------- */
+footer{max-width:var(--maxw);margin:0 auto;padding:30px 24px 60px;border-top:1px solid var(--line);color:var(--soft);font-size:.78rem}
+footer a{color:var(--ink);text-decoration:none}
+.sec-title{font-family:'Outfit';font-weight:700;font-size:1.55rem;margin:0 0 4px;letter-spacing:-.01em}
+.sec-sub{color:var(--soft);margin:0 0 26px}
+
+/* Cartão de apresentação (decks por perfil) */
+.deckcard{background:var(--gold-soft);border:1px solid var(--line-strong);border-radius:var(--radius-sm);padding:16px 18px;margin:16px 0 22px}
+.deckcard .dc-btn{display:inline-flex;align-items:center;gap:9px;background:var(--ink);color:#f1f2f2;
+  font-family:'Outfit',Inter,sans-serif;font-weight:600;font-size:.9rem;letter-spacing:.01em;
+  padding:10px 20px;border:1.5px solid var(--ink);border-radius:999px;text-decoration:none;
+  transition:border-color .15s ease,box-shadow .15s ease}
+.deckcard .dc-btn:hover{border-color:var(--gold);box-shadow:var(--shadow-lg)}
+.deckcard .dc-btn svg{flex:none}
+.deckcard .dc-url{margin:9px 0 0;font-size:.76rem;color:var(--soft);user-select:text;word-break:break-all}
+.deckcard .dc-note{margin:3px 0 0;font-size:.74rem;color:var(--soft)}
+
+@media(max-width:860px){
+  .layout{grid-template-columns:1fr}
+  aside.rail{position:static;margin-bottom:22px;background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:16px}
+  .grid2,.grid3,.client-grid{grid-template-columns:1fr}
+  .hero{padding:32px 26px}.hero h1{font-size:1.9rem}
+  .step{padding:24px 20px}
+}
+@media print{
+  header.topbar,nav.tabs,aside.rail,.mode-toggle,.copy-btn{display:none!important}
+  .tabpane{display:block!important}
+  .step,.panel{box-shadow:none;break-inside:avoid}
+}
+</style>
+</head>
+<body class="mode-guide">
+
+<header class="topbar">
+  <div class="topbar-inner">
+    <div class="brand-block">
+      <span class="wordmark"><span class="wm-osher">osher</span><span class="wm-cap">Capital</span></span>
+      <span class="kicker">Playbook Comercial · Consórcios</span>
+    </div>
+    <div class="topbar-spacer"></div>
+    <div class="mode-toggle" role="tablist" aria-label="Modo de uso">
+      <button id="btnGuide" class="active" onclick="setMode('guide')">📖 Modo Guia</button>
+      <button id="btnPresent" onclick="setMode('present')">🖥️ Apresentação</button>
+    </div>
+  </div>
+  <nav class="tabs" id="mainTabs">
+    <button class="active" data-tab="inicio"><span class="num">•</span>Início</button>
+    <button data-tab="fund"><span class="num">✦</span>Consórcio Explicado</button>
+    <button data-tab="perfis"><span class="num">◆</span>Perfis de Cliente</button>
+    <button data-tab="r1"><span class="num">1</span>Reunião de Qualificação</button>
+    <button data-tab="r2"><span class="num">2</span>Apresentação de Proposta</button>
+    <button data-tab="follow"><span class="num">↻</span>Follow-up & Cadência</button>
+    <button data-tab="casos"><span class="num">★</span>Casos de Sucesso</button>
+  </nav>
+</header>
+
+<div class="page">
+
+<!-- ============ INÍCIO ============ -->
+<section id="inicio" class="tabpane active">
+  <div class="hero">
+    <span class="kicker">Do primeiro contato à assinatura</span>
+    <h1>O método consultivo<br>da Osher Capital.</h1>
+    <p>Este playbook conduz o consultor por duas reuniões desenhadas para transformar interesse em decisão: a <b style="color:#fff">Qualificação</b>, onde investigamos dores e objetivos, e a <b style="color:#fff">Apresentação de Proposta</b>, onde tangibilizamos o objetivo de forma racional e matemática.</p>
+    <div class="meta">
+      <div><div class="n">2</div><div class="l">reuniões estruturadas</div></div>
+      <div><div class="n">SPIN + COIN</div><div class="l">investigação guiada</div></div>
+      <div><div class="n">0 juros</div><div class="l">nosso maior diferencial</div></div>
+    </div>
+    <div class="slogan">Investir com segurança, conquistar com muita inteligência.</div>
+  </div>
+
+  <div class="grid2" style="margin-bottom:22px">
+    <div class="panel">
+      <h3>Framework COIN</h3>
+      <p class="lead">A bússola de qualificação específica para consórcio. Descubra os quatro pilares em toda conversa.</p>
+      <div class="coin-row"><div class="coin-badge">C</div><div><div class="t">Crédito</div><div class="d">Qual valor o cliente precisa captar para o objetivo.</div></div></div>
+      <div class="coin-row"><div class="coin-badge">O</div><div><div class="t">Objetivo</div><div class="d">O que ele quer conquistar: imóvel, veículo, investimento.</div></div></div>
+      <div class="coin-row"><div class="coin-badge">I</div><div><div class="t">Imediatismo</div><div class="d">Urgência para ter o bem e capacidade de dar lance.</div></div></div>
+      <div class="coin-row"><div class="coin-badge">N</div><div><div class="t">Necessidade</div><div class="d">Parcela confortável e experiência prévia com consórcio.</div></div></div>
+    </div>
+    <div class="panel">
+      <h3>Espinha dorsal SPIN</h3>
+      <p class="lead">A sequência de perguntas que leva o cliente da situação atual até desejar a solução.</p>
+      <div class="spin-chip"><span class="letter">S</span><b>Situação</b><span>: entenda o cenário financeiro e o objetivo.</span></div>
+      <div class="spin-chip"><span class="letter">P</span><b>Problema</b><span>: revele dores e obstáculos que travam o objetivo.</span></div>
+      <div class="spin-chip"><span class="letter">I</span><b>Implicação</b><span>: faça sentir o peso de não resolver.</span></div>
+      <div class="spin-chip"><span class="letter">N</span><b>Necessidade de solução</b><span>: conecte o consórcio ao objetivo.</span></div>
+      <div class="tip" style="margin-top:18px"><span class="ti">+</span><div>Apoie-se ainda em <b>Sandler</b> (contrato inicial), <b>BANT</b>, <b>Challenger</b> e <b>NEPQ</b> para conduzir a conversa com autoridade.</div></div>
+    </div>
+  </div>
+
+  <div class="panel">
+    <h3>Como usar este material</h3>
+    <p class="lead">Ele é, ao mesmo tempo, seu roteiro de bastidor e sua tela de apresentação.</p>
+    <ol class="howto">
+      <li><b>Modo Guia</b> (padrão): mostra tudo: scripts, a perspectiva do cliente e dicas de condução. Use para estudar e para consultar durante a call.</li>
+      <li><b>Modo Apresentação</b>: oculta as notas de bastidor e amplia os textos. Compartilhe a tela com o cliente sem medo.</li>
+      <li>Navegue pelas <b>etapas</b> na coluna lateral. Cada bloco em destaque é uma <b>fala pronta</b>. Clique no ícone de copiar para reutilizar.</li>
+      <li>Os campos em <span style="background:var(--gold-soft);color:#0b2c51;padding:1px 6px;border-radius:4px;font-weight:600">destaque</span> devem ser personalizados com os dados reais do cliente.</li>
+    </ol>
+  </div>
+
+  <div class="panel" style="margin-top:22px">
+    <h3>Ponte com o CRM</h3>
+    <p class="lead">Cada etapa do playbook tem um estágio correspondente no CRM. Atualize o card na hora, não no fim do dia.</p>
+    <table class="cmp">
+      <thead><tr><th>Momento do playbook</th><th class="hi">Estágio no CRM</th><th>Campos obrigatórios</th></tr></thead>
+      <tbody>
+        <tr><td class="feat">Trilha express feita</td><td class="hi">Primeiro contato</td><td>Nome + telefone</td></tr>
+        <tr><td class="feat">R1 concluída com COIN e valor estimado</td><td class="hi">Qualificação</td><td>Campo valor preenchido</td></tr>
+        <tr><td class="feat">Simulação apresentada/enviada</td><td class="hi">Proposta</td><td>Simulação anexada/registrada</td></tr>
+        <tr><td class="feat">Objeções em tratamento / follow-up ativo</td><td class="hi">Negociação</td><td>Próximo passo com data</td></tr>
+        <tr><td class="feat">Adesão assinada</td><td class="hi">Ganho</td><td>Dados completos do contrato</td></tr>
+      </tbody>
+    </table>
+    <div class="tip"><span class="ti">★</span><div><b>Regra de ouro:</b> nenhum lead sem <b>dataProximoPasso</b> preenchida; lead sem próximo passo ou sem atualização há 7 dias conta como <b>PARADO</b> no painel.</div></div>
+  </div>
+</section>
+
+<!-- ============ CONSÓRCIO EXPLICADO ============ -->
+<section id="fund" class="tabpane">
+  <div class="layout">
+    <aside class="rail" id="railFund">
+      <h4>Consórcio Explicado</h4>
+      <a href="#fund-osher" class="active"><span class="dot">1</span>Quem é a Osher</a>
+      <a href="#fund-tese"><span class="dot">2</span>Nossa forma de pensar</a>
+      <a href="#fund-prova"><span class="dot">3</span>Resultados que falam</a>
+      <a href="#fund-mercado"><span class="dot">4</span>O Brasil abraçou o consórcio</a>
+      <a href="#fund-1"><span class="dot">5</span>O que é consórcio?</a>
+      <a href="#fund-2"><span class="dot">6</span>Como funciona · passo a passo</a>
+      <a href="#fund-10"><span class="dot">7</span>Suas garantias e proteções</a>
+      <a href="#fund-3"><span class="dot">8</span>Contemplação & Inteligência Osher</a>
+      <a href="#fund-4"><span class="dot">9</span>Consórcio × Financiamento</a>
+      <a href="#fund-8"><span class="dot">10</span>Estratégias de patrimônio</a>
+      <a href="#fund-9"><span class="dot">11</span>Por que a Osher</a>
+      <a href="#fund-5"><span class="dot">12</span>Vantagens & diferenciais</a>
+      <a href="#fund-6"><span class="dot">13</span>Para quem é ideal</a>
+      <a href="#fund-7"><span class="dot">14</span>Dúvidas rápidas</a>
+    </aside>
+
+    <div>
+      <h1 class="sec-title">Consórcio Explicado</h1>
+      <p class="sec-sub">Esta aba tem <b>duas profundidades</b>. Na <b>R1</b>, use a versão contexto de uns 5 minutos: Quem é a Osher, Nossa forma de pensar, Resultados que falam e o produto em 1 minuto (a narração de "O que é consórcio"). Guarde o aprofundamento (garantias, lances, estratégias e comparativo) para a <b>R2</b> ou para quando o cliente pedir. As etiquetas em cada bloco indicam o momento certo. Cada bloco tem uma <b>narração pronta</b> em preto. E cada um dos 4 perfis tem um <b>deck de apresentação próprio</b> para projetar ao cliente, disponível na aba Perfis de Cliente.</p>
+      <div class="present-note"><span>🖥️</span> Modo apresentação ativo. Narre olhando para a tela com o cliente.</div>
+
+      <div class="deck-launch">
+        <div class="dl-txt">
+          <h3>▶ Apresentação em tela cheia</h3>
+          <p>Slides animados para projetar e narrar ao cliente. Clique na metade direita da tela para avançar e na esquerda para voltar; setas (← →) e ESC também funcionam.</p>
+        </div>
+        <button onclick="openDeck()">Iniciar apresentação</button>
+      </div>
+
+      <!-- 1 · QUEM É A OSHER -->
+      <div class="step" id="fund-osher">
+        <div class="step-head"><div class="step-index">1</div><div><h2>Quem é a Osher</h2><span class="time">2 min</span><span class="depth dctx">R1 · contexto</span></div></div>
+        <p class="step-goal">Antes de qualquer produto, posicione quem está do lado do cliente. Consultoria independente, não vendedor de banco.</p>
+        <div class="narr"><span class="q">"Antes de falar de produto, deixa eu te contar quem somos. A Osher é uma consultoria de inteligência patrimonial. A gente não vende o produto de um banco: desenha a estratégia para o seu objetivo e escolhe, entre várias administradoras e ferramentas, a que joga a seu favor."</span></div>
+        <div class="fgrid">
+          <div class="fcard"><div class="fico">◆</div><h4>Consultoria de inteligência patrimonial</h4><p>Especializada em soluções financeiras e inteligência patrimonial. Sede em Brasília (Asa Sul), atendendo todo o Brasil.</p></div>
+          <div class="fcard"><div class="fico">✦</div><h4>Multimarca e independente</h4><p>Não pertencemos a nenhuma administradora. Fazemos a curadoria dos melhores grupos entre várias, sempre pelo interesse do cliente.</p></div>
+          <div class="fcard"><div class="fico">▸</div><h4>Como trabalhamos</h4><p>Planejamento, segurança e crescimento patrimonial, com ética e relacionamento de longo prazo. Cada cliente é uma jornada que acompanhamos de perto.</p></div>
+          <div class="fcard"><div class="fico">●</div><h4>Mais de uma ferramenta</h4><p>Consórcio, Home Equity e Financiamento no portfólio. Temos mais de uma ferramenta; usamos a certa para o seu caso.</p></div>
+        </div>
+        <div class="tip guide-only"><span class="ti">★</span><div>Este bloco é a sua credencial. Narre em até 2 minutos e siga em frente; a prova vem no bloco de resultados.</div></div>
+      </div>
+
+      <!-- 2 · NOSSA FORMA DE PENSAR -->
+      <div class="step" id="fund-tese">
+        <div class="step-head"><div class="step-index">2</div><div><h2>Nossa forma de pensar</h2><span class="time">2 min</span><span class="depth dctx">R1 · contexto</span></div></div>
+        <p class="step-goal">Instale a tese: patrimônio primeiro. O consórcio entra depois, como ferramenta da estratégia.</p>
+        <div class="narr"><span class="q">"Começamos pelo seu patrimônio e por onde você quer chegar; o produto vem depois. A partir daí escolhemos a ferramenta. O consórcio entra na estratégia por quatro motivos: <b>alavancagem</b> (controlar um ativo grande com desembolso pequeno), <b>renda</b> (o bem pode pagar a própria parcela), <b>proteção</b> (um sistema regulado, sem juros) e <b>disciplina</b> (um plano que anda todo mês, mesmo na correria)."</span></div>
+        <div class="fgrid">
+          <div class="fcard"><div class="fico">◆</div><h4>Alavancagem</h4><p>Com um aporte pequeno você passa a controlar um ativo grande. É a base da construção de patrimônio.</p></div>
+          <div class="fcard"><div class="fico">✦</div><h4>Renda</h4><p>Imóvel contemplado pode ir para aluguel; frota renovada gera receita. O ativo trabalha pela parcela.</p></div>
+          <div class="fcard"><div class="fico">▸</div><h4>Proteção</h4><p>Sistema regulado por lei, fiscalizado pelo Banco Central e sem juros. Crescer sem se endividar caro.</p></div>
+          <div class="fcard"><div class="fico">●</div><h4>Disciplina</h4><p>O plano avança automaticamente, mês a mês. É a poupança que você não consegue adiar.</p></div>
+        </div>
+        <div class="tip"><span class="ti">★</span><div><b>Frase de bolso:</b> "Cliente Osher não compra carta de crédito. Contrata uma estratégia de patrimônio."</div></div>
+      </div>
+
+      <!-- 3 · RESULTADOS QUE FALAM -->
+      <div class="step" id="fund-prova">
+        <div class="step-head"><div class="step-index">3</div><div><h2>Resultados que falam</h2><span class="time">2 min</span><span class="depth dctx">R1 · contexto</span></div></div>
+        <p class="step-goal">Prova social em duas camadas: o setor (tradição e escala) e a Osher (números reais de entrega).</p>
+        <div class="narr"><span class="q">"O consórcio tem mais de 60 anos de estrada: nasceu em 1962, criado por funcionários do Banco do Brasil aqui em Brasília, e hoje o sistema tem 12,76 milhões de participantes ativos, fiscalizado pelo Banco Central. E a Osher, desde 2025, já passou de <b>R$ 68 milhões em crédito vendido</b>, com 141 clientes atendidos, 224 contratos e <b>32 contemplações entregues</b>, 28 delas nos últimos 12 meses, em imóveis e veículos."</span></div>
+        <div class="block-label seller"><span class="ic">▸</span>O setor</div>
+        <div class="fgrid">
+          <div class="fcard"><div class="fico">◆</div><h4>Desde 1962</h4><p>Criado por funcionários do Banco do Brasil, em Brasília. Uma solução brasileira com mais de 60 anos de estrada.</p></div>
+          <div class="fcard"><div class="fico">✦</div><h4>12,76 milhões de participantes</h4><p>Participantes ativos no sistema em dezembro de 2025, sob fiscalização do Banco Central.</p></div>
+        </div>
+        <div class="block-label gold"><span class="ic">◆</span>A Osher, desde 2025</div>
+        <div class="fgrid">
+          <div class="fcard"><div class="fico">◆</div><h4>R$ 68 milhões +</h4><p>Em crédito vendido, entre imóveis e veículos.</p></div>
+          <div class="fcard"><div class="fico">✦</div><h4>141 clientes · 224 contratos</h4><p>Clientes atendidos com estratégia desenhada caso a caso.</p></div>
+          <div class="fcard"><div class="fico">▸</div><h4>32 contemplações entregues</h4><p>Sendo 28 nos últimos 12 meses. Resultado, não promessa.</p></div>
+          <div class="fcard"><div class="fico">●</div><h4>Imóveis e veículos</h4><p>Atuação nas duas principais categorias de construção de patrimônio.</p></div>
+        </div>
+        <div class="tip guide-only"><span class="ti">✎</span><div>Números de jul/2026. Atualize trimestralmente no Painel Comercial.</div></div>
+      </div>
+
+      <!-- 4 · O BRASIL ABRAÇOU O CONSÓRCIO -->
+      <div class="step" id="fund-mercado">
+        <div class="step-head"><div class="step-index">4</div><div><h2>O Brasil abraçou o consórcio</h2><span class="time">2 min</span><span class="depth dctx">R1 · contexto</span></div></div>
+        <p class="step-goal">Antes de explicar o produto, mostre a aceitação do mercado: o Brasil já validou o consórcio em escala recorde.</p>
+        <div class="narr"><span class="q">"Um dado que costuma surpreender: 2025 foi o melhor ano da história do consórcio no Brasil. Foram 5,16 milhões de novas adesões, 12,76 milhões de participantes ativos e mais de R$ 500 bilhões em crédito comercializado. E no imóvel é ainda mais forte: hoje, uma a cada quatro aquisições de imóveis com crédito no país passa pelo consórcio. Não estou te apresentando uma aposta. Estou te apresentando o instrumento de compra que mais cresce no Brasil."</span></div>
+        <div class="fgrid">
+          <div class="fcard"><div class="fico">◆</div><h4>Recorde histórico</h4><p>5,16 milhões de adesões em 2025, alta de 15% sobre 2024. São 47 recordes mensais seguidos desde 2022.</p></div>
+          <div class="fcard"><div class="fico">✦</div><h4>12,76 milhões de brasileiros</h4><p>Participantes ativos no sistema (dez/2025), alta de 13,8% em um ano.</p></div>
+          <div class="fcard"><div class="fico">▸</div><h4>R$ 500 bilhões</h4><p>Crédito comercializado em 2025, alta de 32% sobre 2024.</p></div>
+          <div class="fcard"><div class="fico">●</div><h4>Imóveis: 1 a cada 4</h4><p>As contemplações equivalem a 24% dos financiamentos imobiliários. O segmento cresceu 48% em 2025 (R$ 283 bi), com ticket médio de R$ 210 mil e projeção ABAC de +25% para 2026.</p></div>
+        </div>
+        <div class="tip guide-only"><span class="ti">✎</span><div>Fonte: ABAC, dados de dezembro/2025. Atualize 1x por ano em blog.abac.org.br. Se o cliente é investidor, destaque o card de imóveis; se é família, o de participantes.</div></div>
+      </div>
+
+      <!-- 5 -->
+      <div class="step" id="fund-1">
+        <div class="step-head"><div class="step-index">5</div><div><h2>O que é consórcio?</h2><span class="time">1-2 min</span><span class="depth dctx">R1 · produto em 1 min</span></div></div>
+        <p class="step-goal">Ancore a definição de forma simples: é uma compra planejada, em grupo, sem juros. Na R1, esta narração fecha a versão contexto.</p>
+        <div class="narr"><span class="q">"Funciona assim, sem economês. O consórcio é uma <b>compra planejada e em grupo</b>: pessoas com o mesmo objetivo formam uma poupança coletiva e, todo mês, uma ou mais são contempladas e compram o bem à vista. Em vez de pagar juros a um banco, o próprio grupo se financia."</span></div>
+        <div class="fgrid">
+          <div class="fcard"><div class="fico">🏛️</div><h4>Regulado e seguro</h4><p>É um sistema formal, criado por lei (Lei nº 11.795/2008) e supervisionado pelo <b>Banco Central do Brasil</b>.</p></div>
+          <div class="fcard"><div class="fico">🚫</div><h4>Sem juros</h4><p>Você não paga juros. Existe apenas a <b>taxa de administração</b>, que remunera quem organiza o grupo, bem menor que os juros de um financiamento.</p></div>
+          <div class="fcard"><div class="fico">👥</div><h4>Força do grupo</h4><p>A administradora, que nós selecionamos e fiscalizamos por você, organiza o grupo, as assembleias e as contemplações. A Osher fica do seu lado da mesa.</p></div>
+          <div class="fcard"><div class="fico">🎯</div><h4>Poder de compra à vista</h4><p>Quando contemplado, você recebe uma <b>carta de crédito</b> e compra como quem paga à vista, inclusive negociando descontos.</p></div>
+        </div>
+        <div class="tip guide-only"><span class="ti">★</span><div>Use uma analogia se o cliente travar: "É como um grupo de amigos que junta dinheiro todo mês e, por sorteio, cada mês um leva o valor cheio para comprar o que precisa, só que formal, regulado e em escala."</div></div>
+      </div>
+
+      <!-- 2 -->
+      <div class="step" id="fund-2">
+        <div class="step-head"><div class="step-index">6</div><div><h2>Como funciona · passo a passo</h2><span class="time">3-4 min</span><span class="depth dprof">R2 · aprofundamento</span></div></div>
+        <p class="step-goal">Mostre o ciclo completo, do ingresso à quitação, para eliminar o "mistério".</p>
+        <div class="narr"><span class="q">"Na prática, funciona assim: você escolhe o valor de crédito que precisa e entra num grupo com um prazo definido. Paga uma parcela mensal que forma o fundo do grupo. Todo mês tem assembleia, e é lá que as pessoas são contempladas. Quando chega a sua vez, você recebe a carta de crédito e usa para comprar o bem, e segue pagando as parcelas normalmente até o fim, sem juros."</span></div>
+        <div class="flow">
+          <div class="fstep"><div class="fnum">1</div><div><div class="ft">Escolha do crédito</div><div class="fd">Você define o valor da carta de crédito (o quanto precisa) e o prazo do grupo.</div></div></div>
+          <div class="fstep"><div class="fnum">2</div><div><div class="ft">Parcelas mensais</div><div class="fd">Paga uma mensalidade que forma o <b>fundo comum</b> do grupo. Compõem a parcela: fundo comum, taxa de administração e, quando houver, fundo de reserva e seguro.</div></div></div>
+          <div class="fstep"><div class="fnum">3</div><div><div class="ft">Assembleias mensais</div><div class="fd">Todo mês o grupo se reúne e uma ou mais cotas são contempladas, por <b>sorteio</b> ou por <b>lance</b>.</div></div></div>
+          <div class="fstep"><div class="fnum">4</div><div><div class="ft">Contemplação → carta de crédito</div><div class="fd">Ao ser contemplado, você recebe o valor total para adquirir o bem à vista, com poder de negociação.</div></div></div>
+          <div class="fstep"><div class="fnum">5</div><div><div class="ft">Continuação e quitação</div><div class="fd">Você segue pagando as parcelas restantes até quitar. Todos do grupo são contemplados até o encerramento.</div></div></div>
+        </div>
+        <div class="block-label gold" style="margin-top:22px"><span class="ic">◆</span>O que compõe a sua parcela</div>
+        <div class="fgrid">
+          <div class="fcard"><div class="fico">💰</div><h4>Fundo comum</h4><p>A maior parte. É o dinheiro que vira o seu crédito e o dos outros cotistas. Volta 100% para o grupo.</p></div>
+          <div class="fcard"><div class="fico">⚙️</div><h4>Taxa de administração</h4><p>Remuneração da administradora por gerir o grupo. Diluída em todo o prazo, é o preço do serviço, não juros.</p></div>
+          <div class="fcard"><div class="fico">🛟</div><h4>Fundo de reserva</h4><p>Um colchão que protege o grupo de inadimplência e imprevistos. O saldo não usado pode ser devolvido no fim.</p></div>
+          <div class="fcard"><div class="fico">🛡️</div><h4>Seguro (quando houver)</h4><p>Seguro prestamista: em caso de morte ou invalidez, quita o saldo e a família fica com o bem.</p></div>
+        </div>
+        <div class="tip"><span class="ti">✓</span><div>Diga com todas as letras: <b>nenhum centavo é juro</b>. No financiamento, a maior fatia da parcela costuma ser juro; aqui, a maior fatia é o seu próprio crédito voltando para você.</div></div>
+      </div>
+
+      <!-- 6 · SUAS GARANTIAS E PROTEÇÕES -->
+      <div class="step" id="fund-10">
+        <div class="step-head"><div class="step-index">7</div><div><h2>Suas garantias e proteções</h2><span class="time">a parte que traz segurança</span><span class="depth dprof">R2 · aprofundamento</span></div></div>
+        <p class="step-goal">É aqui que o cliente relaxa. A segurança do consórcio está escrita em lei. Mostre as proteções concretas que blindam o dinheiro dele.</p>
+        <div class="narr"><span class="q">"Agora, a parte que mais tranquiliza quem chega aqui. O consórcio é regido pela Lei 11.795 e fiscalizado pelo Banco Central. E tem um ponto importante: o dinheiro do grupo <b>não</b> se mistura com o caixa da administradora. Ela é só a gestora. Se um dia ela tivesse qualquer problema, o Banco Central nomeia outra para tocar o grupo, e o seu dinheiro segue protegido."</span></div>
+        <div class="usp"><div class="un">🏦</div><div><div class="ut">Patrimônio segregado</div><div class="ud">Por lei, os recursos do grupo são separados do patrimônio da administradora. O dinheiro é do grupo, não dela. É o que protege você se a administradora tiver problemas.</div></div></div>
+        <div class="usp"><div class="un">🏛️</div><div><div class="ut">Fiscalização do Banco Central</div><div class="ud">O BACEN normatiza, fiscaliza e pode intervir, inclusive nomeando uma nova administradora para dar continuidade ao grupo.</div></div></div>
+        <div class="usp"><div class="un">🎯</div><div><div class="ut">Contemplação garantida</div><div class="ud">Todo cotista em dia é contemplado até o encerramento do grupo. Se chegar ao fim sem lance nem sorteio, você recebe a carta mesmo assim.</div></div></div>
+        <div class="usp"><div class="un">↩️</div><div><div class="ut">Direito à devolução</div><div class="ud">Se desistir, você tem direito de reaver o que pagou ao fundo comum, corrigido, com as deduções previstas em contrato. Pode voltar por sorteio ou lance mesmo após sair, ou receber ao encerramento do grupo.</div></div></div>
+        <div class="usp"><div class="un">🛡️</div><div><div class="ut">Seguro prestamista</div><div class="ud">Quando contratado, quita o saldo em caso de morte ou invalidez. O bem fica com a família, sem dívida.</div></div></div>
+        <div class="tip"><span class="ti">★</span><div>Frase de segurança: <i>"Aqui você não está confiando na palavra de uma empresa. Está protegido por lei, pelo Banco Central e pela separação do patrimônio. Poucos investimentos têm essa blindagem."</i></div></div>
+      </div>
+
+      <!-- 7 -->
+      <div class="step" id="fund-3">
+        <div class="step-head"><div class="step-index">8</div><div><h2>Como eu sou contemplado?</h2><span class="time">2-3 min</span><span class="depth dprof">R2 · aprofundamento</span></div></div>
+        <p class="step-goal">Trate a maior ansiedade do cliente ("quando eu recebo?") mostrando que há caminhos além da sorte.</p>
+        <div class="narr"><span class="q">"A contemplação acontece de duas formas: por <b>sorteio</b>, em que todos concorrem igualmente todo mês, ou por <b>lance</b>, que é quando você antecipa parte das parcelas para tentar acelerar. Ou seja: você não depende só da sorte. Se tiver pressa, o lance é a sua ferramenta para adiantar."</span></div>
+        <div class="fgrid">
+          <div class="fcard"><div class="fico">🎲</div><h4>Sorteio</h4><p>Todos os participantes em dia concorrem em igualdade nas assembleias mensais, sem custo adicional. É a contemplação que não exige capital.</p></div>
+          <div class="fcard"><div class="fico">⚡</div><h4>Lance livre</h4><p>Você oferta o percentual que quiser (10%, 30% ou mais) e o maior da assembleia vence. Exige capital próprio; é a via mais rápida para quem tem reserva.</p></div>
+          <div class="fcard"><div class="fico">📌</div><h4>Lance fixo</h4><p>Percentual definido pela administradora, igual para todos. Quem oferta disputa por sorteio entre os iguais. Também exige capital próprio.</p></div>
+          <div class="fcard"><div class="fico">🧩</div><h4>Lance embutido</h4><p>Usa parte da própria carta como lance (na maioria dos grupos, até 25% a 30%), sem tirar do bolso. Em troca, o crédito final fica um pouco menor.</p></div>
+        </div>
+        <div class="osher-box">
+          <p>"Na Osher, a gente não dá tiros no escuro. Nossa equipe analisa o <b>histórico do grupo</b>, a <b>saúde financeira da administradora</b> e a <b>sazonalidade das assembleias</b> para calcular o lance com rigor, para aumentar sua chance de contemplação rápida com o <span class="var">menor desembolso possível</span>. É a diferença entre torcer pela sorte e ter um estrategista do seu lado."</p>
+        </div>
+        <div class="tip"><span class="ti">✓</span><div>Reforce a segurança: por regra do Banco Central, <b>todo participante é contemplado até o fim do grupo</b>. A dúvida nunca é "se", é "quando". E a estratégia de lance da Osher encurta esse "quando".</div></div>
+      </div>
+
+      <!-- 8 -->
+      <div class="step" id="fund-4">
+        <div class="step-head"><div class="step-index">9</div><div><h2>Consórcio × Financiamento</h2><span class="time">3-5 min</span><span class="depth dprof">R2 · aprofundamento</span></div></div>
+        <p class="step-goal">O comparativo que muda a percepção. Deixe o cliente enxergar o custo dos juros.</p>
+        <div class="narr"><span class="q">"Muita gente compara com financiamento, e é justo. A diferença central é uma só: no financiamento você tem o bem agora, mas paga <b>juros</b>, que muitas vezes fazem você pagar quase duas vezes pelo mesmo bem. No consórcio você troca a pressa por uma <b>economia enorme</b>, porque não há juros. É pressa contra planejamento."</span></div>
+        <table class="cmp">
+          <thead><tr><th>Critério</th><th class="hi">Consórcio</th><th>Financiamento</th></tr></thead>
+          <tbody>
+            <tr><td class="feat">Juros</td><td class="hi"><span class="yes">Não há</span>, apenas taxa de administração</td><td><span class="no">Sim</span>, + IOF (custo total alto)</td></tr>
+            <tr><td class="feat">Custo total</td><td class="hi">Significativamente menor</td><td>Bem mais alto por causa dos juros</td></tr>
+            <tr><td class="feat">Posse do bem</td><td class="hi">Na contemplação (sorteio ou lance)</td><td>Imediata</td></tr>
+            <tr><td class="feat">Entrada</td><td class="hi">Não obrigatória</td><td>Geralmente exigida</td></tr>
+            <tr><td class="feat">Poder de compra</td><td class="hi">À vista, negocia desconto</td><td>Preso ao que o crédito cobre</td></tr>
+            <tr><td class="feat">Ideal para</td><td class="hi">Quem planeja e quer economizar</td><td>Quem precisa do bem imediatamente</td></tr>
+          </tbody>
+        </table>
+        <div class="tip guide-only"><span class="ti">★</span><div>Na reunião de proposta, transforme isto em números reais no simulador. Aqui o objetivo é só plantar a lógica: <b>juros = pagar quase dois bens; consórcio = pagar um</b>.</div></div>
+      </div>
+
+      <!-- 9 · ESTRATÉGIAS DE PATRIMÔNIO -->
+      <div class="step" id="fund-8">
+        <div class="step-head"><div class="step-index">10</div><div><h2>Estratégias de Patrimônio</h2><span class="time">momento-chave</span><span class="depth dprof">R2 · aprofundamento</span></div></div>
+        <p class="step-goal">Aqui você deixa de vender carta de crédito e passa a vender <b>inteligência financeira</b>. É o que separa a Osher de um vendedor de banco.</p>
+        <div class="narr"><span class="q">"Nossos clientes mais experientes usam o consórcio de um jeito diferente. Não para 'comprar um bem', e sim como <b>ferramenta de construção de patrimônio</b>. Veja três estratégias que aplicamos aqui na Osher:"</span></div>
+        <div class="grid3" style="margin-top:6px">
+          <div class="strat">
+            <div class="stag">Renda · Investidor</div>
+            <h4>Alavancagem Patrimonial</h4>
+            <p>Compre um imóvel com o consórcio e coloque para alugar. O <b>aluguel paga a parcela</b>. O inquilino constrói o seu patrimônio.</p>
+            <div class="how"><b>Na prática:</b> crédito de <span style="white-space:nowrap">R$ 500 mil</span> → imóvel alugado → o aluguel cobre boa parte da parcela. Você multiplica patrimônio com desembolso mínimo do próprio bolso.</div>
+          </div>
+          <div class="strat">
+            <div class="stag">Longo prazo</div>
+            <h4>Aposentadoria Imobiliária</h4>
+            <p>Construa uma <b>carteira de imóveis</b> ao longo do tempo, com parcela reduzida até a contemplação de cada cota.</p>
+            <div class="how"><b>Na prática:</b> várias cotas em andamento; a cada contemplação, mais um imóvel gerando renda. Ao se aposentar, uma carteira de aluguéis no lugar de depender só do INSS.</div>
+          </div>
+          <div class="strat">
+            <div class="stag">Empresas · PJ</div>
+            <h4>Planejamento PJ · Frota & Maquinário</h4>
+            <p>Renove frota, maquinário ou expanda a operação <b>sem descapitalizar</b> o caixa da empresa.</p>
+            <div class="how"><b>Na prática:</b> em vez de tirar o capital de giro, a empresa usa a carta de crédito e preserva o caixa para operar e crescer, com potenciais vantagens fiscais na PJ.</div>
+          </div>
+        </div>
+        <div class="tip guide-only"><span class="ti">✎</span><div>Adapte ao perfil: <b>investidor</b> → alavancagem e ROE · <b>empresário</b> → preservação de caixa · <b>família</b> → disciplina e projeto realizado.</div></div>
+        <div class="tip"><span class="ti">✓</span><div>Simulação ilustrativa: o resultado depende da taxa de administração, do prazo até a contemplação e de vacância. Sem garantia de rentabilidade.</div></div>
+      </div>
+
+      <!-- 10 · POR QUE A OSHER (USP) -->
+      <div class="step" id="fund-9">
+        <div class="step-head"><div class="step-index">11</div><div><h2>Por que fechar com a Osher</h2><span class="time">diferencial</span><span class="depth dprof">R2 · aprofundamento</span></div></div>
+        <p class="step-goal">O cliente pode ir direto num banco. Aqui está, com clareza, por que ele fecha com a gente.</p>
+        <div class="narr"><span class="q">"Uma pergunta justa: 'por que não faço direto com o banco?'. A resposta é simples: <b>o banco vende o produto dele</b>. A Osher trabalha para você. Somos <b>multimarca</b>: fazemos a curadoria dos melhores grupos de várias administradoras e cuidamos de tudo, do lance ao pós-venda."</span></div>
+        <div class="usp"><div class="un">🎯</div><div><div class="ut">Multimarca: curadoria independente</div><div class="ud">Não estamos presos a uma única administradora. Buscamos, entre várias, o grupo com a melhor taxa, prazo e histórico para o seu objetivo.</div></div></div>
+        <div class="usp"><div class="un">♟️</div><div><div class="ut">Gestão estratégica de lances</div><div class="ud">Calculamos o lance ideal com base em dados do grupo e sazonalidade, não no achismo.</div></div></div>
+        <div class="usp"><div class="un">🛡️</div><div><div class="ut">Curadoria da administradora</div><div class="ud">Analisamos a saúde financeira e o histórico de contemplações antes de indicar qualquer grupo.</div></div></div>
+        <div class="usp"><div class="un">🤝</div><div><div class="ut">Acompanhamento & pós-venda ativo</div><div class="ud">Acompanhamos você depois da venda: assembleias, oportunidades de lance e estratégia até a contemplação.</div></div></div>
+        <div class="usp"><div class="un">📈</div><div><div class="ut">Consultoria de alavancagem</div><div class="ud">Orientamos como usar o crédito para gerar renda e patrimônio, não só para comprar um bem.</div></div></div>
+        <div class="tip"><span class="ti">★</span><div><b>Frase de bolso:</b> "Banco vende o produto dele. A Osher encontra o melhor produto para você e cuida de tudo até a contemplação."</div></div>
+      </div>
+
+      <!-- 11 -->
+      <div class="step" id="fund-5">
+        <div class="step-head"><div class="step-index">12</div><div><h2>Vantagens & diferenciais</h2><span class="time">2-3 min</span><span class="depth dprof">R2 · aprofundamento</span></div></div>
+        <p class="step-goal">Consolide os motivos para escolher o consórcio e a Osher.</p>
+        <div class="narr"><span class="q">"Resumindo: você não paga juros, a parcela cabe no orçamento, você compra como quem paga à vista e ganha disciplina no caminho. O objetivo grande vira um plano com data."</span></div>
+        <div class="fgrid">
+          <div class="fcard"><div class="fico">💰</div><h4>Economia real</h4><p>Sem juros, o custo final é muito menor do que em um financiamento.</p></div>
+          <div class="fcard"><div class="fico">📊</div><h4>Parcelas que cabem</h4><p>Flexibilidade de valor de crédito e prazo para encaixar no orçamento.</p></div>
+          <div class="fcard"><div class="fico">🤝</div><h4>Poder de negociação</h4><p>Carta de crédito = compra à vista, abrindo espaço para descontos.</p></div>
+          <div class="fcard"><div class="fico">🧭</div><h4>Planejamento & disciplina</h4><p>Organiza a vida financeira e cria o hábito de investir no próprio objetivo.</p></div>
+          <div class="fcard"><div class="fico">🏠</div><h4>Uso do FGTS (imóveis)</h4><p>No consórcio de imóveis, o FGTS pode ser usado para dar lance ou complementar, conforme as regras.</p></div>
+          <div class="fcard"><div class="fico">🔄</div><h4>Versátil</h4><p>Imóveis, veículos, pesados, serviços. A carta pode ser usada com flexibilidade dentro da categoria.</p></div>
+        </div>
+      </div>
+
+      <!-- 12 -->
+      <div class="step" id="fund-6">
+        <div class="step-head"><div class="step-index">13</div><div><h2>Para quem o consórcio é ideal</h2><span class="time">1-2 min</span><span class="depth dprof">R2 · aprofundamento</span></div></div>
+        <p class="step-goal">Seja honesto sobre o encaixe: isso aumenta a confiança e qualifica a conversa.</p>
+        <div class="narr"><span class="q">"Vou ser transparente com você: o consórcio é perfeito para quem quer <b>planejar</b> e economizar, e não tem uma emergência para ter o bem amanhã. Se a sua prioridade é economia e um plano bem montado, ele foi feito para você. E, se você tem uma certa pressa, a gente resolve isso com estratégia de lance."</span></div>
+        <div class="fgrid">
+          <div class="fcard"><div class="fico">✅</div><h4>Combina com você se…</h4><p>Você quer realizar um objetivo com economia, aceita planejar o momento da contemplação e valoriza não pagar juros.</p></div>
+          <div class="fcard"><div class="fico">⚡</div><h4>Tem pressa?</h4><p>Com estratégia de lance dá para acelerar bastante, mas contemplação depende de sorteio ou lance, sem prazo garantido, e te mostro isso com transparência na simulação.</p></div>
+        </div>
+        <div class="tip guide-only"><span class="ti">✎</span><div>Este é o momento de conectar com o <b>Imediatismo</b> do COIN. Se o cliente demonstrar urgência aqui, já sinalize o caminho do lance antes mesmo da proposta.</div></div>
+      </div>
+
+      <!-- 13 -->
+      <div class="step" id="fund-7">
+        <div class="step-head"><div class="step-index">14</div><div><h2>Dúvidas rápidas</h2><span class="time">conforme surgir</span><span class="depth dprof">R2 · aprofundamento</span></div></div>
+        <p class="step-goal">Respostas curtas e seguras para as perguntas que aparecem já na abertura.</p>
+        <details class="obj" open>
+          <summary><span class="qmark">?</span>"É seguro? E se a administradora quebrar?"<span class="chev">▾</span></summary>
+          <div class="obj-body"><div class="resp-label">Resposta</div><div class="script"><span class="q">"Essa é a melhor parte. Por lei, o dinheiro do grupo é separado do caixa da administradora, ela é só a gestora. Se um dia ela tiver qualquer problema, o Banco Central nomeia outra administradora para tocar o grupo, e o seu dinheiro continua protegido. É um sistema fiscalizado pelo BACEN pela Lei 11.795."</span></div></div>
+        </details>
+        <details class="obj">
+          <summary><span class="qmark">?</span>"E se eu nunca for contemplado?"<span class="chev">▾</span></summary>
+          <div class="obj-body"><div class="resp-label">Resposta</div><div class="script"><span class="q">"Não existe 'nunca'. Por regra, todo cotista em dia é contemplado até o encerramento do grupo. Se você chegar ao fim sem ter dado lance nem sido sorteado, recebe a sua carta de crédito mesmo assim. A pergunta não é se, é quando, e o lance encurta esse quando."</span></div></div>
+        </details>
+        <details class="obj">
+          <summary><span class="qmark">?</span>"Posso desistir? Como recebo de volta?"<span class="chev">▾</span></summary>
+          <div class="obj-body"><div class="resp-label">Resposta</div><div class="script"><span class="q">"Pode. Você tem direito de reaver o que pagou ao fundo comum, corrigido, descontadas as taxas previstas em contrato. O retorno acontece por sorteio ou lance, você pode continuar concorrendo mesmo depois de sair, ou ao encerramento do grupo. Não é imediato, mas o direito é seu e está na lei."</span></div>
+            <div class="tip guide-only"><span class="ti">★</span><div>Seja honesto: a devolução não é imediata (salvo casos de vício de consentimento resolvidos na Justiça). Prometer devolução imediata é o erro que gera processo.</div></div>
+          </div>
+        </details>
+        <details class="obj">
+          <summary><span class="qmark">?</span>"E se eu atrasar ou parar de pagar?"<span class="chev">▾</span></summary>
+          <div class="obj-body"><div class="resp-label">Resposta</div><div class="script"><span class="q">"O ideal é sempre renegociar antes de parar. Se houver inadimplência, a cota fica inativa (exclusão), mas você mantém o direito à devolução nas mesmas condições de quem desiste. Meu papel é montar uma parcela que caiba no seu orçamento justamente para isso não acontecer."</span></div></div>
+        </details>
+        <details class="obj">
+          <summary><span class="qmark">?</span>"Tem juro escondido na parcela?"<span class="chev">▾</span></summary>
+          <div class="obj-body"><div class="resp-label">Resposta</div><div class="script"><span class="q">"Zero juros. A parcela tem o fundo comum (que vira o seu crédito), a taxa de administração (o preço do serviço), e quando houver, fundo de reserva e seguro. Te mostro cada centavo na simulação, sem letra miúda."</span></div></div>
+        </details>
+        <details class="obj">
+          <summary><span class="qmark">?</span>"Posso usar meu FGTS?"<span class="chev">▾</span></summary>
+          <div class="obj-body"><div class="resp-label">Resposta</div><div class="script"><span class="q">"No consórcio de imóvel, sim. O FGTS pode dar lance, complementar a carta, amortizar ou quitar o saldo, e até pagar parte das parcelas. Existem requisitos (como tempo mínimo de FGTS e não ter imóvel residencial na região), que eu confiro com você. É um acelerador poderoso de contemplação."</span></div></div>
+        </details>
+        <details class="obj">
+          <summary><span class="qmark">?</span>"Posso vender ou transferir minha cota?"<span class="chev">▾</span></summary>
+          <div class="obj-body"><div class="resp-label">Resposta</div><div class="script"><span class="q">"Pode. A cota pode ser transferida para outra pessoa com a anuência da administradora. Ou seja, ela tem liquidez: se sua vida mudar, você não fica preso, pode repassar."</span></div></div>
+        </details>
+        <details class="obj">
+          <summary><span class="qmark">?</span>"Posso usar a carta para qualquer coisa?"<span class="chev">▾</span></summary>
+          <div class="obj-body"><div class="resp-label">Resposta</div><div class="script"><span class="q">"Dentro da categoria do seu grupo, sim, com boa flexibilidade. Por exemplo, num consórcio de imóveis você pode comprar casa, apartamento, terreno ou até usar para construir e reformar, conforme as regras."</span></div></div>
+        </details>
+        <div class="tip"><span class="ti">⇢</span><div>Fechou a abertura educativa? Faça a ponte natural para a sondagem: <i>"Agora que você já entende como funciona, deixa eu te fazer algumas perguntas para desenhar o plano ideal para o seu caso."</i> → siga para a <b>Reunião de Qualificação</b>.</div></div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ============ PERFIS DE CLIENTE ============ -->
+<section id="perfis" class="tabpane">
+  <div class="layout">
+    <aside class="rail" id="railPerfis">
+      <h4>Perfis de Cliente</h4>
+      <a href="#pf-igrejas" class="active"><span class="dot">1</span>Igrejas &amp; Pastores</a>
+      <a href="#pf-alav"><span class="dot">2</span>Alavancagem Patrimonial</a>
+      <a href="#pf-recompra"><span class="dot">3</span>Recompra de Imóveis</a>
+      <a href="#pf-primeiro"><span class="dot">4</span>Primeiro Imóvel</a>
+    </aside>
+
+    <div>
+      <h1 class="sec-title">Perfis de Cliente</h1>
+      <p class="sec-sub">Quatro mini-playbooks por segmento. A espinha da venda continua a mesma (R1 de qualificação, R2 de proposta); o que muda em cada perfil são as dores, a narrativa, as perguntas de descoberta e as objeções típicas. Identifique o segmento logo no primeiro contato e registre no CRM.</p>
+
+      <!-- 1 · IGREJAS & PASTORES -->
+      <div class="step" id="pf-igrejas">
+        <div class="step-head"><div class="step-index">1</div><div><h2>Igrejas &amp; Pastores</h2><span class="time">decisão em conselho · ciclo mais longo</span></div></div>
+        <div class="deckcard">
+          <a class="dc-btn" href="_ghpages/apresentacoes/igrejas.html" target="_blank" rel="noopener"><svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg>Abrir apresentação para o cliente</a>
+          <p class="dc-url">Online (após deploy): painel.oshersolucoes.com.br/apresentacoes/igrejas.html</p>
+          <p class="dc-note">Deck animado para projetar na reunião. Setas ou clique avançam; ESC mostra a ajuda.</p>
+        </div>
+        <p class="step-goal">Venda institucional com coração de comunidade. O comprador é um CNPJ religioso, a decisão passa pelo conselho e o critério vai além do financeiro: mordomia, legado e missões.</p>
+
+        <div class="block-label seller"><span class="ic">▸</span>Quem está do outro lado</div>
+        <div class="fgrid">
+          <div class="fcard"><div class="fico">◆</div><h4>Pastores e líderes</h4><p>Guardiões da visão. Pensam em legado: deixar um patrimônio sólido para a próxima geração da igreja.</p></div>
+          <div class="fcard"><div class="fico">✦</div><h4>Conselho e diretoria</h4><p>A decisão raramente é individual. Conselho administrativo e diretoria precisam de argumentos técnicos e de segurança jurídica.</p></div>
+          <div class="fcard"><div class="fico">▸</div><h4>Tesoureiros</h4><p>Olham o fluxo de caixa: dízimos e ofertas variam mês a mês. A parcela precisa caber com folga.</p></div>
+          <div class="fcard"><div class="fico">●</div><h4>Foco em missões</h4><p>Cada real economizado em juros é um real a mais investido na obra. Esse é o argumento que mais conecta.</p></div>
+        </div>
+
+        <div class="block-label gold"><span class="ic">◆</span>As dores que abrem a conversa</div>
+        <div class="fgrid">
+          <div class="fcard"><div class="fico">◆</div><h4>Crédito travado no banco</h4><p>Bancos impõem restrições e burocracia pesada a CNPJs religiosos. E quando o crédito sai, vem com juros que drenam recursos da missão.</p></div>
+          <div class="fcard"><div class="fico">✦</div><h4>Barreira ética aos juros</h4><p>Muitas denominações evitam financiamento por princípio: "o que toma emprestado é servo do que empresta" (Provérbios 22:7). Juros ferem a boa mordomia.</p></div>
+          <div class="fcard"><div class="fico">▸</div><h4>Expansão travada</h4><p>A igreja cresce e fica presa entre vizinhos: templo pequeno, sem estacionamento, e o terreno ao lado passa anos fora do alcance.</p></div>
+          <div class="fcard"><div class="fico">●</div><h4>Casa pastoral</h4><p>Prover moradia digna ao pastor sem desequilibrar o caixa da igreja é um desafio constante.</p></div>
+          <div class="fcard"><div class="fico">◆</div><h4>Regularização fundiária</h4><p>Imóveis sem escritura definitiva ou sem habite-se travam alvarás e trazem insegurança jurídica à congregação.</p></div>
+          <div class="fcard"><div class="fico">✦</div><h4>Manutenção pesada</h4><p>Telhado, acústica, climatização e reformas de grande porte consomem o caixa quando não há planejamento de longo prazo. É quando nascem os puxadinhos.</p></div>
+        </div>
+
+        <div class="block-label seller"><span class="ic">▸</span>Narrativa pronta</div>
+        <div class="narr"><span class="q">"Pastor, o consórcio é uma compra planejada e em grupo, sem juros. É a força da comunidade, da ajuda mútua, somada à segurança de um sistema regulado pelo Banco Central. Para a igreja, isso significa crescer com boa mordomia: em vez de entregar juros a um banco, cada real dos dízimos e ofertas fica trabalhando para a obra. Na contemplação, a igreja recebe o valor cheio e negocia o terreno ou o material como quem paga à vista. E a parcela é desenhada para caber no fluxo mensal, sem sufocar o caixa."</span></div>
+
+        <div class="block-label gold"><span class="ic">◆</span>COIN adaptado para igrejas</div>
+        <table class="cmp">
+          <thead><tr><th>Pilar</th><th class="hi">O que investigar na igreja</th></tr></thead>
+          <tbody>
+            <tr><td class="feat">C · Crédito</td><td class="hi">Valor do projeto de expansão: terreno, obra, reforma de grande porte ou sede própria.</td></tr>
+            <tr><td class="feat">O · Objetivo</td><td class="hi">Templo, terreno vizinho, casa pastoral, centro social ou educacional.</td></tr>
+            <tr><td class="feat">I · Imediatismo</td><td class="hi">Existe oportunidade concreta, como o imóvel vizinho à venda? Isso define a estratégia de lance.</td></tr>
+            <tr><td class="feat">N · Necessidade</td><td class="hi">Parcela confortável frente ao fluxo mensal de dízimos e ofertas.</td></tr>
+          </tbody>
+        </table>
+
+        <div class="block-label seller" style="margin-top:24px"><span class="ic">▸</span>Objeções do púlpito ao conselho</div>
+        <details class="obj" open>
+          <summary><span class="qmark">?</span>"Consórcio é demorado, depende da sorte"<span class="chev">▾</span></summary>
+          <div class="obj-body"><div class="resp-label">Resposta</div>
+            <div class="script"><span class="q">"Entendo a preocupação com o tempo, pastor. A contemplação acontece por sorteio ou por lance, e é aí que entra a inteligência da Osher: analisamos o histórico do grupo, a saúde da administradora e a sazonalidade das assembleias para calcular o lance com rigor, buscando encurtar o caminho com o menor desembolso possível. A dúvida nunca é se a igreja recebe, é quando. E para esse quando existe estratégia."</span></div>
+          </div>
+        </details>
+        <details class="obj">
+          <summary><span class="qmark">?</span>"Pagar juros é contra os nossos princípios"<span class="chev">▾</span></summary>
+          <div class="obj-body"><div class="resp-label">Resposta</div>
+            <div class="script"><span class="q">"Respeitamos profundamente esse princípio, e é exatamente por isso que o consórcio faz sentido para a igreja. Aqui não há juros. Existe uma taxa de administração, que é o preço do serviço de gerir o grupo, diluída em todo o prazo. No financiamento, a maior parte da parcela é juro; no consórcio, a maior parte é o próprio crédito da igreja voltando para ela. É uma forma de construir patrimônio alinhada à mordomia cristã."</span></div>
+          </div>
+        </details>
+        <details class="obj">
+          <summary><span class="qmark">?</span>"Não temos caixa para dar lance"<span class="chev">▾</span></summary>
+          <div class="obj-body"><div class="resp-label">Resposta</div>
+            <div class="script"><span class="q">"Compreendo, o fluxo de muitas igrejas varia bastante. Primeiro: o sorteio não exige nenhum capital extra. Segundo: existe o lance embutido, em que parte da própria carta serve como lance, sem tirar dinheiro do caixa. E a gente estrutura a parcela para caber no orçamento real da igreja. O que importa é o planejamento, e ele pode começar do tamanho que a igreja consegue hoje."</span></div>
+          </div>
+        </details>
+        <details class="obj">
+          <summary><span class="qmark">?</span>"Crédito para igreja é sempre muito burocrático"<span class="chev">▾</span></summary>
+          <div class="obj-body"><div class="resp-label">Resposta</div>
+            <div class="script"><span class="q">"A burocracia bancária é mesmo um peso para as igrejas. No consórcio o processo é mais simples, e a Osher atua como consultora da igreja: cuidamos da escolha da administradora, da documentação e do caminho até a liberação do crédito. O conselho ganha um parceiro técnico do lado de cá da mesa."</span></div>
+          </div>
+        </details>
+        <details class="obj">
+          <summary><span class="qmark">?</span>"Não temos pressa, podemos esperar"<span class="chev">▾</span></summary>
+          <div class="obj-body"><div class="resp-label">Resposta · o custo de esperar</div>
+            <div class="script"><span class="q">"A paciência é uma virtude, pastor, e o consórcio é justamente para quem planeja. Só que esperar também custa: terreno e construção costumam ficar mais caros com o tempo. Começando agora, a igreja coloca o plano para andar com as condições de hoje e se protege da inflação da obra, sem pagar os juros de um financiamento. Adiar costuma significar pagar mais caro pelo mesmo projeto."</span></div>
+          </div>
+        </details>
+        <details class="obj">
+          <summary><span class="qmark">?</span>"E se a administradora falir?"<span class="chev">▾</span></summary>
+          <div class="obj-body"><div class="resp-label">Resposta</div>
+            <div class="script"><span class="q">"Preocupação legítima, e a resposta traz alívio: por lei, o dinheiro do grupo é segregado do patrimônio da administradora. O dinheiro é do grupo. O sistema é regido pela Lei 11.795 e fiscalizado pelo Banco Central, que pode nomear outra administradora para tocar o grupo se for preciso. O recurso da igreja segue protegido."</span></div>
+          </div>
+        </details>
+        <details class="obj">
+          <summary><span class="qmark">?</span>"Como comprovamos renda de um CNPJ religioso?"<span class="chev">▾</span></summary>
+          <div class="obj-body"><div class="resp-label">Resposta</div>
+            <div class="script"><span class="q">"A análise para consórcio é diferente da de um financiamento bancário. Dá para considerar o fluxo de dízimos e ofertas e as demais receitas da igreja, e a Osher orienta a melhor forma de apresentar essa capacidade de pagamento. Cada administradora tem critérios próprios, então validamos o enquadramento caso a caso, antes de qualquer promessa."</span></div>
+          </div>
+        </details>
+
+        <div class="block-label gold" style="margin-top:24px"><span class="ic">◆</span>Chamada para ação</div>
+        <div class="script"><span class="q">"Quero convidar a liderança para uma <b>consultoria de diagnóstico gratuita</b> com a Osher. Sentamos com o pastor, o tesoureiro e o conselho, entendemos o projeto da igreja e desenhamos a estratégia patrimonial, sem custo e sem compromisso. Qual o melhor dia para reunirmos o conselho?"</span></div>
+
+        <div class="tip guide-only"><span class="ti">✎</span><div><b>Compliance e conduta:</b> nunca prometa contemplação rápida nem prazo. A decisão passa pelo conselho: mapeie os decisores (pastor presidente, tesoureiro, conselho fiscal) e ofereça-se para apresentar a eles. Linguagem sempre respeitosa; cite princípios bíblicos apenas se o pastor abrir essa porta primeiro.</div></div>
+        <div class="tip"><span class="ti">⇢</span><div><b>No CRM:</b> registre o segmento <b>Igrejas</b> nas notas/linha do card e o valor estimado do projeto no campo valor ao mover para Qualificação.</div></div>
+      </div>
+
+      <!-- 2 · ALAVANCAGEM PATRIMONIAL -->
+      <div class="step" id="pf-alav">
+        <div class="step-head"><div class="step-index">2</div><div><h2>Alavancagem Patrimonial</h2><span class="time">investidor · tíquete R$ 100 mil a R$ 500 mil+</span></div></div>
+        <div class="deckcard">
+          <a class="dc-btn" href="_ghpages/apresentacoes/alavancagem.html" target="_blank" rel="noopener"><svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg>Abrir apresentação para o cliente</a>
+          <p class="dc-url">Online (após deploy): painel.oshersolucoes.com.br/apresentacoes/alavancagem.html</p>
+          <p class="dc-note">Deck animado para projetar na reunião. Setas ou clique avançam; ESC mostra a ajuda.</p>
+        </div>
+        <p class="step-goal">O perfil predominante da base Osher. O investidor não quer um bem, quer retorno sobre o capital. A base conceitual está na aba Consórcio Explicado, bloco <b>Estratégias de Patrimônio</b>; aqui está o roteiro de venda para esse perfil.</p>
+
+        <div class="block-label seller"><span class="ic">▸</span>A tese em uma narração</div>
+        <div class="narr"><span class="q">"A lógica é simples: com um desembolso pequeno você passa a controlar um ativo grande. Imagine um crédito de R$ 500 mil que vira um imóvel alugado: o aluguel cobre boa parte da parcela, e a renda e a eventual valorização incidem sobre o valor cheio do ativo, não sobre o que saiu do seu bolso. Quem gosta da estratégia costuma montar mais de uma cota e transformar isso numa carteira de renda, contemplação a contemplação."</span></div>
+
+        <div class="block-label seller"><span class="ic">▸</span>Perguntas de descoberta</div>
+        <div class="script"><span class="q">"Hoje, como está distribuído o seu patrimônio? Imóveis, renda fixa, bolsa?"</span></div>
+        <div class="script"><span class="q">"Você já tem ou já teve imóvel alugado? Como foi a experiência com a renda de aluguel?"</span></div>
+        <div class="script"><span class="q">"Quanto de renda passiva mensal você quer construir, e em quanto tempo?"</span></div>
+        <div class="script"><span class="q">"Quanto de capital ficaria confortável para uma estratégia de lance, sem mexer na sua reserva?"</span></div>
+
+        <div class="block-label gold"><span class="ic">◆</span>Simulação sugerida</div>
+        <div class="action"><div class="a-desc">Monte no simulador: crédito de <b>R$ 500 mil</b>, prazo e taxa do grupo real, e um aluguel estimado com base em imóveis da região do cliente. Mostre quanto da parcela o aluguel cobre e qual o desembolso líquido mensal. Traga também o custo total com a taxa de administração e o prazo estimado até a contemplação via lance.</div></div>
+        <div class="tip"><span class="ti">✓</span><div><b>Simulação ilustrativa, sem garantia de rentabilidade.</b> Diga isso ao cliente antes que ele pergunte: o resultado depende da taxa de administração, do prazo até a contemplação e de vacância.</div></div>
+
+        <div class="block-label seller" style="margin-top:24px"><span class="ic">▸</span>Objeções típicas do investidor</div>
+        <details class="obj" open>
+          <summary><span class="qmark">$</span>"O CDI rende mais"<span class="chev">▾</span></summary>
+          <div class="obj-body"><div class="resp-label">Resposta</div>
+            <div class="script"><span class="q">"Na renda fixa, o rendimento incide sobre o que você aplicou. Na alavancagem, o aluguel e a eventual valorização incidem sobre o valor cheio do ativo, que é muito maior do que o seu desembolso. São papéis diferentes: a renda fixa remunera o seu caixa, o consórcio multiplica o seu poder de compra. E nem precisa escolher: reserva num, motor de patrimônio no outro."</span></div>
+            <div class="tip guide-only"><span class="ti">★</span><div>A resposta completa, com ROE e a matemática lado a lado, está no <b>Banco de Objeções da R2</b> (objeção nível investidor).</div></div>
+          </div>
+        </details>
+        <details class="obj">
+          <summary><span class="qmark">$</span>"Prefiro FIIs"<span class="chev">▾</span></summary>
+          <div class="obj-body"><div class="resp-label">Resposta</div>
+            <div class="script"><span class="q">"FIIs são um bom veículo de renda e liquidez, e nada impede você de ter os dois. A diferença é o controle: no imóvel próprio você escolhe o ativo, negocia a compra à vista com a carta e captura o ganho da negociação, além de alavancar com desembolso pequeno. No FII você compra a cota de um portfólio pronto; aqui você monta o seu próprio portfólio."</span></div>
+          </div>
+        </details>
+        <details class="obj">
+          <summary><span class="qmark">$</span>"A taxa de administração é cara"<span class="chev">▾</span></summary>
+          <div class="obj-body"><div class="resp-label">Resposta</div>
+            <div class="script"><span class="q">"Coloque a taxa no papel ao lado dos juros de um financiamento: diluída no prazo, ela costuma ficar bem abaixo do custo efetivo total do crédito bancário. E é o único custo do serviço, não existem juros por cima. A comparação justa é taxa de administração contra juros compostos, e essa conta a gente faz junto, na simulação."</span></div>
+          </div>
+        </details>
+
+        <div class="tip guide-only"><span class="ti">✎</span><div><b>Compliance:</b> nunca prometa retorno. Apresente sempre a matemática completa: taxa de administração, prazo estimado até a contemplação, vacância e custos do imóvel. Argumento bom de investidor sobrevive à planilha.</div></div>
+        <div class="tip"><span class="ti">⇢</span><div><b>No CRM:</b> registre o segmento <b>Alavancagem</b> nas notas/linha do card e o valor estimado do crédito no campo valor ao mover para Qualificação.</div></div>
+      </div>
+
+      <!-- 3 · RECOMPRA DE IMÓVEIS -->
+      <div class="step" id="pf-recompra">
+        <div class="step-head"><div class="step-index">3</div><div><h2>Recompra de Imóveis</h2><span class="time">quitar financiamento caro</span></div></div>
+        <div class="deckcard">
+          <a class="dc-btn" href="_ghpages/apresentacoes/recompra.html" target="_blank" rel="noopener"><svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg>Abrir apresentação para o cliente</a>
+          <p class="dc-url">Online (após deploy): painel.oshersolucoes.com.br/apresentacoes/recompra.html</p>
+          <p class="dc-note">Deck animado para projetar na reunião. Setas ou clique avançam; ESC mostra a ajuda.</p>
+        </div>
+        <p class="step-goal">Definição de trabalho: usar a carta de crédito imobiliária para <b>quitar o financiamento do próprio imóvel</b>, em nome do consorciado, eliminando os juros futuros do banco. O cliente "recompra" o imóvel do banco.</p>
+        <div class="tip guide-only"><span class="ti">✎</span><div>A regra do sistema permite usar a carta para quitação de financiamento imobiliário em nome do consorciado, mas <b>confirme o enquadramento com o cliente e com a administradora</b> antes de apresentar o desenho como certo.</div></div>
+
+        <div class="block-label seller"><span class="ic">▸</span>Para quem é</div>
+        <div class="fgrid">
+          <div class="fcard"><div class="fico">◆</div><h4>Financiamento caro em andamento</h4><p>Quem contratou em ciclo de juros altos e ainda tem muitos anos de contrato pela frente. Boa parte da parcela atual é juro.</p></div>
+          <div class="fcard"><div class="fico">✦</div><h4>Quer trocar juro por planejamento</h4><p>Quem aceita um período de transição planejado em troca de eliminar anos de juros futuros do banco.</p></div>
+        </div>
+
+        <div class="block-label seller"><span class="ic">▸</span>Narrativa pronta</div>
+        <div class="narr"><span class="q">"Se você tem um financiamento em andamento, boa parte da sua parcela hoje é juro. A estratégia é esta: você entra num consórcio imobiliário e, quando contemplado, usa a carta para quitar o saldo devedor com o banco. Na prática, você recompra o seu imóvel do banco e elimina os juros futuros do contrato. Dali em diante fica a parcela do consórcio, sem juros, só com a taxa de administração. Quanto mais cedo no financiamento, maior a montanha de juros que dá para evitar."</span></div>
+
+        <div class="block-label seller"><span class="ic">▸</span>Perguntas de descoberta</div>
+        <div class="script"><span class="q">"Qual o saldo devedor atual do seu financiamento?"</span></div>
+        <div class="script"><span class="q">"Qual a taxa de juros do contrato e qual o sistema, SAC ou Price?"</span></div>
+        <div class="script"><span class="q">"Quantos anos ainda faltam de contrato?"</span></div>
+        <div class="script"><span class="q">"Quanto vale o seu imóvel hoje?"</span></div>
+        <div class="action"><div class="a-desc">Com esses quatro números, calcule os juros futuros que o cliente ainda vai pagar ao banco e compare com o custo do consórcio (taxa de administração no prazo). Essa diferença é o argumento central.</div></div>
+
+        <div class="block-label seller" style="margin-top:24px"><span class="ic">▸</span>Objeções típicas</div>
+        <details class="obj" open>
+          <summary><span class="qmark">?</span>"Vou pagar duas parcelas até ser contemplado"<span class="chev">▾</span></summary>
+          <div class="obj-body"><div class="resp-label">Resposta</div>
+            <div class="script"><span class="q">"Verdade, e é por isso que o desenho importa. A gente dimensiona a parcela do consórcio para caber junto com a do financiamento por um período planejado e monta uma estratégia de lance para encurtar essa fase. Depois da quitação, fica só a parcela do consórcio, com custo total bem menor. É um aperto temporário e planejado em troca de eliminar anos de juros."</span></div>
+          </div>
+        </details>
+        <details class="obj">
+          <summary><span class="qmark">?</span>"Isso é permitido?"<span class="chev">▾</span></summary>
+          <div class="obj-body"><div class="resp-label">Resposta</div>
+            <div class="script"><span class="q">"Sim. A regra do sistema permite usar a carta de crédito imobiliária para quitar financiamento habitacional em nome do consorciado. Cada administradora tem condições próprias, como documentação e enquadramento do contrato, e a gente valida tudo antes da adesão, por escrito."</span></div>
+          </div>
+        </details>
+
+        <div class="tip guide-only"><span class="ti">✎</span><div><b>Compliance:</b> as condições de quitação variam por administradora e por contrato. Valide caso a caso antes de apresentar a estratégia como certa, e nunca prometa prazo de contemplação.</div></div>
+        <div class="tip"><span class="ti">⇢</span><div><b>No CRM:</b> registre o segmento <b>Recompra</b> nas notas/linha do card e o saldo devedor estimado no campo valor ao mover para Qualificação.</div></div>
+      </div>
+
+      <!-- 4 · PRIMEIRO IMÓVEL -->
+      <div class="step" id="pf-primeiro">
+        <div class="step-head"><div class="step-index">4</div><div><h2>Primeiro Imóvel</h2><span class="time">família · saída do aluguel</span></div></div>
+        <div class="deckcard">
+          <a class="dc-btn" href="_ghpages/apresentacoes/primeiro-imovel.html" target="_blank" rel="noopener"><svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg>Abrir apresentação para o cliente</a>
+          <p class="dc-url">Online (após deploy): painel.oshersolucoes.com.br/apresentacoes/primeiro-imovel.html</p>
+          <p class="dc-note">Deck animado para projetar na reunião. Setas ou clique avançam; ESC mostra a ajuda.</p>
+        </div>
+        <p class="step-goal">Família ou jovem profissional saindo do aluguel. A venda tem dois motores: o emocional (o primeiro patrimônio, a chave na mão) e o racional (sem juros, sem entrada pesada, com FGTS como acelerador).</p>
+
+        <div class="block-label seller"><span class="ic">▸</span>Narrativa pronta</div>
+        <div class="narr"><span class="q">"Todo mês o aluguel sai da sua conta e não volta em nada seu. O consórcio inverte essa lógica: a parcela vira patrimônio, mês a mês, no seu nome. E, diferente do financiamento, você não precisa de uma entrada alta nem paga juros; existe só a taxa de administração. Se você tem FGTS, ele pode entrar como lance para acelerar a contemplação ou complementar a carta. O primeiro imóvel deixa de ser um sonho distante e vira um plano andando todo mês."</span></div>
+
+        <div class="block-label seller"><span class="ic">▸</span>Perguntas de descoberta</div>
+        <div class="script"><span class="q">"Quanto você paga de aluguel hoje?"</span></div>
+        <div class="script"><span class="q">"Você tem FGTS acumulado? Trabalha com carteira assinada há quanto tempo?"</span></div>
+        <div class="script"><span class="q">"Para quando você gostaria de estar no imóvel próprio?"</span></div>
+        <div class="script"><span class="q">"Além do FGTS, teria algum valor guardado para uma estratégia de lance?"</span></div>
+        <div class="tip guide-only"><span class="ti">★</span><div><b>Âncora do aluguel:</b> se a parcela fica perto do aluguel atual, a conversa muda de figura: o mesmo dinheiro que hoje paga o imóvel do outro passa a construir o do cliente.</div></div>
+
+        <div class="block-label gold"><span class="ic">◆</span>Comparativo para o primeiro imóvel</div>
+        <div class="action"><div class="a-desc">O comparativo completo consórcio × financiamento está na aba Consórcio Explicado, bloco <b>Consórcio × Financiamento</b>. Para este perfil, destaque dois pontos: <b>entrada não obrigatória</b> (no financiamento ela costuma ser alta) e <b>zero juros</b>, o que derruba o custo total do primeiro imóvel.</div></div>
+
+        <div class="block-label seller" style="margin-top:24px"><span class="ic">▸</span>Objeções típicas</div>
+        <details class="obj" open>
+          <summary><span class="qmark">?</span>"Preciso morar agora"<span class="chev">▾</span></summary>
+          <div class="obj-body"><div class="resp-label">Resposta</div>
+            <div class="script"><span class="q">"Se a urgência é real, o consórcio puro pode não ser a ferramenta, e eu te falo isso com transparência. A Osher tem mais de uma ferramenta no portfólio, incluindo Home Equity e financiamento, e desenha o caminho certo para o seu caso. Agora, se der para planejar a mudança em alguns meses, uma boa estratégia de lance, com FGTS incluído, costuma encurtar bastante o caminho, com um custo total muito menor."</span></div>
+          </div>
+        </details>
+        <details class="obj">
+          <summary><span class="qmark">?</span>"Aluguel é dinheiro jogado fora, mas consórcio também demora"<span class="chev">▾</span></summary>
+          <div class="obj-body"><div class="resp-label">Resposta</div>
+            <div class="script"><span class="q">"A diferença está no que sobra no fim. O aluguel pago nunca vira patrimônio. A parcela do consórcio vira: cada mês pago é um pedaço do seu imóvel já garantido. Enquanto a contemplação não chega, você segue acumulando patrimônio em vez de só cobrir o mês. E com lance e FGTS dá para trabalhar ativamente para antecipar."</span></div>
+          </div>
+        </details>
+
+        <div class="tip guide-only"><span class="ti">✎</span><div><b>Compliance:</b> o FGTS tem requisitos, como tempo mínimo de trabalho sob o regime do FGTS e não ter imóvel residencial na região onde mora ou trabalha. Confira o enquadramento antes de usá-lo como argumento. E nunca prometa prazo de contemplação.</div></div>
+        <div class="tip"><span class="ti">⇢</span><div><b>No CRM:</b> registre o segmento <b>Primeiro Imóvel</b> nas notas/linha do card e o valor estimado da carta no campo valor ao mover para Qualificação.</div></div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ============ REUNIÃO 1 ============ -->
+<section id="r1" class="tabpane">
+  <div class="layout">
+    <aside class="rail" id="railR1">
+      <h4>Reunião 1 · Qualificação</h4>
+      <a href="#r1-0" class="active"><span class="dot">0</span>Preparação pré-reunião</a>
+      <a href="#r1-exp"><span class="dot">⚡</span>Trilha express (triagem)</a>
+      <a href="#r1-1"><span class="dot">1</span>Abertura · Rapport & Contrato</a>
+      <a href="#r1-2"><span class="dot">2</span>Descoberta · SPIN + COIN</a>
+      <a href="#r1-rf"><span class="dot">⚑</span>Red Flags · desqualificar</a>
+      <a href="#r1-3"><span class="dot">3</span>Interesse & Conexão emocional</a>
+      <a href="#r1-4"><span class="dot">4</span>Transição para a proposta</a>
+      <a href="#r1-5"><span class="dot">5</span>Fechamento da reunião</a>
+    </aside>
+
+    <div>
+      <h1 class="sec-title">Reunião de Qualificação Consultiva</h1>
+      <p class="sec-sub">O coração da investigação. Aqui você atua como consultor: ouve mais do que fala, mapeia dores e valida o encaixe antes de propor qualquer solução. Duração-alvo: 25-30 min (11 a 14 perguntas, na faixa que mais fecha negócio).</p>
+      <div class="present-note"><span>🖥️</span> Modo apresentação ativo. As notas de bastidor e a perspectiva do cliente estão ocultas.</div>
+
+      <!-- STEP 0 -->
+      <div class="step" id="r1-0">
+        <div class="step-head"><div class="step-index">0</div><div><h2>Preparação Pré-Reunião</h2><span class="time">antes da call</span></div></div>
+        <p class="step-goal">Chegue pronto: profissionalismo, tempo otimizado e abordagem personalizada.</p>
+        <div class="block-label seller"><span class="ic">▸</span>Ações do consultor</div>
+        <div class="action">
+          <div class="a-desc">Revise as informações prévias do lead, defina o objetivo (qualificar e agendar a próxima etapa) e deixe à mão suas ferramentas de anotação: o quadro <b>COIN</b> e o CRM abertos.</div>
+        </div>
+        <div class="tip"><span class="ti">✓</span><div>Checklist: nome correto, origem do lead, CRM aberto, quadro COIN em branco, simulador acessível para eventual dúvida rápida.</div></div>
+        <div class="client-box guide-only">
+          <div class="cb-head"><span class="av">🙂</span>Do outro lado, o cliente</div>
+          <div class="client-grid">
+            <div class="cg"><div class="lab">Sentimento</div><div class="val">Curiosidade com um pé atrás. "Será que vale a pena? Vão me empurrar algo?"</div></div>
+            <div class="cg"><div class="lab">Dúvida</div><div class="val">"Vou perder meu tempo?"</div></div>
+            <div class="cg"><div class="lab">Expectativa</div><div class="val">Ser ouvido e entender se o consórcio serve para ele.</div></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- TRILHA EXPRESS -->
+      <div class="step" id="r1-exp">
+        <div class="step-head"><div class="step-index">⚡</div><div><h2>Trilha Express · Triagem de 2 Minutos</h2><span class="time">antes de investir a reunião cheia</span></div></div>
+        <p class="step-goal">Nem todo lead merece a reunião consultiva completa. Use esta triagem rápida (BANT enxuto) para decidir se vale seguir para o fluxo completo, nutrir ou encerrar. Ideal para lead frio, de topo de funil ou de baixo ticket.</p>
+        <div class="block-label seller"><span class="ic">▸</span>4 perguntas de triagem</div>
+        <div class="script"><span class="q">"Antes de marcarmos um bate-papo mais completo, posso te fazer umas perguntas rápidas para ver se faz sentido? Um: o que você quer conquistar? Dois: já tem uma ideia de valor? Três: para quando é esse plano? Quatro: quanto, por mês, caberia confortável no seu orçamento?"</span></div>
+        <div class="block-label seller"><span class="ic">▸</span>Como ler o resultado</div>
+        <div class="usp"><div class="un">✅</div><div><div class="ut">Verde: fluxo completo</div><div class="ud">Objetivo claro, capacidade de parcela e horizonte compatível. Agende a reunião consultiva completa.</div></div></div>
+        <div class="usp"><div class="un">🟡</div><div><div class="ut">Amarelo: nutrir</div><div class="ud">Interesse real, mas sem timing ou orçamento agora. Entra na cadência de follow-up leve.</div></div></div>
+        <div class="usp"><div class="un">🔴</div><div><div class="ut">Vermelho: encerrar com elegância</div><div class="ud">Sem objetivo, sem capacidade ou buscando "dinheiro rápido". Veja os Red Flags e encerre com respeito.</div></div></div>
+        <div class="tip guide-only"><span class="ti">★</span><div>O mercado moderno pré-qualifica: um formulário ou assistente no WhatsApp pode coletar parte do COIN antes do contato humano. Você já chega com o lead meio mapeado, e a reunião cheia fica mais curta.</div></div>
+      </div>
+
+      <!-- STEP 1 -->
+      <div class="step" id="r1-1">
+        <div class="step-head"><div class="step-index">1</div><div><h2>Abertura · Rapport & Contrato Inicial</h2><span class="time">3-4 min</span></div></div>
+        <p class="step-goal">Construir confiança, respeitar o tempo do cliente e combinar as regras da conversa (Up-Front Contract · Sandler).</p>
+
+        <div class="block-label seller"><span class="ic">▸</span>Ações do consultor</div>
+        <div class="action">
+          <div class="a-title">Saudação e quebra-gelo <span class="tg">1-2 min</span></div>
+          <div class="a-desc">Comece com calor humano e um comentário neutro para criar conexão.</div>
+          <div class="script"><span class="q">"Olá <span class="var">[Nome]</span>, tudo bem? É um prazer falar com você! Como está o dia por aí?"</span></div>
+        </div>
+        <div class="action">
+          <div class="a-title">Contrato inicial <span class="tg">1-2 min</span></div>
+          <div class="a-desc">Proponha uma agenda clara (tempo e objetivo) e obtenha a concordância.</div>
+          <div class="script"><span class="q"><span class="var">[Nome]</span>, nosso objetivo hoje é uma conversa de uns 25-30 minutos para eu entender melhor suas necessidades e ver se o consórcio faz sentido para você. Ao final, se ambos concordarmos que há um bom encaixe, agendamos um próximo passo para eu te apresentar uma proposta detalhada. Tudo bem para você?"</span></div>
+        </div>
+        <div class="tip"><span class="ti">★</span><div>O contrato inicial tira a pressão da conversa: você deixa explícito que <b>não</b> vai vender agora. Isso baixa a guarda do cliente.</div></div>
+
+        <div class="client-box guide-only">
+          <div class="cb-head"><span class="av">🙂</span>Do outro lado, o cliente</div>
+          <div class="client-grid">
+            <div class="cg"><div class="lab">Sentimento</div><div class="val">Alívio (o vendedor não é agressivo) e confiança pela organização.</div></div>
+            <div class="cg"><div class="lab">Dúvida</div><div class="val">"Ele vai me ouvir ou só quer me empurrar algo?"</div></div>
+            <div class="cg"><div class="lab">Expectativa</div><div class="val">Que você cumpra o combinado e não force a venda agora.</div></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- STEP 2 -->
+      <div class="step" id="r1-2">
+        <div class="step-head"><div class="step-index">2</div><div><h2>Descoberta & Qualificação · SPIN + COIN</h2><span class="time">13-19 min</span></div></div>
+        <p class="step-goal">A fase mais crítica. Desvende motivações, dores e colete os dados do COIN. Ouça 70%, fale 30%.</p>
+
+        <div class="block-label seller"><span class="ic">▸</span>Perguntas de Situação <span style="font-weight:400;text-transform:none;letter-spacing:0;color:var(--soft)">· SPIN · 3-5 min</span></div>
+        <div class="script"><span class="q"><span class="var">[Nome]</span>, para eu entender melhor: qual é o seu principal objetivo financeiro ou projeto que você busca realizar no momento?"</span></div>
+        <div class="script"><span class="q">"E como você tem planejado alcançar esse objetivo até agora?"</span></div>
+
+        <div class="block-label seller"><span class="ic">▸</span>Perguntas de Problema <span style="font-weight:400;text-transform:none;letter-spacing:0;color:var(--soft)">· SPIN / NEPQ · 5-7 min</span></div>
+        <div class="script"><span class="q">"Quais são as maiores dificuldades ou obstáculos que você tem encontrado para realizar esse objetivo?"</span></div>
+        <div class="script"><span class="q">"O que mais te preocupa em relação a essa situação?"</span></div>
+        <div class="script"><span class="q">"Você já tentou outra forma de poupar ou investir para isso? O que aconteceu?"</span></div>
+
+        <div class="block-label seller"><span class="ic">▸</span>Perguntas de Implicação <span style="font-weight:400;text-transform:none;letter-spacing:0;color:var(--soft)">· SPIN / NEPQ · 3-5 min</span></div>
+        <div class="action"><div class="a-desc">Faça o cliente sentir o custo (emocional, financeiro e de oportunidade) de não resolver.</div></div>
+        <div class="script"><span class="q">"Se essa situação continuar como está, como isso afetaria seus planos futuros ou sua família?"</span></div>
+        <div class="script"><span class="q">"Qual o custo de não realizar esse objetivo no tempo que você deseja?"</span></div>
+        <div class="script"><span class="q">"Como você se sentiria se, daqui a 5 anos, ainda estivesse na mesma situação, sem ter realizado esse projeto?"</span></div>
+
+        <div class="block-label gold"><span class="ic">◆</span>Qualificação COIN <span style="font-weight:400;text-transform:none;letter-spacing:0;color:var(--soft)">· 5-7 min</span></div>
+        <div class="action">
+          <div class="a-title"><span style="color:var(--ink);font-family:Outfit;font-weight:700">C</span> · Crédito</div>
+          <div class="script"><span class="q">"Para esse objetivo, qual valor de crédito você imagina que precisaria? <span class="var">(ex: R$ 200 mil imóvel, R$ 50 mil carro)</span>"</span></div>
+        </div>
+        <div class="action">
+          <div class="a-title"><span style="color:var(--ink);font-family:Outfit;font-weight:700">O</span> · Objetivo</div>
+          <div class="script"><span class="q">"Qual o principal motivo para buscar um consórcio neste momento? É moradia, investimento, renovação de frota?"</span></div>
+        </div>
+        <div class="action">
+          <div class="a-title"><span style="color:var(--ink);font-family:Outfit;font-weight:700">I</span> · Imediatismo</div>
+          <div class="script"><span class="q">"Você tem urgência para adquirir o bem? Em quanto tempo idealmente gostaria de ter acesso a ele? Teria algum valor para dar de lance, caso queira antecipar a contemplação?"</span></div>
+        </div>
+        <div class="action">
+          <div class="a-title"><span style="color:var(--ink);font-family:Outfit;font-weight:700">N</span> · Necessidade</div>
+          <div class="script"><span class="q">"Qual seria uma parcela mensal confortável, que não apertaria seu orçamento? E, por curiosidade, você já possui algum consórcio ativo ou teve experiência anterior?"</span></div>
+        </div>
+        <div class="action">
+          <div class="a-title"><span style="color:var(--ink);font-family:Outfit;font-weight:700">+</span> · Decisor <span class="tg">obrigatória</span></div>
+          <div class="script"><span class="q">"Além de você, quem participa dessa decisão? Se fizer sentido, já convido essa pessoa para a nossa próxima conversa."</span></div>
+        </div>
+        <div class="tip guide-only"><span class="ti">★</span><div>Mapear o decisor na R1 evita a objeção "vou falar com a esposa/o sócio" na R2. Se houver outro decisor, agende a R2 já com ele presente.</div></div>
+        <div class="tip"><span class="ti">⏸</span><div><b>Pausa de 3 segundos:</b> depois que o cliente responde, segure o silêncio por três segundos antes de falar. É o que os melhores vendedores fazem; a frase mais reveladora quase sempre vem nesse silêncio.</div></div>
+        <div class="tip"><span class="ti">✎</span><div>Registre <b>palavras exatas</b> e emoções do cliente. Você vai reusá-las na abertura da reunião de proposta.</div></div>
+
+        <div class="client-box guide-only">
+          <div class="cb-head"><span class="av">😊</span>Do outro lado, o cliente</div>
+          <div class="client-grid">
+            <div class="cg"><div class="lab">Sentimento</div><div class="val">"Ele quer me ajudar, não só vender. Me sinto compreendido, e isso me incomoda de verdade."</div></div>
+            <div class="cg"><div class="lab">Dúvida</div><div class="val">"Será que o consórcio é a melhor opção para mim?"</div></div>
+            <div class="cg"><div class="lab">Expectativa</div><div class="val">Que você mostre que entendeu e tenha algo relevante.</div></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- RED FLAGS -->
+      <div class="step" id="r1-rf">
+        <div class="step-head"><div class="step-index">⚑</div><div><h2>Red Flags · Quando desqualificar</h2><span class="time">critério interno</span></div></div>
+        <p class="step-goal">Um bom consultor sabe a hora de "demitir" o lead com elegância, para não queimar tempo nem reputação com quem o consórcio não atende.</p>
+        <div class="redflags guide-only">
+          <div class="rf-h">⚑ Sinais de que o consórcio NÃO é para este lead</div>
+          <ul class="rf-list">
+            <li><b>Urgência extrema</b>: precisa do bem em ~30 dias e não tem valor para lance. O consórcio premia o planejamento, não a pressa absoluta.</li>
+            <li><b>Sem capacidade de pagar a parcela</b>: orçamento já estourado; a parcela viraria um peso, não um plano.</li>
+            <li><b>Busca "dinheiro rápido" / empréstimo</b>: não entende nem aceita que é uma compra programada.</li>
+            <li><b>Sem objetivo real nem intenção</b>: só "olhando", sem clareza do que quer ou por quê.</li>
+            <li><b>Espera contemplação garantida imediata</b>: quer promessa de sorteio "para o mês que vem".</li>
+          </ul>
+        </div>
+        <div class="block-label seller"><span class="ic">▸</span>Encerramento elegante (preserva o relacionamento)</div>
+        <div class="script"><span class="q"><span class="var">[Nome]</span>, vou ser transparente com você: pela sua necessidade de ter o bem já em 30 dias e sem um valor para dar de lance, o consórcio não é o melhor caminho neste momento. Ele funciona melhor para quem consegue planejar. Não quero te oferecer algo que não vá te atender de verdade. Se o seu cenário mudar, ou quando quiser planejar uma próxima aquisição com economia, estarei à disposição."</span></div>
+        <div class="tip"><span class="ti">★</span><div>Desqualificar com honestidade gera confiança e indicações. O lead que você respeitou hoje pode ser o cliente (ou a indicação) de amanhã.</div></div>
+      </div>
+
+      <!-- STEP 3 -->
+      <div class="step" id="r1-3">
+        <div class="step-head"><div class="step-index">3</div><div><h2>Despertar Interesse & Conexão Emocional</h2><span class="time">5-8 min</span></div></div>
+        <p class="step-goal">Conectar o consórcio ao sonho do cliente e criar uma visão positiva do futuro.</p>
+
+        <div class="block-label seller"><span class="ic">▸</span>Perguntas de Necessidade de Solução <span style="font-weight:400;text-transform:none;letter-spacing:0;color:var(--soft)">· 3-5 min</span></div>
+        <div class="script"><span class="q"><span class="var">[Nome]</span>, se você tivesse um plano seguro, econômico e com parcelas que cabem no seu bolso para conquistar <span class="var">[objetivo]</span>, como isso mudaria sua vida?"</span></div>
+        <div class="script"><span class="q">"Como você se sentiria ao pegar as chaves do seu imóvel/carro novo, sabendo que planejou isso de forma inteligente?"</span></div>
+
+        <div class="block-label seller"><span class="ic">▸</span>Storytelling & prova social <span style="font-weight:400;text-transform:none;letter-spacing:0;color:var(--soft)">· 2-3 min</span></div>
+        <div class="action"><div class="a-desc">Compartilhe um caso de sucesso que ressoe com a situação do cliente.</div>
+          <div class="script"><span class="q">"Recentemente ajudei uma família como a sua, que sonhava com a casa própria mas não queria pagar juros altos. Com o consórcio, se planejaram e hoje moram no imóvel que sempre quiseram."</span></div>
+        </div>
+        <div class="tip"><span class="ti">★</span><div>Use gatilhos de <b>autoridade</b> (seu conhecimento) e <b>prova social</b> (depoimentos) de forma natural, integrados à fala.</div></div>
+
+        <div class="client-box guide-only">
+          <div class="cb-head"><span class="av">✨</span>Do outro lado, o cliente</div>
+          <div class="client-grid">
+            <div class="cg"><div class="lab">Sentimento</div><div class="val">Esperança e entusiasmo. "Isso é exatamente o que eu quero, parece possível para mim."</div></div>
+            <div class="cg"><div class="lab">Dúvida</div><div class="val">"Como isso funciona na prática? Quais os detalhes?"</div></div>
+            <div class="cg"><div class="lab">Expectativa</div><div class="val">Receber mais informação sobre como concretizar o sonho.</div></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- STEP 4 -->
+      <div class="step" id="r1-4">
+        <div class="step-head"><div class="step-index">4</div><div><h2>Transição para a Apresentação da Proposta</h2><span class="time">2-4 min</span></div></div>
+        <p class="step-goal">Consolidar o entendimento e agendar a reunião de proposta como o próximo passo natural.</p>
+
+        <div class="block-label seller"><span class="ic">▸</span>Resumo & validação</div>
+        <div class="action"><div class="a-desc">Espelhe o que ouviu e valide. Isso prova que você escutou e prepara a ponte para a proposta.</div>
+          <div class="script"><span class="q"><span class="var">[Nome]</span>, pelo que conversamos, seu principal objetivo é <span class="var">[objetivo]</span>, você busca um crédito de aproximadamente <span class="var">[valor]</span>, com uma parcela em torno de <span class="var">[valor]</span>, e gostaria de realizar isso em <span class="var">[prazo]</span>. Além disso, quer uma solução que te traga <span class="var">[segurança / tranquilidade / realização]</span>. É isso mesmo?"</span></div>
+        </div>
+
+        <div class="block-label seller"><span class="ic">▸</span>Proposta do próximo passo</div>
+        <div class="script"><span class="q">"Excelente! Com base em tudo isso, tenho opções de consórcio que se encaixam no seu perfil. Para eu te apresentar com simulações visuais e detalhadas, que tal agendarmos uma reunião específica para a proposta? Podemos fazer <span class="var">[data/hora]</span> ou <span class="var">[data/hora]</span>. Qual é melhor para você?"</span></div>
+        <div class="tip"><span class="ti">✓</span><div>Confirme data, hora e formato, e envie convite/lembrete imediatamente. Nunca deixe a próxima reunião "em aberto".</div></div>
+
+        <div class="client-box guide-only">
+          <div class="cb-head"><span class="av">🤝</span>Do outro lado, o cliente</div>
+          <div class="client-grid">
+            <div class="cg"><div class="lab">Sentimento</div><div class="val">Confiança e clareza. "Ele me ouviu de verdade. Faz sentido ver a proposta."</div></div>
+            <div class="cg"><div class="lab">Dúvida</div><div class="val">"Será que a proposta vai atender minhas expectativas?"</div></div>
+            <div class="cg"><div class="lab">Expectativa</div><div class="val">Receber algo personalizado e claro na próxima reunião.</div></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- STEP 5 -->
+      <div class="step" id="r1-5">
+        <div class="step-head"><div class="step-index">5</div><div><h2>Fechamento da Reunião</h2><span class="time">1-2 min</span></div></div>
+        <p class="step-goal">Deixar uma impressão positiva e profissional.</p>
+        <div class="script"><span class="q"><span class="var">[Nome]</span>, muito obrigado pelo seu tempo e pela sua abertura. Tenho certeza de que será um passo importante para a realização do seu projeto. Até a próxima!"</span></div>
+        <div class="tip"><span class="ti">⇢</span><div><b>Pós-reunião:</b> registre tudo no CRM (dados do COIN, dores e gatilhos emocionais) e prepare a proposta já considerando os pontos racionais e emocionais levantados.</div></div>
+        <div class="client-box guide-only">
+          <div class="cb-head"><span class="av">😌</span>Do outro lado, o cliente</div>
+          <div class="client-grid">
+            <div class="cg"><div class="lab">Sentimento</div><div class="val">Satisfação e otimismo com o futuro.</div></div>
+            <div class="cg"><div class="lab">Expectativa</div><div class="val">Aguardar a próxima reunião com interesse.</div></div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ============ REUNIÃO 2 ============ -->
+<section id="r2" class="tabpane">
+  <div class="layout">
+    <aside class="rail" id="railR2">
+      <h4>Reunião 2 · Proposta</h4>
+      <a href="#r2-1" class="active"><span class="dot">1</span>Abertura & reafirmação</a>
+      <a href="#r2-2"><span class="dot">2</span>Reafirmar necessidade & sonho</a>
+      <a href="#r2-3"><span class="dot">3</span>Apresentação da solução</a>
+      <a href="#r2-4"><span class="dot">4</span>Banco de objeções</a>
+      <a href="#r2-5"><span class="dot">5</span>Fechamento</a>
+      <a href="#r2-6"><span class="dot">6</span>Pós-venda & indicações</a>
+    </aside>
+
+    <div>
+      <h1 class="sec-title">Apresentação da Proposta & Fechamento</h1>
+      <p class="sec-sub">Aqui tangibilizamos o sonho de forma racional e matemática. Conecte os números do simulador aos gatilhos emocionais mapeados na qualificação.</p>
+      <div class="present-note"><span>🖥️</span> Modo apresentação ativo. Pronto para compartilhar a tela com o cliente.</div>
+
+      <!-- STEP 1 -->
+      <div class="step" id="r2-1">
+        <div class="step-head"><div class="step-index">1</div><div><h2>Abertura & Reafirmação Estratégica</h2><span class="time">5-7 min</span></div></div>
+        <p class="step-goal">Reativar o contrato inicial, relembrar o contexto e criar um clima colaborativo.</p>
+        <div class="block-label seller"><span class="ic">▸</span>Saudação & relembrar o combinado</div>
+        <div class="script"><span class="q">"Olá <span class="var">[Nome]</span>, tudo bem? Que bom nos encontrarmos de novo. Na nossa última conversa, combinamos que hoje eu te apresentaria opções de consórcio para o seu objetivo de <span class="var">[objetivo]</span>. Podemos seguir?"</span></div>
+        <div class="block-label seller"><span class="ic">▸</span>Relembrar o objetivo da reunião</div>
+        <div class="script"><span class="q">"Meu objetivo hoje é te mostrar como o consórcio pode ser a melhor ferramenta para conquistar <span class="var">[objetivo]</span> de forma planejada e econômica, e tirar todas as suas dúvidas. Ao final, você terá tudo para decidir se faz sentido avançarmos."</span></div>
+        <div class="client-box guide-only">
+          <div class="cb-head"><span class="av">🙂</span>Do outro lado, o cliente</div>
+          <div class="client-grid">
+            <div class="cg"><div class="lab">Sentimento</div><div class="val">Curiosidade e expectativa, com uma ponta de ansiedade.</div></div>
+            <div class="cg"><div class="lab">Dúvida</div><div class="val">"Será que ele entendeu o que preciso? A proposta vai ser boa?"</div></div>
+            <div class="cg"><div class="lab">Expectativa</div><div class="val">Ver uma solução concreta e personalizada.</div></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- STEP 2 -->
+      <div class="step" id="r2-2">
+        <div class="step-head"><div class="step-index">2</div><div><h2>Reafirmação da Necessidade & do Sonho</h2><span class="time">10-15 min</span></div></div>
+        <p class="step-goal">Mostrar que ouviu. Recapitule o COIN e as dores, e construa a ponte emocional para a solução.</p>
+        <div class="block-label seller"><span class="ic">▸</span>Resumo da qualificação · COIN & dores</div>
+        <div class="script"><span class="q"><span class="var">[Nome]</span>, na nossa conversa você me contou que seu grande objetivo é <span class="var">[objetivo]</span> e que busca um crédito de aproximadamente <span class="var">[valor]</span> com parcela de <span class="var">[valor]</span>. Você também mencionou que as maiores dificuldades são <span class="var">[dores]</span>. É isso mesmo?"</span></div>
+        <div class="block-label seller"><span class="ic">▸</span>Conexão emocional · implicação</div>
+        <div class="script"><span class="q">"E você me disse que, se não realizasse esse objetivo, isso afetaria <span class="var">[a segurança da família / a liberdade / a sensação de conquista]</span>. Acertei?"</span></div>
+        <div class="block-label seller"><span class="ic">▸</span>Reforço do sonho</div>
+        <div class="script"><span class="q">"Pensando nisso, e em como seria incrível para você <span class="var">[ter a chave da sua casa / viajar com a família no carro novo]</span>, preparei algumas opções que acredito que vão te surpreender."</span></div>
+        <div class="client-box guide-only">
+          <div class="cb-head"><span class="av">💛</span>Do outro lado, o cliente</div>
+          <div class="client-grid">
+            <div class="cg"><div class="lab">Sentimento</div><div class="val">Reconhecimento e emoção. "Ele realmente me ouviu!"</div></div>
+            <div class="cg"><div class="lab">Dúvida</div><div class="val">"Como o consórcio vai resolver isso?"</div></div>
+            <div class="cg"><div class="lab">Expectativa</div><div class="val">Que a solução seja a resposta para o problema e o sonho.</div></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- STEP 3 -->
+      <div class="step" id="r2-3">
+        <div class="step-head"><div class="step-index">3</div><div><h2>Apresentação da Solução · Simulador</h2><span class="time">20-30 min</span></div></div>
+        <p class="step-goal">Educar com clareza. Use o simulador para trazer parcelas, prazos e taxas de forma visual.</p>
+        <div class="block-label seller"><span class="ic">▸</span>Apresentação visual</div>
+        <div class="script"><span class="q">"Para te ajudar a visualizar tudo isso, preparei algumas simulações. Veja só…"</span></div>
+        <div class="block-label seller"><span class="ic">▸</span>Detalhes da proposta</div>
+        <div class="script"><span class="q">"Aqui temos uma opção de <span class="var">[crédito]</span> com parcelas de <span class="var">[valor]</span> em <span class="var">[prazo]</span> meses. A taxa administrativa é de <span class="var">[taxa]</span>%…"</span></div>
+        <div class="block-label seller"><span class="ic">▸</span>Diferenciais do consórcio</div>
+        <div class="script"><span class="q">"Lembre-se: ao contrário do financiamento, aqui você <b>não paga juros</b>, o que representa uma economia enorme no final."</span></div>
+        <div class="block-label seller"><span class="ic">▸</span>Comparativo & opções de contemplação</div>
+        <div class="action"><div class="a-desc">Se o cliente citou financiamento, use o comparativo de custo total. Depois trate a urgência com as formas de contemplação.</div></div>
+        <div class="script"><span class="q">"Você me disse que pensou em financiamento. Veja a diferença de custo total…"</span></div>
+        <div class="script"><span class="q">"Se você tem urgência, podemos explorar as opções de lance (fixo, embutido ou livre) para antecipar sua contemplação. Temos clientes com perfil parecido contemplados em <span class="var">[tempo]</span> usando <span class="var">[tipo de lance]</span>."</span></div>
+        <div class="client-box guide-only">
+          <div class="cb-head"><span class="av">🧭</span>Do outro lado, o cliente</div>
+          <div class="client-grid">
+            <div class="cg"><div class="lab">Sentimento</div><div class="val">Entendimento e interesse. "Faz sentido! Não sabia que era assim."</div></div>
+            <div class="cg"><div class="lab">Dúvida</div><div class="val">"E se eu não for contemplado? A parcela pode pesar? É seguro?"</div></div>
+            <div class="cg"><div class="lab">Expectativa</div><div class="val">Ter todas as dúvidas respondidas de forma convincente.</div></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- STEP 4 -->
+      <div class="step" id="r2-4">
+        <div class="step-head"><div class="step-index">4</div><div><h2>Banco de Objeções</h2><span class="time">10-15 min</span></div></div>
+        <p class="step-goal">Ouça a objeção real, valide com empatia e responda com segurança. Clique para expandir cada resposta pronta.</p>
+        <div class="action guide-only"><div class="a-desc">Abra com uma escuta ativa antes de responder:</div>
+          <div class="script"><span class="q"><span class="var">[Nome]</span>, sei que é muita informação. Quais são suas principais dúvidas ou preocupações neste momento?"</span></div>
+        </div>
+
+        <details class="obj" open>
+          <summary><span class="qmark">?</span>"Não quero esperar"<span class="chev">▾</span></summary>
+          <div class="obj-body"><div class="resp-label">Resposta</div>
+            <div class="script"><span class="q">"Entendo perfeitamente sua urgência. Por isso é importante falarmos de estratégias de lance. Muitos clientes com seu perfil são contemplados em <span class="var">[X]</span> meses. E o consórcio te dá a segurança de que o bem está garantido, mesmo que a contemplação não seja imediata."</span></div>
+          </div>
+        </details>
+        <details class="obj">
+          <summary><span class="qmark">?</span>"Prefiro financiamento"<span class="chev">▾</span></summary>
+          <div class="obj-body"><div class="resp-label">Resposta</div>
+            <div class="script"><span class="q">"Compreendo. O financiamento dá posse imediata, mas o custo total é muito maior, como vimos na simulação. O consórcio é para quem busca economia e não quer pagar juros."</span></div>
+          </div>
+        </details>
+        <details class="obj">
+          <summary><span class="qmark">?</span>"E se eu nunca for contemplado?"<span class="chev">▾</span></summary>
+          <div class="obj-body"><div class="resp-label">Resposta</div>
+            <div class="script"><span class="q">"Dúvida muito comum e importante. Por lei e regulamentação do Banco Central, todo cotista é contemplado até o final do grupo. Além disso, só trabalhamos com administradoras de histórico sólido, que selecionamos e acompanhamos, e oferecemos diversas estratégias de lance para acelerar esse processo."</span></div>
+          </div>
+        </details>
+        <details class="obj">
+          <summary><span class="qmark">?</span>"A parcela é muito alta"<span class="chev">▾</span></summary>
+          <div class="obj-body"><div class="resp-label">Resposta</div>
+            <div class="script"><span class="q">"Podemos ajustar o valor do crédito ou o prazo para a parcela encaixar no seu orçamento. Há também a opção de amortização reduzida no início. O consórcio precisa ser um aliado do seu planejamento, não um peso."</span></div>
+          </div>
+        </details>
+        <details class="obj">
+          <summary><span class="qmark">?</span>"Vou pensar e te falo"<span class="chev">▾</span></summary>
+          <div class="obj-body"><div class="resp-label">Resposta</div>
+            <div class="script"><span class="q">"Claro, é uma decisão importante. Para você pensar com clareza: qual ponto ficou em aberto ou qual a sua principal dúvida que eu poderia esclarecer agora?"</span></div>
+            <div class="tip guide-only"><span class="ti">★</span><div>Objetivo: descobrir a <b>objeção real</b> por trás do "vou pensar" e resolvê-la na hora.</div></div>
+          </div>
+        </details>
+        <details class="obj">
+          <summary><span class="qmark">?</span>"Não tenho pressa, deixo para mais tarde"<span class="chev">▾</span></summary>
+          <div class="obj-body"><div class="resp-label">Resposta · o custo de esperar</div>
+            <div class="script"><span class="q">"Faz sentido não ter urgência, e o consórcio é justamente para quem planeja. Só que esperar também tem um custo: o preço do imóvel e da construção costuma acompanhar a inflação, então o mesmo bem tende a custar mais caro daqui a um ou dois anos. Começando agora, você coloca o plano para andar com as condições de hoje e se protege dessa inflação, sem pagar os juros de um financiamento. Adiar costuma significar pagar mais caro pelo mesmo bem."</span></div>
+            <div class="tip guide-only"><span class="ti">✎</span><div>Se o cliente pedir números, use índices de inflação da construção e do imóvel (INCC, IGP-M). O argumento é <b>proteção contra a inflação do bem</b>; nunca prometa valorização do imóvel.</div></div>
+          </div>
+        </details>
+
+        <div class="block-label gold" style="margin-top:24px"><span class="ic">◆</span>Objeção nível investidor</div>
+        <details class="obj" open>
+          <summary><span class="qmark">$</span>"Não é melhor investir a parcela no CDI / Tesouro Direto?"<span class="chev">▾</span></summary>
+          <div class="obj-body"><div class="resp-label">Resposta · custo de oportunidade &amp; ROE</div>
+            <div class="script"><span class="q">"Pergunta de investidor, e a mais inteligente de todas. Se você aplica <span class="var">R$ 50 mil</span> na renda fixa, o seu rendimento incide sobre esses R$ 50 mil. Agora, no consórcio, com um aporte parecido em lance você movimenta um ativo de <span class="var">R$ 500 mil</span>, e a valorização e o aluguel incidem sobre os R$ 500 mil, não sobre o que você colocou. Isso se chama <b>alavancagem</b>: o retorno sobre o capital investido, o ROE, supera com folga a renda fixa. A renda fixa remunera o seu dinheiro; o consórcio alavancado <b>multiplica o seu poder de compra</b>. Aliás, nem precisa escolher um ou outro: use a renda fixa como reserva e o consórcio como motor de patrimônio."</span></div>
+            <div class="tip guide-only"><span class="ti">✎</span><div>Se puder, <b>rode os números na hora</b>: aporte na renda fixa (taxa vigente) × imóvel valorizando + aluguel sobre o valor cheio do crédito. Para o perfil investidor, o ROE alavancado costuma ser muito superior. Traga a matemática, não a opinião.</div></div>
+            <div class="tip"><span class="ti">✓</span><div>Simulação ilustrativa: o resultado depende da taxa de administração, do prazo até a contemplação e de vacância. Sem garantia de rentabilidade. Diga isso ao cliente; transparência aqui vale mais que o argumento.</div></div>
+          </div>
+        </details>
+
+        <div class="tip"><span class="ti">♥</span><div>Feche o bloco com empatia e compromisso: <i>"Estou aqui para garantir que você se sinta seguro e confiante com a sua decisão."</i></div></div>
+      </div>
+
+      <!-- STEP 5 -->
+      <div class="step" id="r2-5">
+        <div class="step-head"><div class="step-index">5</div><div><h2>Fechamento</h2><span class="time">5-10 min</span></div></div>
+        <p class="step-goal">Conduzir à decisão com perguntas diretas, senso de urgência real e próximos passos claros.</p>
+        <div class="block-label seller"><span class="ic">▸</span>Perguntas de fechamento</div>
+        <div class="script"><span class="q"><span class="var">[Nome]</span>, com base em tudo que conversamos, qual dessas opções faz mais sentido para você dar o próximo passo rumo a <span class="var">[objetivo]</span>?"</span></div>
+        <div class="script"><span class="q">"Você gostaria de iniciar seu planejamento hoje com a opção <span class="var">[opção sugerida]</span>?"</span></div>
+        <div class="block-label seller"><span class="ic">▸</span>Senso de urgência <span style="font-weight:400;text-transform:none;letter-spacing:0;color:var(--soft)">· quando real</span></div>
+        <div class="script"><span class="q">"Temos um grupo com essa condição nas últimas cotas. Se decidir hoje, consigo garantir sua participação."</span></div>
+        <div class="block-label seller"><span class="ic">▸</span>Próximos passos claros</div>
+        <div class="script"><span class="q">"Excelente! Para darmos andamento, o próximo passo é <span class="var">[adesão / documentação]</span>. Vou te guiar em cada etapa."</span></div>
+        <div class="client-box guide-only">
+          <div class="cb-head"><span class="av">🎯</span>Do outro lado, o cliente</div>
+          <div class="client-grid">
+            <div class="cg"><div class="lab">Sentimento</div><div class="val">Decisão e confiança. "É isso que eu quero. Estou pronto para começar."</div></div>
+            <div class="cg"><div class="lab">Dúvida</div><div class="val">"Quais são os próximos passos práticos?"</div></div>
+            <div class="cg"><div class="lab">Expectativa</div><div class="val">Um processo de adesão simples e claro.</div></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- STEP 6 -->
+      <div class="step" id="r2-6">
+        <div class="step-head"><div class="step-index">6</div><div><h2>Pós-Venda & Indicações</h2><span class="time">2-3 min</span></div></div>
+        <p class="step-goal">Fortalecer o relacionamento, garantir a satisfação e abrir portas para indicações.</p>
+        <div class="block-label seller"><span class="ic">▸</span>Parabenização</div>
+        <div class="script"><span class="q">"Parabéns, <span class="var">[Nome]</span>! Você acaba de dar um passo muito importante para realizar o seu projeto. Fico muito feliz em fazer parte disso."</span></div>
+        <div class="block-label seller"><span class="ic">▸</span>Reforço do relacionamento</div>
+        <div class="script"><span class="q">"Estou à disposição para qualquer dúvida. Conte comigo nessa jornada."</span></div>
+        <div class="block-label gold"><span class="ic">◆</span>Pedido proativo de indicação</div>
+        <div class="script"><span class="q">"Conhece alguém que também busca <span class="var">[objetivo]</span> e se beneficiaria de um planejamento como esse?"</span></div>
+        <div class="client-box guide-only">
+          <div class="cb-head"><span class="av">😄</span>Do outro lado, o cliente</div>
+          <div class="client-grid">
+            <div class="cg"><div class="lab">Sentimento</div><div class="val">Satisfação e segurança. "Fiz a escolha certa!"</div></div>
+            <div class="cg"><div class="lab">Expectativa</div><div class="val">Receber o suporte prometido e ver o plano se concretizar.</div></div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ============ FOLLOW-UP & CADÊNCIA ============ -->
+<section id="follow" class="tabpane">
+  <div class="layout">
+    <aside class="rail" id="railFollow">
+      <h4>Follow-up & Cadência</h4>
+      <a href="#fu-1" class="active"><span class="dot">1</span>Princípios do follow-up</a>
+      <a href="#fu-2"><span class="dot">2</span>Cadência pós-proposta</a>
+      <a href="#fu-3"><span class="dot">3</span>Templates de WhatsApp</a>
+      <a href="#fu-4"><span class="dot">4</span>"Vou falar com esposa/sócio"</a>
+      <a href="#fu-5"><span class="dot">5</span>Quando encerrar</a>
+    </aside>
+    <div>
+      <h1 class="sec-title">Follow-up & Cadência de Resgate</h1>
+      <p class="sec-sub">O playbook não termina no "vou pensar". A maioria dos consórcios fecha <b>depois</b> da reunião, no follow-up. Aqui estão a cadência e os templates que aumentam a conversão.</p>
+
+      <div class="step" id="fu-1">
+        <div class="step-head"><div class="step-index">1</div><div><h2>Princípios do follow-up</h2></div></div>
+        <p class="step-goal">Persistência com valor. Nunca "só passando para saber".</p>
+        <div class="usp"><div class="un">🎁</div><div><div class="ut">Todo contato entrega valor</div><div class="ud">Um dado, uma prova social, uma condição nova. Nunca uma cobrança vazia.</div></div></div>
+        <div class="usp"><div class="un">📅</div><div><div class="ut">Sempre com próximo passo agendado</div><div class="ud">Encerre cada contato com data e hora do próximo. "Vou pensar" vira "combinado, quinta às 10h eu te chamo".</div></div></div>
+        <div class="usp"><div class="un">🔁</div><div><div class="ut">Persistência inteligente</div><div class="ud">A maioria das vendas acontece após vários contatos. Desistir cedo é deixar dinheiro na mesa, mas sempre com respeito ao cliente.</div></div></div>
+        <div class="usp"><div class="un">💬</div><div><div class="ut">Multicanal, com WhatsApp na frente</div><div class="ud">WhatsApp para o dia a dia (áudios curtos humanizam), <b>ligação</b> nos momentos-chave e e-mail para o que precisa ficar registrado. O benchmark aponta 3+ canais e 8 a 12 toques.</div></div></div>
+      </div>
+
+      <div class="step" id="fu-2">
+        <div class="step-head"><div class="step-index">2</div><div><h2>Cadência pós-proposta</h2></div></div>
+        <p class="step-goal">Um ritmo definido para não sumir nem sufocar. Ajuste ao engajamento do cliente.</p>
+        <div class="flow">
+          <div class="fstep"><div class="fnum">D+0</div><div><div class="ft">Mesmo dia da reunião</div><div class="fd">Envie a simulação em PDF + um áudio curto agradecendo e recapitulando o objetivo. Deixe o próximo contato combinado.</div></div></div>
+          <div class="fstep"><div class="fnum">D+1</div><div><div class="ft">24 horas depois</div><div class="fd">Reforço de valor: destaque a opção ideal e 1 diferencial (sem juros / estratégia de lance). Convide para reservar a cota.</div></div></div>
+          <div class="fstep"><div class="fnum">D+2</div><div><div class="ft">Ligação, não mensagem</div><div class="fd">Uma ligação curta para tirar dúvidas ao vivo. A voz cria conexão e destrava decisão que o texto trava. Não atendeu? Deixe um áudio.</div></div></div>
+          <div class="fstep"><div class="fnum">D+3</div><div><div class="ft">Prova social &amp; objeção</div><div class="fd">Traga um caso de sucesso real e resolva a objeção específica que ficou no ar na reunião.</div></div></div>
+          <div class="fstep"><div class="fnum">D+7</div><div><div class="ft">Resgate</div><div class="fd">Se sumiu: mensagem honesta, sem pressão, pedindo um "sim, seguimos" ou "não, mais para frente". Reative com escassez real.</div></div></div>
+          <div class="fstep"><div class="fnum">D+9</div><div><div class="ft">Ligação de resgate</div><div class="fd">Se o WhatsApp não teve resposta, ligue. Metade dos vendedores desiste após 1 tentativa, e 80% das vendas fecham entre o 5º e o 12º contato. Persistência com respeito é o que separa quem fecha.</div></div></div>
+          <div class="fstep"><div class="fnum">D+14</div><div><div class="ft">Novidade / escassez</div><div class="fd">Condição nova, últimas cotas de um grupo que encaixa no perfil. Motivo legítimo para reabrir a conversa.</div></div></div>
+          <div class="fstep"><div class="fnum">D+30</div><div><div class="ft">Nutrição de longo prazo</div><div class="fd">Sem resposta? Não queime. Mova para uma cadência leve de conteúdo/casos e mantenha aquecido para o momento certo.</div></div></div>
+        </div>
+      </div>
+
+      <div class="step" id="fu-3">
+        <div class="step-head"><div class="step-index">3</div><div><h2>Templates de WhatsApp</h2></div></div>
+        <p class="step-goal">Prontos para copiar e personalizar. Ajuste o tom ao perfil (investidor, PJ, família).</p>
+
+        <div class="wa-when"><span class="wd">D+0</span> Resumo no mesmo dia</div>
+        <div class="script wa"><span class="q">Oi <span class="var">[Nome]</span>! Foi ótimo nosso papo hoje 🙌 Como combinei, te mandei a simulação com as opções que desenhamos para o seu objetivo de <span class="var">[objetivo]</span>. Dá uma olhada com calma. Qualquer dúvida, me chama. Amanhã te dou um retorno rápido, pode ser?</span></div>
+
+        <div class="wa-when"><span class="wd">D+1</span> Reforço de valor</div>
+        <div class="script wa"><span class="q"><span class="var">[Nome]</span>, bom dia! Revisando aqui, a opção de <span class="var">[crédito]</span> com parcela de <span class="var">[valor]</span> é a que mais conversa com o que você me contou. Lembra que, diferente do financiamento, aqui você não paga juros, e a economia no total é enorme. Quer que eu reserve uma cota antes da próxima assembleia?</span></div>
+
+        <div class="wa-when"><span class="wd">D+3</span> Prova social &amp; objeção</div>
+        <div class="script wa"><span class="q">Oi <span class="var">[Nome]</span>! Lembrei de você: acabamos de contemplar um cliente com um perfil bem parecido com o seu 🎯 Isso reforça o que te falei sobre a estratégia de lance. Fico à disposição para esclarecer aquele ponto sobre <span class="var">[objeção]</span> que ficou no ar.</span></div>
+
+        <div class="wa-when"><span class="wd">D+7</span> Resgate (cliente sumiu)</div>
+        <div class="script wa"><span class="q"><span class="var">[Nome]</span>, tudo certo por aí? 😊 Não quero ser insistente, só garantir que você não perca a condição que separei. Me diz com sinceridade: faz sentido seguirmos agora ou prefere que eu te procure mais para frente?</span></div>
+
+        <div class="wa-when"><span class="wd">D+14</span> Escassez / novidade</div>
+        <div class="script wa"><span class="q">Oi <span class="var">[Nome]</span>! Passando para avisar: abriu uma condição no grupo <span class="var">[X]</span> que encaixa certinho no seu objetivo, mas são poucas cotas. Se ainda fizer sentido, consigo garantir a sua. Quer que eu segure?</span></div>
+
+        <div class="tip guide-only"><span class="ti">★</span><div>Regra de ouro: <b>1 pergunta por mensagem</b> e sempre facilite o "sim". Áudios de 20-30s convertem mais que textos longos.</div></div>
+      </div>
+
+      <div class="step" id="fu-4">
+        <div class="step-head"><div class="step-index">4</div><div><h2>O clássico "vou falar com a esposa/sócio"</h2></div></div>
+        <p class="step-goal">Trate como um pedido de ajuda para convencer terceiros. Assuma a condução.</p>
+        <div class="block-label seller"><span class="ic">▸</span>Na hora, ainda na reunião</div>
+        <div class="script"><span class="q">"Perfeito, decisão importante se toma em conjunto mesmo. Para facilitar, que tal marcarmos 15 minutinhos com vocês dois juntos? Assim eu tiro as dúvidas do(a) <span class="var">[esposa/sócio]</span> na hora e a informação não vira telefone sem fio. Que dia funciona melhor?"</span></div>
+        <div class="block-label seller"><span class="ic">▸</span>Transforme o retorno vago em compromisso</div>
+        <div class="script"><span class="q">"Você disse que me dá um retorno na terça, combinado! Só para eu me organizar e te dar prioridade: <span class="var">terça às 10h</span> eu te ligo, pode ser? Se resolver antes, é só me chamar."</span></div>
+        <div class="tip"><span class="ti">✎</span><div>Ofereça-se para participar da conversa com o decisor ausente. Quem tira a dúvida da esposa/sócio pessoalmente controla a narrativa e a objeção.</div></div>
+      </div>
+
+      <div class="step" id="fu-5">
+        <div class="step-head"><div class="step-index">5</div><div><h2>Quando encerrar (com elegância)</h2></div></div>
+        <p class="step-goal">Persistir não é perseguir. Saiba a hora de mudar de marcha.</p>
+        <div class="redflags">
+          <div class="rf-h">⚑ Sinais de que é hora de recuar</div>
+          <ul class="rf-list">
+            <li>Vários contatos sem <b>nenhum</b> engajamento (não abre, não responde, não lê).</li>
+            <li>Pedidos explícitos para não ser mais contatado: respeite sempre.</li>
+            <li>O lead virou um <b>Red Flag</b> claro (sem capacidade, sem objetivo real).</li>
+          </ul>
+        </div>
+        <div class="block-label seller"><span class="ic">▸</span>Mensagem de "porta aberta"</div>
+        <div class="script wa"><span class="q"><span class="var">[Nome]</span>, imagino que o momento agora não seja o ideal, e está tudo bem 🙂 Vou parar de te chamar para não incomodar. Deixo a porta aberta: quando quiser retomar o plano do seu <span class="var">[objetivo]</span>, é só me dar um oi. Sucesso!</span></div>
+        <div class="tip"><span class="ti">★</span><div>Depois disso, mova o contato para a nutrição leve (D+30). Encerrar bem preserva a chance de reativação e de indicações futuras.</div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ CASOS DE SUCESSO ============ -->
+<section id="casos" class="tabpane">
+  <h1 class="sec-title">Casos de Sucesso</h1>
+  <p class="sec-sub">"Temos clientes com perfil parecido" não convence. <b>Número exato convence.</b> Consulte aqui casos reais para quebrar o ceticismo com prova social tangível.</p>
+  <div class="fill-banner"><span>⚠️</span><div><b>Área para dados REAIS.</b> Os cards abaixo são exemplos ilustrativos (marcados como <b>EXEMPLO</b>). Substitua pelos casos reais da Osher: crédito, % de lance, mês de contemplação e grupo. Peça ao Claude para inserir os dados quando tiver a lista.</div></div>
+
+  <div class="casos-grid">
+    <div class="caso"><span class="exemplo">EXEMPLO</span>
+      <div class="cat">Imóvel · Investidor</div>
+      <div class="cval">R$ 500 mil</div>
+      <div class="cdesc">Contemplado por lance e já colocou o imóvel para alugar, com o aluguel abatendo a parcela.</div>
+      <div class="cstats"><div><div class="n">32%</div><div class="l">Lance</div></div><div><div class="n">4º mês</div><div class="l">Contempl.</div></div><div><div class="n">ROE ↑</div><div class="l">Alavancagem</div></div></div>
+    </div>
+    <div class="caso"><span class="exemplo">EXEMPLO</span>
+      <div class="cat">Imóvel · Carteira</div>
+      <div class="cval">R$ 250 mil</div>
+      <div class="cdesc">3ª cota da carteira de aposentadoria imobiliária do cliente.</div>
+      <div class="cstats"><div><div class="n">28%</div><div class="l">Lance</div></div><div><div class="n">5º mês</div><div class="l">Contempl.</div></div><div><div class="n">Renda</div><div class="l">Futura</div></div></div>
+    </div>
+    <div class="caso"><span class="exemplo">EXEMPLO</span>
+      <div class="cat">PJ · Frota</div>
+      <div class="cval">R$ 400 mil</div>
+      <div class="cdesc">Empresa renovou 3 veículos sem tocar no capital de giro.</div>
+      <div class="cstats"><div><div class="n">30%</div><div class="l">Lance</div></div><div><div class="n">3º mês</div><div class="l">Contempl.</div></div><div><div class="n">Caixa</div><div class="l">Preservado</div></div></div>
+    </div>
+    <div class="caso"><span class="exemplo">EXEMPLO</span>
+      <div class="cat">PJ · Maquinário</div>
+      <div class="cval">R$ 600 mil</div>
+      <div class="cdesc">Aquisição de maquinário para expansão da operação, sem dívida bancária.</div>
+      <div class="cstats"><div><div class="n">35%</div><div class="l">Lance</div></div><div><div class="n">2º mês</div><div class="l">Contempl.</div></div><div><div class="n">Expansão</div><div class="l">Sem juros</div></div></div>
+    </div>
+    <div class="caso"><span class="exemplo">EXEMPLO</span>
+      <div class="cat">Veículo</div>
+      <div class="cval">R$ 90 mil</div>
+      <div class="cdesc">Troca de carro planejada, sem os juros de um financiamento.</div>
+      <div class="cstats"><div><div class="n">25%</div><div class="l">Lance</div></div><div><div class="n">6º mês</div><div class="l">Contempl.</div></div><div><div class="n">Economia</div><div class="l">vs financ.</div></div></div>
+    </div>
+    <div class="caso"><span class="exemplo">EXEMPLO</span>
+      <div class="cat">Imóvel · Família</div>
+      <div class="cval">R$ 300 mil</div>
+      <div class="cdesc">Primeiro imóvel da família, contemplado por sorteio.</div>
+      <div class="cstats"><div><div class="n">Sorteio</div><div class="l">Contempl.</div></div><div><div class="n">14º mês</div><div class="l">Prazo</div></div><div><div class="n">Sonho</div><div class="l">Realizado</div></div></div>
+    </div>
+  </div>
+
+  <div class="panel" style="margin-top:26px">
+    <h3>Como registrar um novo caso</h3>
+    <p class="lead">Padronize para manter a força da prova social. Cada caso precisa de:</p>
+    <div class="usp"><div class="un">🏷️</div><div><div class="ut">Categoria &amp; perfil</div><div class="ud">Imóvel / veículo / PJ · investidor, família ou empresa.</div></div></div>
+    <div class="usp"><div class="un">💰</div><div><div class="ut">Valor do crédito</div><div class="ud">A carta contemplada, em número exato.</div></div></div>
+    <div class="usp"><div class="un">⚡</div><div><div class="ut">% de lance e mês de contemplação</div><div class="ud">O dado que prova a estratégia. Ex.: "32% de lance, contemplado no 4º mês".</div></div></div>
+    <div class="usp"><div class="un">🎯</div><div><div class="ut">Resultado / uso</div><div class="ud">O que o cliente conquistou: renda de aluguel, frota renovada, objetivo realizado.</div></div></div>
+    <div class="tip"><span class="ti">✓</span><div>Dica de uso na venda: cite o caso mais próximo do perfil do cliente à frente. <i>"Mês passado contemplamos uma carta de R$ 500 mil no grupo X com 32% de lance, perfil idêntico ao seu."</i></div></div>
+  </div>
+</section>
+
+</div>
+
+<!-- ============ APRESENTADOR (DECK) ============ -->
+<div class="deck" id="deck">
+  <div class="deck-brand"><span class="wordmark on-dark" style="transform:scale(.82);transform-origin:left"><span class="wm-osher">osher</span><span class="wm-cap">Capital</span></span></div>
+  <button class="deck-close" id="deckClose" title="Fechar (Esc)">✕</button>
+  <div class="deck-bg"><span class="orb o1"></span><span class="orb o2"></span></div>
+  <svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
+    <symbol id="i-person" viewBox="0 0 24 24"><circle cx="12" cy="8" r="3.6"/><path d="M5 20c0-3.9 3.1-6.4 7-6.4s7 2.5 7 6.4"/></symbol>
+    <symbol id="i-coins" viewBox="0 0 24 24"><ellipse cx="12" cy="6.5" rx="6.5" ry="2.6"/><path d="M5.5 6.5v6c0 1.5 2.9 2.6 6.5 2.6s6.5-1.1 6.5-2.6v-6"/><path d="M5.5 9.5c0 1.5 2.9 2.6 6.5 2.6s6.5-1.1 6.5-2.6"/></symbol>
+    <symbol id="i-shield" viewBox="0 0 24 24"><path d="M12 3l7 3v5c0 4.4-3 8-7 9.6C8 19 5 15.4 5 11V6z"/><path d="M9 11.5l2 2 4-4"/></symbol>
+    <symbol id="i-house" viewBox="0 0 24 24"><path d="M4 11l8-6 8 6"/><path d="M6 10v9h12v-9"/><path d="M10 19v-5h4v5"/></symbol>
+    <symbol id="i-building" viewBox="0 0 24 24"><rect x="6" y="3.5" width="12" height="17" rx="1"/><path d="M9.5 7.5h1.5M13 7.5h1.5M9.5 11h1.5M13 11h1.5M9.5 14.5h1.5M13 14.5h1.5M10.5 20.5v-3h3v3"/></symbol>
+    <symbol id="i-tree" viewBox="0 0 24 24"><path d="M12 21v-5"/><path d="M12 16a5 5 0 01-5-5c0-1.6.8-3 2-3.9C9.4 6 10.6 4.6 12 3c1.4 1.6 2.6 3 3 4.1 1.2.9 2 2.3 2 3.9a5 5 0 01-5 5z"/></symbol>
+    <symbol id="i-truck" viewBox="0 0 24 24"><path d="M2.5 6.5h11v8h-11z"/><path d="M13.5 9h3.5l3 3v2.5h-6.5z"/><circle cx="6.5" cy="17" r="1.6"/><circle cx="17" cy="17" r="1.6"/></symbol>
+    <symbol id="i-target" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="4.2"/><circle cx="12" cy="12" r="1.3" fill="#c2b89e" stroke="none"/></symbol>
+    <symbol id="i-dice" viewBox="0 0 24 24"><rect x="4.5" y="4.5" width="15" height="15" rx="3"/><circle cx="9" cy="9" r="1.1" fill="#c2b89e" stroke="none"/><circle cx="15" cy="9" r="1.1" fill="#c2b89e" stroke="none"/><circle cx="9" cy="15" r="1.1" fill="#c2b89e" stroke="none"/><circle cx="15" cy="15" r="1.1" fill="#c2b89e" stroke="none"/></symbol>
+    <symbol id="i-bolt" viewBox="0 0 24 24"><path d="M13 2.5L5 13.5h6l-1 8 8-11h-6z"/></symbol>
+    <symbol id="i-scale" viewBox="0 0 24 24"><path d="M12 3.5v17M7.5 20.5h9M6 7.5h12"/><path d="M6 7.5L3.2 13a2.8 2.8 0 005.6 0zM18 7.5L15.2 13a2.8 2.8 0 005.6 0z"/></symbol>
+    <symbol id="i-search" viewBox="0 0 24 24"><circle cx="10.5" cy="10.5" r="6"/><path d="M15 15l5 5"/></symbol>
+    <symbol id="i-users" viewBox="0 0 24 24"><circle cx="9" cy="8" r="3.2"/><path d="M3.5 19.5c0-3.2 2.5-5.3 5.5-5.3s5.5 2.1 5.5 5.3"/><path d="M16 5.4A3 3 0 0116 11"/><path d="M17.5 14.4c2.2.5 3.8 2.3 3.8 5.1"/></symbol>
+    <symbol id="i-chart" viewBox="0 0 24 24"><path d="M4 20V4M4 20h16"/><path d="M7.5 15l3.5-3.5 2.5 2 4.5-5.5"/><path d="M15.5 8h2.5v2.5"/></symbol>
+    <symbol id="i-wallet" viewBox="0 0 24 24"><rect x="3.5" y="6.5" width="17" height="12" rx="2"/><path d="M3.5 10.5h17"/><circle cx="16.5" cy="14" r="1.2" fill="#c2b89e" stroke="none"/></symbol>
+    <symbol id="i-key" viewBox="0 0 24 24"><circle cx="7.5" cy="16.5" r="3"/><path d="M9.6 14.4l8-8M15 6.5l2.5 2.5M12.5 9l2 2"/></symbol>
+    <symbol id="i-check" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><path d="M8.5 12l2.4 2.4 4.6-4.8"/></symbol>
+    <symbol id="i-rocket" viewBox="0 0 24 24"><path d="M12 3c3.2 1.4 5.5 4.4 5.5 8.5L15 14H9l-2.5-2.5C6.5 7.4 8.8 4.4 12 3z"/><circle cx="12" cy="9.5" r="1.6"/><path d="M9 15l-2.5 3M15 15l2.5 3M12 15v3.5"/></symbol>
+  </defs></svg>
+
+  <!-- S1 · Capa -->
+  <div class="deck-slide current">
+    <div class="ring2 an d1"><svg viewBox="0 0 300 300" class="dsvg">
+      <line class="spoke" x1="150" y1="150" x2="150" y2="45"/><line class="spoke" x1="150" y1="150" x2="241" y2="97"/><line class="spoke" x1="150" y1="150" x2="241" y2="203"/><line class="spoke" x1="150" y1="150" x2="150" y2="255"/><line class="spoke" x1="150" y1="150" x2="59" y2="203"/><line class="spoke" x1="150" y1="150" x2="59" y2="97"/>
+      <g class="core"><circle cx="150" cy="150" r="40" fill="rgba(194,184,158,.14)" stroke="#c2b89e" stroke-width="1.6"/><use href="#i-coins" x="132" y="132" width="36" height="36"/></g>
+      <g class="node n1"><circle cx="150" cy="45" r="24" fill="#0e355c" stroke="#c2b89e" stroke-width="1.6"/><use href="#i-person" x="136" y="31" width="28" height="28"/></g>
+      <g class="node n2"><circle cx="241" cy="97" r="24" fill="#0e355c" stroke="#c2b89e" stroke-width="1.6"/><use href="#i-person" x="227" y="83" width="28" height="28"/></g>
+      <g class="node n3"><circle cx="241" cy="203" r="24" fill="#0e355c" stroke="#c2b89e" stroke-width="1.6"/><use href="#i-person" x="227" y="189" width="28" height="28"/></g>
+      <g class="node n4"><circle cx="150" cy="255" r="24" fill="#0e355c" stroke="#c2b89e" stroke-width="1.6"/><use href="#i-person" x="136" y="241" width="28" height="28"/></g>
+      <g class="node n5"><circle cx="59" cy="203" r="24" fill="#0e355c" stroke="#c2b89e" stroke-width="1.6"/><use href="#i-person" x="45" y="189" width="28" height="28"/></g>
+      <g class="node n6"><circle cx="59" cy="97" r="24" fill="#0e355c" stroke="#c2b89e" stroke-width="1.6"/><use href="#i-person" x="45" y="83" width="28" height="28"/></g>
+    </svg></div>
+    <div class="deck-kicker an d2">Osher Capital · Consórcios</div>
+    <h2 class="an d3">A engenharia do seu<br>próximo <span class="hl">patrimônio</span>.</h2>
+    <p class="big an d4">Como transformar parcela em conquista: <span class="hl">sem juros</span>, com estratégia.</p>
+    <p class="deck-slogan an d5">Investir com segurança, conquistar com muita inteligência.</p>
+    <div class="deck-hint an d6">Clique à direita para avançar e à esquerda para voltar · setas ← → · ESC para sair</div>
+  </div>
+
+  <!-- S1b · Quem é a Osher -->
+  <div class="deck-slide">
+    <div class="deck-kicker an d1">Quem somos</div>
+    <h2 class="an d2">Consultoria de<br><span class="hl">inteligência patrimonial</span>.</h2>
+    <p class="big an d3">De Brasília para todo o Brasil. Não vendemos o produto de um banco: desenhamos a estratégia e escolhemos a ferramenta certa para o seu caso.</p>
+    <div class="usp-grid" style="max-width:840px">
+      <div class="urow an d4"><div class="uic"><svg class="dsvg" viewBox="0 0 24 24"><use href="#i-scale"/></svg></div><div><div class="ut2">Multimarca e independente</div><div class="ud2">Curadoria dos melhores grupos entre várias administradoras.</div></div></div>
+      <div class="urow an d4"><div class="uic"><svg class="dsvg" viewBox="0 0 24 24"><use href="#i-chart"/></svg></div><div><div class="ut2">Mais de uma ferramenta</div><div class="ud2">Consórcio, Home Equity e Financiamento. Usamos a certa para você.</div></div></div>
+    </div>
+  </div>
+
+  <!-- S1c · Resultados -->
+  <div class="deck-slide">
+    <div class="deck-kicker an d1">Resultados</div>
+    <h2 class="an d2">Números que <span class="hl">entregam</span>.</h2>
+    <div class="badges">
+      <div class="badge-b an d3"><div class="bnum"><span class="countup" data-to="68" data-prefix="R$ " data-suffix=" mi+">R$ 0 mi+</span></div><div class="bt">em crédito vendido</div><div class="bd">desde 2025, em imóveis e veículos</div></div>
+      <div class="badge-b an d4"><div class="bnum"><span class="countup" data-to="141">0</span></div><div class="bt">clientes atendidos</div><div class="bd">com estratégia desenhada caso a caso</div></div>
+      <div class="badge-b an d5"><div class="bnum"><span class="countup" data-to="32">0</span></div><div class="bt">contemplações entregues</div><div class="bd">28 delas nos últimos 12 meses</div></div>
+    </div>
+  </div>
+
+  <!-- S1d · O Brasil abraçou o consórcio -->
+  <div class="deck-slide">
+    <div class="deck-kicker an d1">O mercado</div>
+    <h2 class="an d2">O Brasil abraçou<br>o <span class="hl">consórcio</span>.</h2>
+    <div class="badges">
+      <div class="badge-b an d3"><div class="bnum">5,16 mi</div><div class="bt">novas adesões em 2025</div><div class="bd">o melhor ano da história do setor</div></div>
+      <div class="badge-b an d3"><div class="bnum">12,76 mi</div><div class="bt">participantes ativos</div><div class="bd">alta de 13,8% em um ano</div></div>
+      <div class="badge-b an d4"><div class="bnum"><span class="countup" data-to="500" data-prefix="R$ " data-suffix=" bi+">R$ 0 bi+</span></div><div class="bt">em crédito comercializado</div><div class="bd">alta de 32% sobre 2024</div></div>
+      <div class="badge-b an d5"><div class="bnum">1 em 4</div><div class="bt">imóveis com crédito</div><div class="bd">no Brasil, passa pelo consórcio</div></div>
+    </div>
+  </div>
+
+  <!-- S2 · O que é -->
+  <div class="deck-slide">
+    <div class="ring2 an d1"><svg viewBox="0 0 300 300" class="dsvg">
+      <line class="spoke" x1="150" y1="150" x2="150" y2="45"/><line class="spoke" x1="150" y1="150" x2="241" y2="97"/><line class="spoke" x1="150" y1="150" x2="241" y2="203"/><line class="spoke" x1="150" y1="150" x2="150" y2="255"/><line class="spoke" x1="150" y1="150" x2="59" y2="203"/><line class="spoke" x1="150" y1="150" x2="59" y2="97"/>
+      <g class="core"><circle cx="150" cy="150" r="40" fill="rgba(194,184,158,.14)" stroke="#c2b89e" stroke-width="1.6"/><use href="#i-coins" x="132" y="132" width="36" height="36"/></g>
+      <g class="node n1"><circle cx="150" cy="45" r="24" fill="#0e355c" stroke="#c2b89e" stroke-width="1.6"/><use href="#i-person" x="136" y="31" width="28" height="28"/></g>
+      <g class="node n2"><circle cx="241" cy="97" r="24" fill="#0e355c" stroke="#c2b89e" stroke-width="1.6"/><use href="#i-person" x="227" y="83" width="28" height="28"/></g>
+      <g class="node n3"><circle cx="241" cy="203" r="24" fill="#0e355c" stroke="#c2b89e" stroke-width="1.6"/><use href="#i-person" x="227" y="189" width="28" height="28"/></g>
+      <g class="node n4"><circle cx="150" cy="255" r="24" fill="#0e355c" stroke="#c2b89e" stroke-width="1.6"/><use href="#i-person" x="136" y="241" width="28" height="28"/></g>
+      <g class="node n5"><circle cx="59" cy="203" r="24" fill="#0e355c" stroke="#c2b89e" stroke-width="1.6"/><use href="#i-person" x="45" y="189" width="28" height="28"/></g>
+      <g class="node n6"><circle cx="59" cy="97" r="24" fill="#0e355c" stroke="#c2b89e" stroke-width="1.6"/><use href="#i-person" x="45" y="83" width="28" height="28"/></g>
+    </svg></div>
+    <div class="deck-kicker an d2">O que é</div>
+    <h2 class="an d3">Um grupo. Um objetivo.<br><span class="hl">Zero juros.</span></h2>
+    <p class="big an d4">Pessoas se unem numa poupança coletiva. Todo mês, alguém é contemplado e compra à vista.</p>
+  </div>
+
+  <!-- S3 · Impacto 0% -->
+  <div class="deck-slide">
+    <div class="deck-kicker an d1">A base de tudo</div>
+    <div class="impact an d2">0%</div>
+    <div class="impact-u an d3">de juros</div>
+    <p class="big an d4">Você não financia com um banco. O próprio grupo se financia. Você paga apenas a taxa de administração.</p>
+  </div>
+
+  <!-- S4 · Regulado -->
+  <div class="deck-slide">
+    <div class="fig an d1"><svg class="dsvg" viewBox="0 0 24 24" width="120" height="120"><use href="#i-shield"/></svg></div>
+    <div class="deck-kicker an d2">Segurança</div>
+    <h2 class="an d3">Regulado pelo<br>Banco Central.</h2>
+    <p class="big an d4">Sistema regido pela Lei 11.795/2008 e fiscalizado pelo BACEN. Regras rígidas para proteger o seu dinheiro.</p>
+  </div>
+
+  <!-- S · Suas garantias -->
+  <div class="deck-slide">
+    <div class="deck-kicker an d1">Suas garantias</div>
+    <h2 class="an d2">Não é confiança.<br>É <span class="hl">lei</span>.</h2>
+    <div class="usp-grid" style="max-width:840px">
+      <div class="urow an d3"><div class="uic"><svg class="dsvg" viewBox="0 0 24 24"><use href="#i-shield"/></svg></div><div><div class="ut2">Patrimônio segregado</div><div class="ud2">O dinheiro do grupo não se mistura com o da administradora.</div></div></div>
+      <div class="urow an d3"><div class="uic"><svg class="dsvg" viewBox="0 0 24 24"><use href="#i-search"/></svg></div><div><div class="ut2">Fiscalizado pelo BACEN</div><div class="ud2">O Banco Central supervisiona e pode intervir.</div></div></div>
+      <div class="urow an d4"><div class="uic"><svg class="dsvg" viewBox="0 0 24 24"><use href="#i-target"/></svg></div><div><div class="ut2">Contemplação garantida</div><div class="ud2">Todo cotista em dia é contemplado até o fim do grupo.</div></div></div>
+      <div class="urow an d4"><div class="uic"><svg class="dsvg" viewBox="0 0 24 24"><use href="#i-check"/></svg></div><div><div class="ut2">Direito à devolução</div><div class="ud2">Desistiu? A lei garante o retorno do que você pagou.</div></div></div>
+    </div>
+  </div>
+
+  <!-- S5 · Como funciona -->
+  <div class="deck-slide">
+    <div class="deck-kicker an d1">Como funciona</div>
+    <h2 class="an d2">Do plano à conquista.</h2>
+    <div class="steps5">
+      <div class="ln"></div>
+      <div class="st5 an d2"><div class="node5"><span class="num5">1</span><svg class="dsvg" viewBox="0 0 24 24"><use href="#i-wallet"/></svg></div><div class="t5">Escolha o crédito</div></div>
+      <div class="st5 an d3"><div class="node5"><span class="num5">2</span><svg class="dsvg" viewBox="0 0 24 24"><use href="#i-coins"/></svg></div><div class="t5">Pague as parcelas</div></div>
+      <div class="st5 an d4"><div class="node5"><span class="num5">3</span><svg class="dsvg" viewBox="0 0 24 24"><use href="#i-users"/></svg></div><div class="t5">Assembleia mensal</div></div>
+      <div class="st5 an d5"><div class="node5"><span class="num5">4</span><svg class="dsvg" viewBox="0 0 24 24"><use href="#i-key"/></svg></div><div class="t5">Seja contemplado</div></div>
+      <div class="st5 an d6"><div class="node5"><span class="num5">5</span><svg class="dsvg" viewBox="0 0 24 24"><use href="#i-house"/></svg></div><div class="t5">Compre à vista</div></div>
+    </div>
+  </div>
+
+  <!-- S6 · Contemplação -->
+  <div class="deck-slide">
+    <div class="deck-kicker an d1">A hora da conquista</div>
+    <h2 class="an d2">Todo mês, alguém conquista.</h2>
+    <div class="spot2 an d3">
+      <div class="card-cred">Carta de crédito</div>
+      <div class="person"><svg class="dsvg" viewBox="0 0 24 24"><use href="#i-person"/></svg></div>
+      <div class="person"><svg class="dsvg" viewBox="0 0 24 24"><use href="#i-person"/></svg></div>
+      <div class="person hot"><svg class="dsvg" viewBox="0 0 24 24"><use href="#i-person"/></svg></div>
+      <div class="person"><svg class="dsvg" viewBox="0 0 24 24"><use href="#i-person"/></svg></div>
+      <div class="person"><svg class="dsvg" viewBox="0 0 24 24"><use href="#i-person"/></svg></div>
+    </div>
+    <p class="big an d4">E, por lei, <span class="hl">todos são contemplados até o fim do grupo</span>. Não é "se", é "quando".</p>
+  </div>
+
+  <!-- S7 · Sorteio vs Lance -->
+  <div class="deck-slide">
+    <div class="deck-kicker an d1">Você no controle</div>
+    <h2 class="an d2">Não dependa da sorte.</h2>
+    <div class="duo">
+      <div class="card an d3"><svg class="dsvg cic" viewBox="0 0 24 24"><use href="#i-dice"/></svg><h4>Sorteio</h4><p>Concorre em igualdade todo mês, sem custo extra.</p></div>
+      <div class="card gold an d4"><svg class="dsvg cic" viewBox="0 0 24 24"><use href="#i-bolt"/></svg><h4>Lance</h4><p>Antecipa parcelas e adianta a sua contemplação.</p></div>
+    </div>
+    <p class="big an d5">Com pressa? O <span class="hl">lance</span> é a sua alavanca.</p>
+  </div>
+
+  <!-- S8 · Comparativo (HERO) -->
+  <div class="deck-slide">
+    <div class="deck-kicker an d1">A grande diferença</div>
+    <h2 class="an d2">Juros custam um<br>segundo imóvel.</h2>
+    <div class="cbars">
+      <div class="cbar-wrap">
+        <div class="cbar-num" style="color:#d8d1c0"><span class="countup" data-to="348" data-prefix="R$ " data-suffix=" mil">R$ 0 mil</span></div>
+        <div class="cbar c-good"></div>
+        <div class="cbar-lab">Consórcio</div><div class="cbar-sub">custo total até quitar</div>
+      </div>
+      <div class="cbar-wrap">
+        <div class="cbar-num" style="color:#e07a5f"><span class="countup" data-to="610" data-prefix="R$ " data-suffix=" mil">R$ 0 mil</span></div>
+        <div class="cbar c-bad"><div class="seg-j">＋ Juros</div></div>
+        <div class="cbar-lab">Financiamento</div><div class="cbar-sub">custo total até quitar</div>
+      </div>
+    </div>
+    <p class="cnote an d3">*Simulação ilustrativa para um bem de R$ 300 mil. Simule o caso real no atendimento.</p>
+  </div>
+
+  <!-- S9 · Estratégias -->
+  <div class="deck-slide">
+    <div class="deck-kicker an d1">Inteligência financeira</div>
+    <h2 class="an d2">Três formas de<br><span class="hl">multiplicar patrimônio</span>.</h2>
+    <div class="duo">
+      <div class="card an d3"><svg class="dsvg cic" viewBox="0 0 24 24"><use href="#i-building"/></svg><h4>Alavancagem</h4><p>O inquilino paga a sua parcela.</p></div>
+      <div class="card an d4"><svg class="dsvg cic" viewBox="0 0 24 24"><use href="#i-tree"/></svg><h4>Aposentadoria imobiliária</h4><p>Uma carteira de imóveis rendendo no futuro.</p></div>
+      <div class="card an d5"><svg class="dsvg cic" viewBox="0 0 24 24"><use href="#i-truck"/></svg><h4>Planejamento PJ</h4><p>Renove a frota sem descapitalizar a empresa.</p></div>
+    </div>
+  </div>
+
+  <!-- S10 · A Inteligência Osher -->
+  <div class="deck-slide">
+    <div class="fig an d1"><svg class="dsvg" viewBox="0 0 24 24" width="106" height="106"><use href="#i-target"/></svg></div>
+    <div class="deck-kicker an d2">A Inteligência Osher</div>
+    <h2 class="an d3">Contemplação é <span class="hl">estratégia</span>,<br>não sorte.</h2>
+    <p class="big an d4">Analisamos histórico do grupo, saúde da administradora e sazonalidade das assembleias para calcular o lance com rigor: contemplação rápida e o menor desembolso.</p>
+  </div>
+
+  <!-- S11 · Por que a Osher (USP) -->
+  <div class="deck-slide">
+    <div class="deck-kicker an d1">Por que a Osher</div>
+    <h2 class="an d2">O banco vende o dele.<br>Nós buscamos o <span class="hl">seu</span>.</h2>
+    <div class="usp-grid">
+      <div class="urow an d3"><div class="uic"><svg class="dsvg" viewBox="0 0 24 24"><use href="#i-scale"/></svg></div><div><div class="ut2">Multimarca</div><div class="ud2">O melhor grupo entre várias administradoras, não o único.</div></div></div>
+      <div class="urow an d3"><div class="uic"><svg class="dsvg" viewBox="0 0 24 24"><use href="#i-target"/></svg></div><div><div class="ut2">Gestão de lances</div><div class="ud2">Lance calculado por dados, não por achismo.</div></div></div>
+      <div class="urow an d4"><div class="uic"><svg class="dsvg" viewBox="0 0 24 24"><use href="#i-search"/></svg></div><div><div class="ut2">Curadoria da administradora</div><div class="ud2">Analisamos saúde e histórico antes de indicar.</div></div></div>
+      <div class="urow an d4"><div class="uic"><svg class="dsvg" viewBox="0 0 24 24"><use href="#i-users"/></svg></div><div><div class="ut2">Pós-venda ativo</div><div class="ud2">Acompanhamos você até a contemplação.</div></div></div>
+      <div class="urow an d5"><div class="uic"><svg class="dsvg" viewBox="0 0 24 24"><use href="#i-chart"/></svg></div><div><div class="ut2">Consultoria de alavancagem</div><div class="ud2">Crédito que gera renda e patrimônio.</div></div></div>
+    </div>
+  </div>
+
+  <!-- S12 · Vantagens -->
+  <div class="deck-slide">
+    <div class="deck-kicker an d1">Em resumo</div>
+    <h2 class="an d2">O que o consórcio faz<br>pelo seu bolso.</h2>
+    <div class="chips">
+      <span class="chip-v an d2"><svg class="dsvg" viewBox="0 0 24 24"><use href="#i-check"/></svg> Sem juros</span>
+      <span class="chip-v an d3"><svg class="dsvg" viewBox="0 0 24 24"><use href="#i-check"/></svg> Parcela que cabe</span>
+      <span class="chip-v an d3"><svg class="dsvg" viewBox="0 0 24 24"><use href="#i-check"/></svg> Compra à vista</span>
+      <span class="chip-v an d4"><svg class="dsvg" viewBox="0 0 24 24"><use href="#i-check"/></svg> Planejamento</span>
+      <span class="chip-v an d4"><svg class="dsvg" viewBox="0 0 24 24"><use href="#i-check"/></svg> FGTS (imóveis)</span>
+      <span class="chip-v an d5"><svg class="dsvg" viewBox="0 0 24 24"><use href="#i-check"/></svg> Versátil</span>
+    </div>
+  </div>
+
+  <!-- S13 · Slot de vídeo/depoimento -->
+  <div class="deck-slide">
+    <div class="deck-kicker an d1">Histórias reais</div>
+    <h2 class="an d2">Quem já realizou.</h2>
+    <!-- PARA TROCAR POR SEU VÍDEO/GIF: substitua a div abaixo por, por exemplo:
+         <video class="media-slot" src="depoimento.mp4" autoplay muted loop playsinline></video>
+         ou uma imagem/gif: <img class="media-slot" src="depoimento.gif" alt=""> -->
+    <div class="media-slot an d3">
+      <svg class="dsvg" viewBox="0 0 24 24" width="58" height="58"><use href="#i-users"/></svg>
+      <div style="font-family:'Outfit';font-weight:600;font-size:1.05rem">Espaço para o seu vídeo de depoimento</div>
+      <small>Grave clientes contando a experiência. Para inserir, troque este bloco por uma tag &lt;video&gt; ou &lt;img&gt; (instruções no código).</small>
+    </div>
+  </div>
+
+  <!-- S14 · CTA -->
+  <div class="deck-slide">
+    <div class="fig an d1"><svg class="dsvg" viewBox="0 0 24 24" width="98" height="98"><use href="#i-rocket"/></svg></div>
+    <div class="deck-kicker an d2">Próximo passo</div>
+    <h2 class="an d3">Vamos desenhar<br>o <span class="hl">seu</span> plano.</h2>
+    <p class="big an d4">Me conte o seu momento e o seu objetivo, e eu monto o consórcio ideal para você.</p>
+    <span class="deck-cta an d5">Bora começar</span>
+  </div>
+
+  <div class="deck-nav">
+    <button class="deck-arrow" id="deckPrev" title="Anterior">‹</button>
+    <div class="deck-dots" id="deckDots"></div>
+    <button class="deck-arrow" id="deckNext" title="Próximo">›</button>
+  </div>
+  <div class="deck-count" id="deckCount"></div>
+</div>
+
+<footer>
+  <span class="wordmark" style="transform:scale(.85);transform-origin:left"><span class="wm-osher">osher</span><span class="wm-cap">Capital</span></span>
+  <p style="margin:12px 0 0">Playbook Comercial de Consórcios · uso interno da equipe de consultores. Estruturado sobre SPIN Selling, Sandler, Challenger, NEPQ, BANT e o framework proprietário COIN.</p>
+</footer>
+
+<script>
+/* ---- MODE TOGGLE ---- */
+function setMode(m){
+  document.body.classList.toggle('mode-present',m==='present');
+  document.body.classList.toggle('mode-guide',m==='guide');
+  document.getElementById('btnPresent').classList.toggle('active',m==='present');
+  document.getElementById('btnGuide').classList.toggle('active',m==='guide');
+}
+
+/* ---- MAIN TABS ---- */
+document.querySelectorAll('#mainTabs button').forEach(b=>{
+  b.addEventListener('click',()=>{
+    document.querySelectorAll('#mainTabs button').forEach(x=>x.classList.remove('active'));
+    document.querySelectorAll('.tabpane').forEach(x=>x.classList.remove('active'));
+    b.classList.add('active');
+    document.getElementById(b.dataset.tab).classList.add('active');
+    window.scrollTo({top:0,behavior:'smooth'});
+  });
+});
+
+/* ---- STEP RAIL NAV ---- */
+document.querySelectorAll('.rail a').forEach(a=>{
+  a.addEventListener('click',e=>{
+    e.preventDefault();
+    const t=document.querySelector(a.getAttribute('href'));
+    if(t)t.scrollIntoView({behavior:'smooth'});
+  });
+});
+/* scrollspy */
+function spy(railId,paneId){
+  const links=document.querySelectorAll('#'+railId+' a');
+  const steps=[...links].map(l=>document.querySelector(l.getAttribute('href'))).filter(Boolean);
+  const pane=document.getElementById(paneId);
+  window.addEventListener('scroll',()=>{
+    if(!pane.classList.contains('active'))return;
+    let idx=0;
+    steps.forEach((s,i)=>{if(s.getBoundingClientRect().top<200)idx=i;});
+    links.forEach(l=>l.classList.remove('active'));
+    if(links[idx])links[idx].classList.add('active');
+  });
+}
+spy('railFund','fund');spy('railPerfis','perfis');spy('railR1','r1');spy('railR2','r2');spy('railFollow','follow');
+
+/* ---- COPY BUTTONS ---- */
+document.querySelectorAll('.script, .narr').forEach(s=>{
+  const btn=document.createElement('button');
+  btn.className='copy-btn';btn.title='Copiar fala';
+  btn.innerHTML='&#10697;';
+  btn.addEventListener('click',()=>{
+    const txt=s.querySelector('.q').innerText;
+    navigator.clipboard.writeText(txt).then(()=>{
+      btn.classList.add('ok');btn.innerHTML='&#10003;';
+      setTimeout(()=>{btn.classList.remove('ok');btn.innerHTML='&#10697;';},1400);
+    });
+  });
+  s.appendChild(btn);
+});
+
+/* ---- SLIDE DECK CONTROLLER ---- */
+(function(){
+  const deck=document.getElementById('deck');
+  if(!deck)return;
+  const slides=[...deck.querySelectorAll('.deck-slide')];
+  const dotsWrap=document.getElementById('deckDots');
+  const countEl=document.getElementById('deckCount');
+  let i=0;
+  slides.forEach((s,idx)=>{
+    const d=document.createElement('i');
+    d.addEventListener('click',e=>{e.stopPropagation();go(idx);});
+    dotsWrap.appendChild(d);
+  });
+  const dots=[...dotsWrap.children];
+  function runCounters(slide){
+    slide.querySelectorAll('.countup').forEach(el=>{
+      const to=+el.dataset.to,pre=el.dataset.prefix||'',suf=el.dataset.suffix||'',dur=1200,t0=performance.now();
+      function step(t){const p=Math.min(1,(t-t0)/dur);const v=Math.round(to*(1-Math.pow(1-p,3)));el.textContent=pre+v.toLocaleString('pt-BR')+suf;if(p<1)requestAnimationFrame(step);}
+      el.textContent=pre+'0'+suf;requestAnimationFrame(step);
+    });
+  }
+  function render(){
+    slides.forEach((s,idx)=>s.classList.toggle('current',idx===i));
+    dots.forEach((d,idx)=>d.classList.toggle('on',idx===i));
+    countEl.textContent=(i+1)+' / '+slides.length;
+    runCounters(slides[i]);
+  }
+  function go(n){i=Math.max(0,Math.min(slides.length-1,n));render();}
+  function next(){if(i<slides.length-1)go(i+1);}
+  function prev(){if(i>0)go(i-1);}
+  window.openDeck=function(){
+    deck.classList.add('open');document.body.style.overflow='hidden';i=0;render();
+    if(deck.requestFullscreen){deck.requestFullscreen().catch(()=>{});}
+  };
+  window.closeDeck=function(){
+    deck.classList.remove('open');document.body.style.overflow='';
+    if(document.fullscreenElement){document.exitFullscreen().catch(()=>{});}
+  };
+  document.getElementById('deckNext').addEventListener('click',e=>{e.stopPropagation();next();});
+  document.getElementById('deckPrev').addEventListener('click',e=>{e.stopPropagation();prev();});
+  document.getElementById('deckClose').addEventListener('click',e=>{e.stopPropagation();closeDeck();});
+  deck.addEventListener('click',e=>{
+    if(e.clientX<window.innerWidth/2){prev();}else{next();}
+  });
+  document.addEventListener('keydown',e=>{
+    if(!deck.classList.contains('open'))return;
+    if(e.key==='ArrowRight'||e.key===' '){e.preventDefault();next();}
+    else if(e.key==='ArrowLeft'){prev();}
+    else if(e.key==='Escape'){closeDeck();}
+  });
+})();
+</script>
+</body>
+</html>
