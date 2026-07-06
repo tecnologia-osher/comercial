@@ -4,7 +4,7 @@
 <meta charset="UTF-8"><meta http-equiv="Cache-Control" content="no-store">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Painel Comercial — Osher Capital</title>
-<!-- painel v10 · idv 2026-07-04 -->
+<!-- painel v11 · faturamento por mês = 1ª parcela paga · 2026-07-06 -->
 <!-- auditoria 2026-07-03 -->
 <base target="_top">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -199,7 +199,7 @@ th.l,td.l{text-align:left}tbody tr:hover{background:var(--card2)}
   <div id="g_alertas"></div>
   <div class="kpis kpis4" id="g_kpis"></div>
   <div class="grid" style="margin-top:18px">
-    <div class="card"><h2><span class="dot"></span>Evolução no tempo</h2><div class="h2sub">&nbsp;</div>
+    <div class="card"><h2><span class="dot"></span>Evolução no tempo</h2><div class="h2sub">Mês pela data da 1ª parcela paga (adesão) · sem pagamento cai na data do contrato</div>
       <div class="toggle" id="g_tgl"><button class="on" data-m="n">Nº de contratos</button><button data-m="v">Valor (R$)</button></div>
       <div class="vbars" id="g_tempo"></div><div id="g_tempoLeg"></div></div>
     <div class="card"><h2><span class="dot" style="background:var(--ac2)"></span>Mix de produto</h2><div class="h2sub">Participação por valor vendido</div>
@@ -303,6 +303,8 @@ function enrich(rows){rows.forEach(function(r){var pct=contraPct(r.tipo,parseTax
 
 /* ===================== DATA / JANELAS ===================== */
 function ymd(s){var m=/^(\d{4})-(\d{1,2})-(\d{1,2})/.exec(s||'');return m?{y:+m[1],mo:+m[2],d:+m[3]}:null;}
+function firstPayYMD(r){var pc=(r&&r.parc)||[];for(var i=0;i<pc.length;i++){var v=String(pc[i]==null?'':pc[i]).trim();if(!v||/abert/i.test(v))continue;var p=ymd(v);if(p)return p;}return null;}
+function payMonthYMD(r){return firstPayYMD(r)||ymd(r&&r.data);} /* mês pela 1ª parcela paga (adesão); fallback = data do contrato se nada pago */
 function ageFrom(n){var p=ymd(n);if(!p)return null;var a=new Date().getFullYear()-p.y;return (a>=18&&a<=90)?a:null;}
 /* semana comercial: DOMINGO a DOMINGO (offset +4 faz a semana começar no domingo) */
 function wkIdx(s){var t=Date.parse(s);if(isNaN(t))return null;return Math.floor((Math.floor(t/864e5)+4)/7);}
@@ -366,7 +368,7 @@ function buildGeral(R){
     cont:cont,taxa_cont:n?+(100*cont/n).toFixed(1):0,cont_valor:cont_valor,
     canc:canc,taxa_canc:n?+(100*canc/n).toFixed(1):0,valor_canc:valor_canc};
   // tempo
-  var tm={},to=[];R.forEach(function(r){var p=ymd(r.data);if(!p)return;var k=p.y*100+p.mo;if(!tm[k]){tm[k]={k:k,y:p.y,m:p.mo,label:MES[p.mo-1]+'/'+(''+p.y).slice(2),fech_n:0,fech_v:0,canc_n:0,canc_v:0};to.push(k);}var o=tm[k];o.fech_n++;o.fech_v+=r.valor;if(r.status==='CANCELADO'){o.canc_n++;o.canc_v+=r.valor;}});
+  var tm={},to=[];R.forEach(function(r){var p=payMonthYMD(r);if(!p)return;var k=p.y*100+p.mo;if(!tm[k]){tm[k]={k:k,y:p.y,m:p.mo,label:MES[p.mo-1]+'/'+(''+p.y).slice(2),fech_n:0,fech_v:0,canc_n:0,canc_v:0};to.push(k);}var o=tm[k];o.fech_n++;o.fech_v+=r.valor;if(r.status==='CANCELADO'){o.canc_n++;o.canc_v+=r.valor;}});
   to.sort(function(a,b){return a-b;});var tempo=to.map(function(k){return tm[k];});
   // mix / ticket_prod
   var mix=[{tipo:'IMÓVEL',valor:imV,n:imN},{tipo:'AUTOMÓVEL',valor:auV,n:auN}];
