@@ -190,6 +190,7 @@ label.fl{display:flex;flex-direction:column;gap:5px;font-size:12px;color:var(--m
     <button data-v="vend" data-see="1">Vendedores</button>
     <button data-v="ativ">Atividades</button>
     <button data-v="tracao" data-see="1">Tração</button>
+    <button data-v="relatorio" data-see="1">Relatório semanal</button>
     <button data-v="rotina">Rotina</button>
   </nav>
   <div class="side-foot">
@@ -327,6 +328,27 @@ label.fl{display:flex;flex-direction:column;gap:5px;font-size:12px;color:var(--m
     <h3 style="margin:0"><span class="dot" style="background:var(--gold)"></span>Playbook Comercial — apoio ao vendedor</h3>
     <div class="h3sub">Consórcio explicado, perfis de cliente, roteiros de Reunião 1 e 2, follow-up e casos</div>
     <iframe id="pbFrame" src="playbook.html" onload="syncFinTheme()" style="width:100%;height:84vh;border:1px solid var(--bd);border-radius:12px;margin-top:8px;background:var(--card)"></iframe>
+  </div>
+</section>
+
+<section class="view" id="v-relatorio">
+  <div class="card">
+    <h3 style="margin:0"><span class="dot" style="background:var(--gold)"></span>Relatório semanal para os sócios</h3>
+    <div class="h3sub">Semana comercial (domingo a domingo). Qualificações e indicações contam pela data no período; contratos, pela data de fechamento.</div>
+    <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin:12px 0">
+      <button class="btn sm" onclick="repWeek(-1)">◀ Semana anterior</button>
+      <button class="btn sm" onclick="repHoje()">Semana atual</button>
+      <button class="btn sm" onclick="repWeek(1)">Próxima ▶</button>
+      <div id="repLabel" style="font-weight:700;margin-left:6px"></div>
+      <button class="btn sm primary" style="margin-left:auto" onclick="copiarReport()">📋 Copiar relatório</button>
+      <button class="btn sm" onclick="exportReportCSV()">CSV</button>
+    </div>
+    <div class="grid kpis" id="repKpis" style="margin-bottom:14px"></div>
+    <div style="overflow-x:auto">
+      <table id="tRep"><thead><tr>
+        <th class="l">Vendedor</th><th>Qualificações</th><th>Indicações tomadas</th><th>Contratos fechados</th><th>Valor fechado</th>
+      </tr></thead><tbody></tbody></table>
+    </div>
   </div>
 </section>
 
@@ -1295,6 +1317,30 @@ var META_WK={qual:5,prop:5,ind:25,venda:1};
 function histCount(name,st,de,ate){var n=0;DB.deals.forEach(function(d){if(name&&d.vendedor!==name)return;(d.hist||[]).forEach(function(h){if(h.st===st&&inRange(h.em,de,ate))n++;});});return n;}
 function refWeek(name,de,ate){return DB.deals.filter(function(d){return (!name||d.vendedor===name)&&inRange(d.criadoEm,de,ate)&&((d.indicadoPor||'').trim()||d.origem==='Indicação');}).length;}
 function vendasCPFweek(name,de,ate){var s={};DB.deals.forEach(function(d){if((!name||d.vendedor===name)&&isWon(d)&&inRange(d.ganhoEm,de,ate)){var k=((d.cpf||'').replace(/\D/g,''))||('cli:'+((d.cliente||'').toLowerCase().trim()||d.id));s[k]=1;}});return Object.keys(s).length;}
+/* ===== RELATÓRIO SEMANAL (para os sócios) ===== */
+var reportOff=0,_repCache=null;
+function repWeek(n){reportOff+=n;renderReport();}
+function repHoje(){reportOff=0;renderReport();}
+function renderReport(){
+  if(!el('tRep')||!ME)return;
+  var wr=weekRangeSun(reportOff);var de=wr[0],ate=wr[1];
+  if(el('repLabel'))el('repLabel').textContent=fmtFull(de)+' a '+fmtFull(ate)+(reportOff===0?' · semana atual':'');
+  var vs=canSeeAll()?sellers().map(function(s){return s.nome;}):[ME.nome];
+  var rows=vs.map(function(v){
+    var qual=histCount(v,'Qualificação',de,ate);
+    var ind=refWeek(v,de,ate);
+    var won=DB.deals.filter(function(d){return d.vendedor===v&&isWon(d)&&inRange(d.ganhoEm,de,ate);});
+    var val=won.reduce(function(a,d){return a+(d.valor||0);},0);
+    return {v:v,qual:qual,ind:ind,ct:won.length,val:val};
+  }).sort(function(a,b){return b.val-a.val||b.ct-a.ct;});
+  var tQ=0,tI=0,tC=0,tV=0;rows.forEach(function(r){tQ+=r.qual;tI+=r.ind;tC+=r.ct;tV+=r.val;});
+  if(el('repKpis'))el('repKpis').innerHTML=[['Qualificações',tQ,'na semana'],['Indicações tomadas',tI,'na semana'],['Contratos fechados',tC,'na semana'],['Valor total fechado',BRL(tV),'na semana']].map(function(k){return '<div class="kpi"><div class="lbl">'+k[0]+'</div><div class="val">'+k[1]+'</div><div class="sub">'+k[2]+'</div></div>';}).join('');
+  var tb=el('tRep').querySelector('tbody');
+  tb.innerHTML=(rows.length?rows.map(function(r){return '<tr><td class="l">'+esc(r.v)+'</td><td>'+r.qual+'</td><td>'+r.ind+'</td><td>'+r.ct+'</td><td>'+BRL(r.val)+'</td></tr>';}).join(''):'<tr><td class="l" colspan="5"><div class="empty">Sem vendedores na seleção.</div></td></tr>')+'<tr style="font-weight:800;background:var(--card2)"><td class="l">Total</td><td>'+tQ+'</td><td>'+tI+'</td><td>'+tC+'</td><td>'+BRL(tV)+'</td></tr>';
+  _repCache={de:de,ate:ate,rows:rows,tQ:tQ,tI:tI,tC:tC,tV:tV};
+}
+function copiarReport(){if(!_repCache){renderReport();}var c=_repCache;if(!c)return;var L=['Relatório semanal — Osher Capital','Semana: '+fmtFull(c.de)+' a '+fmtFull(c.ate),''];c.rows.forEach(function(r){L.push(r.v+' — '+r.qual+' qualif · '+r.ind+' indic · '+r.ct+' contrato(s) · '+BRL(r.val));});L.push('','TOTAL: '+c.tQ+' qualif · '+c.tI+' indic · '+c.tC+' contrato(s) · '+BRL(c.tV)+' fechado');var txt=L.join('\n');if(navigator.clipboard){navigator.clipboard.writeText(txt).then(function(){alert('Relatório copiado — cole na apresentação ou no WhatsApp.');},function(){prompt('Copie o relatório:',txt);});}else prompt('Copie o relatório:',txt);}
+function exportReportCSV(){if(!_repCache){renderReport();}var c=_repCache;if(!c)return;var L=['Vendedor;Qualificacoes;Indicacoes tomadas;Contratos fechados;Valor fechado'];c.rows.forEach(function(r){L.push(r.v+';'+r.qual+';'+r.ind+';'+r.ct+';'+(r.val||0));});L.push('Total;'+c.tQ+';'+c.tI+';'+c.tC+';'+c.tV);var blob=new Blob(['﻿'+L.join('\r\n')],{type:'text/csv;charset=utf-8'});var a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='relatorio_semana_'+c.de+'.csv';document.body.appendChild(a);a.click();document.body.removeChild(a);}
 function weekMetrics(name,de,ate){return {qualif:histCount(name,'Qualificação',de,ate),propostas:histCount(name,'Proposta',de,ate),indicacoes:refWeek(name,de,ate),vendas:vendasCPFweek(name,de,ate)};}
 function cadenceDate(st){var c={'Prospecção':1,'Ligação':1,'Qualificação':2,'Proposta':3,'Negociação':2};var dd=c[st]||2;var t=new Date();t.setDate(t.getDate()+dd);return t.toISOString().slice(0,10);}
 function paceWidget(){var me=memberByName(ME.nome)||{};var r=weekRangeSun(0);var wm=weekMetrics(ME.nome,r[0],r[1]);var its=[['Qualificações',wm.qualif,me.metaWkQual||META_WK.qual],['Propostas',wm.propostas,me.metaWkProp||META_WK.prop],['Indicações',wm.indicacoes,me.metaWkInd||META_WK.ind],['Venda (CPF)',wm.vendas,me.metaWkFech||META_WK.venda]];var fr=paceFrac();var cards=its.map(function(it){var t=it[2];var pc=t?Math.round(it[1]/t*100):0;var on=t?it[1]>=t*fr:true;var col=t?(it[1]>=t?'var(--ac2)':on?'var(--ac)':'var(--warn)'):'var(--mut)';return '<div class="kpi"><div class="lbl">'+it[0]+' (semana)</div><div class="val">'+it[1]+(t?'<span style="font-size:13px;color:var(--mut)"> / '+t+'</span>':'')+'</div><div class="meta-track" style="height:5px;margin-top:7px"><div class="meta-fill" style="width:'+Math.min(100,pc)+'%;background:'+col+'"></div></div><div class="sub" style="color:'+col+'">'+(t?(it[1]>=t?'meta batida':on?'no ritmo':'abaixo do ritmo'):'sem meta')+'</div></div>';}).join('');return '<div style="font-size:13px;font-weight:700;margin:2px 0 8px">Meu pace da semana <span style="color:var(--mut);font-weight:400">(dom '+fmtFull(r[0])+' → dom)</span></div><div class="grid kpis" style="margin-bottom:16px">'+cards+'</div>';}
@@ -1315,7 +1361,7 @@ function rotinaVendedor(){var r=weekRangeSun(0);var av=weekActivity(ME.nome,r[0]
 function rotinaDiretor(){var r=weekRangeSun(0);var names=sellers().map(function(s){return s.nome;});var today=todayStr();var huddle=names.map(function(n){var nv=DB.deals.filter(function(d){return d.vendedor===n&&dDate(d.criadoEm)===today;}).length;var rh=0;DB.deals.forEach(function(d){if(d.vendedor!==n)return;(d.reunioes||[]).forEach(function(x){if(x.data===today)rh++;});});var lh=(DB.atividades||[]).filter(function(a){return a.v===n&&dDate(a.em)===today&&a.tipo==='ligacao';}).length;var atr=DB.deals.filter(function(d){return d.vendedor===n&&overdue(d);}).length;if(!(nv||rh||lh||atr))return null;return '<tr><td class="l">'+esc(n)+'</td><td>'+lh+'</td><td>'+nv+'</td><td>'+rh+'</td><td>'+(atr?'<span class="badge b-bad">'+atr+'</span>':'0')+'</td></tr>';}).filter(Boolean).join('')||'<tr><td class="l" colspan="5"><div class="empty">Sem atividade hoje ainda.</div></td></tr>';var um=names.map(function(n){var av=weekActivity(n,r[0],r[1]);var pipe=DB.deals.filter(function(d){return d.vendedor===n&&isOpen(d);});if(!(pipe.length||av.novos||av.fechados))return null;var pv=pipe.reduce(function(a,d){return a+(d.valor||0)},0);var neg=pipe.filter(function(d){return d.estagio==='Negociação'}).length;var par=pipe.filter(function(d){return daysSince(d.stageSince)>14}).length;var m=memberByName(n)||{};var pm=(m.metaWkNovos||0)?Math.round(av.novos/(m.metaWkNovos)*100):null;return '<tr><td class="l">'+esc(n)+'</td><td>'+BRLk(pv)+'</td><td>'+neg+'</td><td>'+(par?'<span class="badge b-bad">'+par+'</span>':'0')+'</td><td>'+av.novos+'</td><td>'+av.reunioes+'</td><td>'+av.propostas+'</td><td>'+(pm==null?'—':'<span class="badge '+(pm>=100?'b-ok':pm>=60?'b-warn':'b-bad')+'">'+pm+'%</span>')+'</td></tr>';}).filter(Boolean).join('')||'<tr><td class="l" colspan="8"><div class="empty">Sem pipeline ativo.</div></td></tr>';var tot={lig:0,reun:0,prop:0,novos:0,qual:0,fech:0};names.forEach(function(n){var a=weekActivity(n,r[0],r[1]);tot.lig+=a.ligacoes;tot.reun+=a.reunioes;tot.prop+=a.propostas;tot.novos+=a.novos;tot.qual+=a.qualif;tot.fech+=a.fechados;});var convT=tot.novos?Math.round(tot.qual/tot.novos*100):0;var valT=names.reduce(function(s,n){return s+DB.deals.filter(function(d){return d.vendedor===n&&isWon(d)&&inRange(d.ganhoEm,r[0],r[1]);}).reduce(function(a,d){return a+(d.valor||0)},0);},0);var pir='<div class="card"><h3><span class="dot" style="background:var(--vio)"></span>Atividades → Objetivos → Resultados</h3><div class="h3sub">Foque no que é gerenciável (semana)</div><div style="display:flex;flex-direction:column;gap:8px"><div style="background:var(--card2);border-radius:10px;padding:10px 12px;font-size:13px"><b>Atividades</b> · '+tot.lig+' ligações · '+tot.reun+' reuniões · '+tot.prop+' propostas</div><div style="background:var(--card2);border-radius:10px;padding:10px 12px;font-size:13px;margin-left:18px"><b>Objetivos</b> · '+tot.novos+' novos · '+tot.qual+' qualificados · '+convT+'% qualif.</div><div style="background:var(--card2);border-radius:10px;padding:10px 12px;font-size:13px;margin-left:36px"><b>Resultados</b> · '+tot.fech+' fechados · '+BRLk(valT)+'</div></div></div>';return '<div style="font-size:21px;font-weight:800;margin-bottom:4px">Rotina da Equipe</div><div style="font-size:13px;color:var(--mut);margin-bottom:16px">Cadência: Daily Huddle, 1:1 semanal e foco em atividade</div><div class="grid cards2"><div class="card" style="padding:8px 10px 0"><h3><span class="dot"></span>Pauta do Daily Huddle (hoje)</h3><div class="h3sub">Métricas do dia · onde destravar</div><table><thead><tr><th class="l">Vendedor</th><th>Ligações</th><th>Novos</th><th>Reuniões</th><th>Atrasados</th></tr></thead><tbody>'+huddle+'</tbody></table></div>'+pir+'</div><div class="card" style="padding:8px 10px 0;margin-top:14px"><h3><span class="dot" style="background:var(--ac2)"></span>Pauta do 1:1 semanal</h3><div class="h3sub">Pipeline + atividade vs. meta — pronto para a reunião</div><table><thead><tr><th class="l">Vendedor</th><th>Pipeline</th><th>Negoc.</th><th>Parados</th><th>Novos(sem)</th><th>Reuniões</th><th>Propostas</th><th>Pace novos</th></tr></thead><tbody>'+um+'</tbody></table></div>';}
 function renderRotina(){var b=el('rotinaBody');if(!b||!ME)return;b.innerHTML=canSeeAll()?rotinaDiretor():rotinaVendedor();}
 
-function renderAll(){if(!ME)return;renderInicio();renderDash();renderConvView();renderFunil();renderClientes();renderFila();renderTarefas();renderBoard();renderPos();renderLeads();renderVend();renderAtiv();renderTracao();renderRotina();if(el('v-sim').classList.contains('on'))runSim();else fillSimDealSelect();el('foot').innerHTML='OSHER CAPITAL · CRM Comercial — dados salvos localmente neste navegador. '+DB.deals.length+' negócios · meta '+BRLk(CFG().meta)+'. '+(canSeeAll()?'<b>Exportar</b> para backup/compartilhar. ':'')+'Funciona offline.';}
+function renderAll(){if(!ME)return;renderInicio();renderDash();renderConvView();renderFunil();renderClientes();renderFila();renderTarefas();renderBoard();renderPos();renderLeads();renderVend();renderAtiv();renderTracao();renderReport();renderRotina();if(el('v-sim').classList.contains('on'))runSim();else fillSimDealSelect();el('foot').innerHTML='OSHER CAPITAL · CRM Comercial — dados salvos localmente neste navegador. '+DB.deals.length+' negócios · meta '+BRLk(CFG().meta)+'. '+(canSeeAll()?'<b>Exportar</b> para backup/compartilhar. ':'')+'Funciona offline.';}
 
 /* ===================== TEMA (claro/escuro) ===================== */
 function _themeIcon(dark){return dark
