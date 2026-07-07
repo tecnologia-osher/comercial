@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>OSHER CAPITAL — CRM Comercial</title><!-- v-pb2 -->
-<!-- crm v10 · sessão resiliente (re-login + fila de reenvio + merge mais-recente-vence) · 2026-07-07 -->
+<!-- crm v11 · merge: servidor manda em lead de outro (diretor vê etapa real) · 2026-07-07 -->
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300..800&display=swap" rel="stylesheet">
 <style>
@@ -762,7 +762,10 @@ async function cloudPullDeals(){try{var B=SB_URL+'/rest/v1/';if(!_getTok())retur
   var rows=[],off=0;while(true){var r=await authFetch(B+'deals?select=payload&order=id&limit=1000&offset='+off,{});if(!r.ok)return false;var pg=await r.json();if(!Array.isArray(pg))return false;rows=rows.concat(pg);if(pg.length<1000)break;off+=1000;}
   var srv=rows.map(function(x){return x.payload;}).filter(function(d){return d&&d.id;});
   var byId={};(DB.deals||[]).forEach(function(d){if(d&&d.id)byId[d.id]=d;}); /* parte do que já existe local */
-  srv.forEach(function(s){var l=byId[s.id];if(!l){byId[s.id]=s;return;}var ls=l.atualizadoEm||'',ss=s.atualizadoEm||'';byId[s.id]=(ss>=ls)?s:l;}); /* mais recente vence — nunca perde edição local pendente */
+  srv.forEach(function(s){var l=byId[s.id];if(!l){byId[s.id]=s;return;}
+    var mineDeal=(ME&&l.vendedor===ME.nome); /* só protejo edição local do MEU próprio lead */
+    if(!mineDeal){byId[s.id]=s;return;} /* lead de outro vendedor (visão diretor/admin): servidor SEMPRE manda — evita ver etapa antiga em cache */
+    var ls=l.atualizadoEm||'',ss=s.atualizadoEm||'';byId[s.id]=(ss>=ls)?s:l;}); /* meu lead: mais recente vence, protege edição ainda não sincronizada */
   DB.deals=Object.keys(byId).map(function(k){return byId[k];});
   var srvIds={};srv.forEach(function(d){srvIds[d.id]=1;});var localOnly=(DB.deals||[]).filter(function(d){return d&&d.id&&!srvIds[d.id];});if(localOnly.length)cloudPush();
   if(typeof ensureCfg==='function')ensureCfg();return true;}catch(e){console.warn('cloudPull falhou',e);}return false;}
