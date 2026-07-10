@@ -331,7 +331,7 @@ label.fl{display:flex;flex-direction:column;gap:5px;font-size:12px;color:var(--m
 <section class="view" id="v-relatorio">
   <div class="card">
     <h3 style="margin:0"><span class="dot" style="background:var(--gold)"></span>Relatório semanal para os sócios</h3>
-    <div class="h3sub">Semana comercial (domingo a domingo). Qualificações e indicações contam pela data no período; contratos, pela data de fechamento.</div>
+    <div class="h3sub">Idêntico ao scorecard do vendedor — as metas semanais que cada um deve cumprir (semana comercial, domingo a domingo): 5 qualificações · 5 propostas · 25 indicações · 1 venda por CPF. Chip verde = meta batida.</div>
     <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin:12px 0">
       <button class="btn sm" onclick="repWeek(-1)">◀ Semana anterior</button>
       <button class="btn sm" onclick="repHoje()">Semana atual</button>
@@ -343,7 +343,7 @@ label.fl{display:flex;flex-direction:column;gap:5px;font-size:12px;color:var(--m
     <div class="grid kpis" id="repKpis" style="margin-bottom:14px"></div>
     <div style="overflow-x:auto">
       <table id="tRep"><thead><tr>
-        <th class="l">Vendedor</th><th>Qualificações</th><th>Indicações tomadas</th><th>Contratos fechados</th><th>Valor fechado</th>
+        <th class="l">Vendedor</th><th>Qualificações</th><th>Propostas</th><th>Indicações</th><th>Venda (CPF)</th><th>Valor fechado</th>
       </tr></thead><tbody></tbody></table>
     </div>
   </div>
@@ -1365,20 +1365,22 @@ function renderReport(){
   if(el('repLabel'))el('repLabel').textContent='Semana '+semanaNum(de)+' · '+fmtFull(de)+' a '+fmtFull(ate)+(reportOff===0?' (atual)':'');
   var vs=canSeeAll()?sellers().map(function(s){return s.nome;}):[ME.nome];
   var rows=vs.map(function(v){
-    var qual=histCount(v,'Qualificação',de,ate);
-    var ind=refWeek(v,de,ate);
+    var wm=weekMetrics(v,de,ate); /* MESMO cálculo do scorecard */
+    var m=memberByName(v)||{};
     var won=DB.deals.filter(function(d){return d.vendedor===v&&isWon(d)&&inRange(d.ganhoEm,de,ate);});
     var val=won.reduce(function(a,d){return a+(d.valor||0);},0);
-    return {v:v,qual:qual,ind:ind,ct:won.length,val:val};
-  }).sort(function(a,b){return b.val-a.val||b.ct-a.ct;});
-  var tQ=0,tI=0,tC=0,tV=0;rows.forEach(function(r){tQ+=r.qual;tI+=r.ind;tC+=r.ct;tV+=r.val;});
-  if(el('repKpis'))el('repKpis').innerHTML=[['Qualificações',tQ,'na semana'],['Indicações tomadas',tI,'na semana'],['Contratos fechados',tC,'na semana'],['Valor total fechado',BRL(tV),'na semana']].map(function(k){return '<div class="kpi"><div class="lbl">'+k[0]+'</div><div class="val">'+k[1]+'</div><div class="sub">'+k[2]+'</div></div>';}).join('');
+    return {v:v,qual:wm.qualif,prop:wm.propostas,ind:wm.indicacoes,venda:wm.vendas,val:val,
+      mq:m.metaWkQual||META_WK.qual,mp:m.metaWkProp||META_WK.prop,mi:m.metaWkInd||META_WK.ind,mv:m.metaWkFech||META_WK.venda};
+  }).sort(function(a,b){return b.venda-a.venda||b.ind-a.ind||b.val-a.val;});
+  var tQ=0,tP=0,tI=0,tVd=0,tV=0,mQ=0,mP=0,mI=0,mV=0;
+  rows.forEach(function(r){tQ+=r.qual;tP+=r.prop;tI+=r.ind;tVd+=r.venda;tV+=r.val;mQ+=r.mq;mP+=r.mp;mI+=r.mi;mV+=r.mv;});
+  if(el('repKpis'))el('repKpis').innerHTML=[['Qualificações',tQ+' / '+mQ,'meta da semana'],['Propostas',tP+' / '+mP,'meta da semana'],['Indicações',tI+' / '+mI,'meta da semana'],['Vendas (CPF)',tVd+' / '+mV,'meta da semana'],['Valor fechado',BRL(tV),'na semana']].map(function(k){return '<div class="kpi"><div class="lbl">'+k[0]+'</div><div class="val">'+k[1]+'</div><div class="sub">'+k[2]+'</div></div>';}).join('');
   var tb=el('tRep').querySelector('tbody');
-  tb.innerHTML=(rows.length?rows.map(function(r){return '<tr><td class="l">'+esc(r.v)+'</td><td>'+r.qual+'</td><td>'+r.ind+'</td><td>'+r.ct+'</td><td>'+BRL(r.val)+'</td></tr>';}).join(''):'<tr><td class="l" colspan="5"><div class="empty">Sem vendedores na seleção.</div></td></tr>')+'<tr style="font-weight:800;background:var(--card2)"><td class="l">Total</td><td>'+tQ+'</td><td>'+tI+'</td><td>'+tC+'</td><td>'+BRL(tV)+'</td></tr>';
-  _repCache={de:de,ate:ate,rows:rows,tQ:tQ,tI:tI,tC:tC,tV:tV};
+  tb.innerHTML=(rows.length?rows.map(function(r){return '<tr><td class="l">'+esc(r.v)+'</td><td>'+metaChip(r.qual,r.mq)+'</td><td>'+metaChip(r.prop,r.mp)+'</td><td>'+metaChip(r.ind,r.mi)+'</td><td>'+metaChip(r.venda,r.mv)+'</td><td>'+BRL(r.val)+'</td></tr>';}).join(''):'<tr><td class="l" colspan="6"><div class="empty">Sem vendedores na seleção.</div></td></tr>')+'<tr style="font-weight:800;background:var(--card2)"><td class="l">Total</td><td>'+tQ+' / '+mQ+'</td><td>'+tP+' / '+mP+'</td><td>'+tI+' / '+mI+'</td><td>'+tVd+' / '+mV+'</td><td>'+BRL(tV)+'</td></tr>';
+  _repCache={de:de,ate:ate,rows:rows,tQ:tQ,tP:tP,tI:tI,tVd:tVd,tV:tV,mQ:mQ,mP:mP,mI:mI,mV:mV};
 }
-function copiarReport(){if(!_repCache){renderReport();}var c=_repCache;if(!c)return;var L=['Relatório semanal — Osher Capital','Semana '+semanaNum(c.de)+' ('+fmtFull(c.de)+' a '+fmtFull(c.ate)+')',''];c.rows.forEach(function(r){L.push(r.v+' — '+r.qual+' qualif · '+r.ind+' indic · '+r.ct+' contrato(s) · '+BRL(r.val));});L.push('','TOTAL: '+c.tQ+' qualif · '+c.tI+' indic · '+c.tC+' contrato(s) · '+BRL(c.tV)+' fechado');var txt=L.join('\n');if(navigator.clipboard){navigator.clipboard.writeText(txt).then(function(){alert('Relatório copiado — cole na apresentação ou no WhatsApp.');},function(){prompt('Copie o relatório:',txt);});}else prompt('Copie o relatório:',txt);}
-function exportReportCSV(){if(!_repCache){renderReport();}var c=_repCache;if(!c)return;var L=['Semana '+semanaNum(c.de)+' ('+fmtFull(c.de)+' a '+fmtFull(c.ate)+')','','Vendedor;Qualificacoes;Indicacoes tomadas;Contratos fechados;Valor fechado'];c.rows.forEach(function(r){L.push(r.v+';'+r.qual+';'+r.ind+';'+r.ct+';'+(r.val||0));});L.push('Total;'+c.tQ+';'+c.tI+';'+c.tC+';'+c.tV);var blob=new Blob(['﻿'+L.join('\r\n')],{type:'text/csv;charset=utf-8'});var a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='relatorio_semana_'+semanaNum(c.de)+'_'+c.de+'.csv';document.body.appendChild(a);a.click();document.body.removeChild(a);}
+function copiarReport(){if(!_repCache){renderReport();}var c=_repCache;if(!c)return;var L=['Relatório semanal — Osher Capital','Semana '+semanaNum(c.de)+' ('+fmtFull(c.de)+' a '+fmtFull(c.ate)+') — metas do scorecard',''];c.rows.forEach(function(r){L.push(r.v+' — '+r.qual+'/'+r.mq+' qualif · '+r.prop+'/'+r.mp+' propostas · '+r.ind+'/'+r.mi+' indic · '+r.venda+'/'+r.mv+' venda(s) · '+BRL(r.val));});L.push('','TOTAL: '+c.tQ+'/'+c.mQ+' qualif · '+c.tP+'/'+c.mP+' propostas · '+c.tI+'/'+c.mI+' indic · '+c.tVd+'/'+c.mV+' venda(s) · '+BRL(c.tV)+' fechado');var txt=L.join('\n');if(navigator.clipboard){navigator.clipboard.writeText(txt).then(function(){alert('Relatório copiado — cole na apresentação ou no WhatsApp.');},function(){prompt('Copie o relatório:',txt);});}else prompt('Copie o relatório:',txt);}
+function exportReportCSV(){if(!_repCache){renderReport();}var c=_repCache;if(!c)return;var L=['Semana '+semanaNum(c.de)+' ('+fmtFull(c.de)+' a '+fmtFull(c.ate)+')','','Vendedor;Qualificacoes;Meta Qualif;Propostas;Meta Prop;Indicacoes;Meta Indic;Vendas CPF;Meta Venda;Valor fechado'];c.rows.forEach(function(r){L.push(r.v+';'+r.qual+';'+r.mq+';'+r.prop+';'+r.mp+';'+r.ind+';'+r.mi+';'+r.venda+';'+r.mv+';'+(r.val||0));});L.push('Total;'+c.tQ+';'+c.mQ+';'+c.tP+';'+c.mP+';'+c.tI+';'+c.mI+';'+c.tVd+';'+c.mV+';'+c.tV);var blob=new Blob(['﻿'+L.join('\r\n')],{type:'text/csv;charset=utf-8'});var a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='relatorio_semana_'+semanaNum(c.de)+'_'+c.de+'.csv';document.body.appendChild(a);a.click();document.body.removeChild(a);}
 function weekMetrics(name,de,ate){return {qualif:histCount(name,'Qualificação',de,ate),propostas:histCount(name,'Proposta',de,ate),indicacoes:refWeek(name,de,ate),vendas:vendasCPFweek(name,de,ate)};}
 function cadenceDate(st){var c={'Prospecção':1,'Ligação':1,'Qualificação':2,'Proposta':3,'Negociação':2};var dd=c[st]||2;var t=new Date();t.setDate(t.getDate()+dd);return t.toISOString().slice(0,10);}
 function paceWidget(){var me=memberByName(ME.nome)||{};var r=weekRangeSun(0);var wm=weekMetrics(ME.nome,r[0],r[1]);var its=[['Qualificações',wm.qualif,me.metaWkQual||META_WK.qual],['Propostas',wm.propostas,me.metaWkProp||META_WK.prop],['Indicações',wm.indicacoes,me.metaWkInd||META_WK.ind],['Venda (CPF)',wm.vendas,me.metaWkFech||META_WK.venda]];var fr=paceFrac();var cards=its.map(function(it){var t=it[2];var pc=t?Math.round(it[1]/t*100):0;var on=t?it[1]>=t*fr:true;var col=t?(it[1]>=t?'var(--ac2)':on?'var(--ac)':'var(--warn)'):'var(--mut)';return '<div class="kpi"><div class="lbl">'+it[0]+' (semana)</div><div class="val">'+it[1]+(t?'<span style="font-size:13px;color:var(--mut)"> / '+t+'</span>':'')+'</div><div class="meta-track" style="height:5px;margin-top:7px"><div class="meta-fill" style="width:'+Math.min(100,pc)+'%;background:'+col+'"></div></div><div class="sub" style="color:'+col+'">'+(t?(it[1]>=t?'meta batida':on?'no ritmo':'abaixo do ritmo'):'sem meta')+'</div></div>';}).join('');return '<div style="font-size:13px;font-weight:700;margin:2px 0 8px">Meu pace da semana <span style="color:var(--mut);font-weight:400">(dom '+fmtFull(r[0])+' → dom)</span></div><div class="grid kpis" style="margin-bottom:16px">'+cards+'</div>';}
