@@ -4,7 +4,7 @@
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>Compra Imobiliária Inteligente · Financiamento ou Consórcio</title>
-<!-- calculadora v2 · idv 2026-07-04 -->
+<!-- calculadora v3 · export PDF do comparativo (marca Osher) · 2026-07-12 · idv 2026-07-04 -->
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300..800&display=swap" rel="stylesheet">
 <style>
@@ -139,6 +139,9 @@
   <div class="card" style="margin-top:16px">
     <h3 style="font-family:'Outfit',serif;font-size:21px;margin:0 0 12px">Resultado</h3>
     <div id="out"></div>
+    <div style="margin-top:16px;text-align:right">
+      <button id="pdfBtn" onclick="gerarPDF()" style="display:none;font-family:'Outfit',sans-serif;font-size:14px;font-weight:600;padding:11px 20px;border-radius:10px;border:1px solid var(--goldbd);background:var(--accent);color:#fff;cursor:pointer">Exportar comparativo (PDF)</button>
+    </div>
   </div>
 </div>
 
@@ -261,8 +264,68 @@ function renderResult(){
       '<div class="box"><h4>O custo real do financiamento</h4><div class="d">O que o banco soma além da taxa anunciada.</div><div class="mini">'+metric("Juros (SAC)",brl(sac.juros),"cost")+metric("Seguros (MIP+DFI)",brl(sac.seguros),"cost")+metric("IOF",brl(sac.iof),"cost")+metric("Sua entrada",brl(ent))+'</div></div>'+
       (embPct>0?'<div class="box"><h4>Como fica o lance embutido</h4><div class="d">O lance sai da própria carta: você contrata um crédito maior para receber líquido o que precisa.</div><div class="mini">'+metric("Contrata (bruto)",brl(gross))+metric("Lance embutido ("+embPct+"%)",brl(lanceEmbVal),"profit")+metric("Recebe (líquido)",brl(credNet))+metric("Custo do consórcio",brl(cons.total),"cost")+'</div></div>':'<div class="box"><h4>Onde mora a diferença</h4><div class="d">O consórcio troca juros por taxa de administração.</div><div class="mini">'+metric("Juros do banco",brl(sac.juros),"cost")+metric("Taxa adm + fundo",brl(cons.adm),"profit")+'</div></div>')+
     '</div>';
+  window.LASTCALC={sacP1:sac.p1,sacPn:sac.pn,sacTot:sacTot,prP1:pr.p1,prTot:prTot,consP1:cons.p1,consTot:cons.total,consSub:consSub,mesCont:cons.mesCont,eco:eco,frase:frase,im:im,ent:ent,credNet:credNet,gross:gross,nc:nc,nf:nf,adm:adm,j:j,lanceLiq:lanceLiq,adesaoVal:cons.adesaoVal,parcelaApos:cons.parcelaApos};
+  var pb=document.getElementById("pdfBtn");if(pb)pb.style.display="";
   var c=document.getElementById("inflChk");if(c)c.onchange=function(){infl=c.checked;renderResult();};
   var sa=document.getElementById("segAmort");if(sa)sa.querySelectorAll("button").forEach(function(b){b.onclick=function(){amortModo=b.dataset.v;renderResult();};});
+}
+function gerarPDF(){
+  var d=window.LASTCALC;if(!d){alert("Faça a simulação primeiro.");return;}
+  function b(n){return (isFinite(n)?n:0).toLocaleString("pt-BR",{style:"currency",currency:"BRL",maximumFractionDigits:0});}
+  function e(s){return String(s||"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");}
+  var cli=e((window.__osherCliente||(typeof lead!=="undefined"&&lead&&lead.nome)||"").trim());
+  var data=new Date().toLocaleDateString("pt-BR");
+  var econ=d.eco>0?'<div class="eco">Economia estimada com o consórcio: <b>'+b(d.eco)+'</b> frente ao melhor financiamento</div>':"";
+  var html='<!doctype html><html lang="pt-BR"><head><meta charset="utf-8"><title>Comparativo Osher'+(cli?" — "+cli:"")+'</title>'
+   +'<link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;800&display=swap" rel="stylesheet">'
+   +'<style>*{box-sizing:border-box;margin:0;padding:0}'
+   +'body{font-family:Outfit,Arial,sans-serif;color:#0b2c51;background:#fff;padding:30px 38px;-webkit-print-color-adjust:exact;print-color-adjust:exact}'
+   +'.hd{display:flex;justify-content:space-between;align-items:flex-end;border-bottom:3px solid #a89e86;padding-bottom:14px}'
+   +'.logo{font-size:25px;font-weight:800;letter-spacing:.5px}.logo span{color:#a89e86;font-weight:600;font-size:14px;letter-spacing:2px}'
+   +'.slogan{font-size:11px;color:#5b6b83;font-style:italic;margin-top:3px}.meta{font-size:12px;color:#5b6b83;text-align:right}'
+   +'h1{font-size:22px;margin:20px 0 2px}.sub{font-size:13px;color:#5b6b83;margin-bottom:16px}'
+   +'.cli{font-size:14px;font-weight:600;margin-bottom:16px}'
+   +'.cmp{display:flex;gap:12px;margin-bottom:18px}'
+   +'.col{flex:1;border:1px solid #d7dde5;border-radius:12px;padding:15px}'
+   +'.col.win{border-color:#a89e86;border-width:2px;background:#faf8f3}'
+   +'.tag{font-size:11px;font-weight:700;color:#5b6b83;text-transform:uppercase;letter-spacing:.5px}'
+   +'.par{font-size:13px;margin:8px 0;color:#0b2c51}.par b{font-size:16px}'
+   +'.tot{font-size:21px;font-weight:800;margin-top:8px}.tot.red{color:#c0392b}.tot.grn{color:#1e9b6b}'
+   +'.totl{font-size:11px;color:#5b6b83;text-transform:uppercase}'
+   +'.eco{background:#eef7f2;border:1px solid #1e9b6b;border-radius:10px;padding:11px 14px;font-size:14px;color:#0b6b45;margin-bottom:14px}'
+   +'.verdict{font-size:13.5px;line-height:1.55;background:#f6f7f9;border-left:3px solid #a89e86;padding:12px 15px;border-radius:6px;margin-bottom:18px}'
+   +'.params{width:100%;border-collapse:collapse;font-size:12.5px;margin-bottom:22px}'
+   +'.params td{padding:6px 10px;border-bottom:1px solid #e7eaee}.params td:first-child{color:#5b6b83}.params td:last-child{text-align:right;font-weight:600}'
+   +'.ft{border-top:1px solid #d7dde5;padding-top:11px;font-size:10.5px;color:#8a97aa;line-height:1.5}'
+   +'.bar{text-align:center;margin:22px 0}.bar button{font-family:Outfit,sans-serif;font-size:14px;font-weight:600;padding:11px 24px;border-radius:10px;border:0;background:#0b2c51;color:#fff;cursor:pointer}'
+   +'@page{margin:14mm}@media print{body{padding:0}.noprint{display:none}}'
+   +'</style></head><body>'
+   +'<div class="hd"><div><div class="logo">OSHER <span>CAPITAL</span></div><div class="slogan">Investir com segurança, conquistar com muita inteligência.</div></div>'
+   +'<div class="meta">Comparativo gerado em<br><b>'+data+'</b></div></div>'
+   +'<h1>Financiamento × Consórcio</h1><div class="sub">Análise comparativa de custo e impacto no patrimônio</div>'
+   +(cli?'<div class="cli">Preparado para: '+cli+'</div>':"")
+   +econ
+   +'<div class="cmp">'
+     +'<div class="col"><div class="tag">Financiamento · SAC</div><div class="par">1ª parcela <b>'+b(d.sacP1)+'</b><br><span style="font-size:11px;color:#5b6b83">cai até '+b(d.sacPn)+'</span></div><div class="tot red">'+b(d.sacTot)+'</div><div class="totl">custo total</div></div>'
+     +'<div class="col"><div class="tag">Financiamento · PRICE</div><div class="par">parcela fixa <b>'+b(d.prP1)+'</b></div><div class="tot red">'+b(d.prTot)+'</div><div class="totl">custo total</div></div>'
+     +'<div class="col win"><div class="tag">Consórcio</div><div class="par">parcela <b>'+b(d.consP1)+'</b><br><span style="font-size:11px;color:#5b6b83">'+d.consSub+'</span></div><div class="tot grn">'+b(d.consTot)+'</div><div class="totl">custo total · contempl. mês '+d.mesCont+'</div></div>'
+   +'</div>'
+   +'<div class="verdict">'+d.frase+'</div>'
+   +'<table class="params"><tr><td>Valor do imóvel</td><td>'+b(d.im)+'</td></tr>'
+     +'<tr><td>Crédito / carta (consórcio)</td><td>'+b(d.gross)+'</td></tr>'
+     +'<tr><td>Entrada (financiamento)</td><td>'+b(d.ent)+'</td></tr>'
+     +'<tr><td>Prazo do financiamento</td><td>'+d.nf+' meses</td></tr>'
+     +'<tr><td>Prazo do consórcio</td><td>'+d.nc+' meses</td></tr>'
+     +'<tr><td>Taxa de juros (financiamento)</td><td>'+d.j+'% a.a.</td></tr>'
+     +'<tr><td>Taxa de administração (consórcio)</td><td>'+d.adm+'%</td></tr>'
+   +(d.lanceLiq>0?'<tr><td>Lance líquido</td><td>'+b(d.lanceLiq)+'</td></tr>':"")
+   +'</table>'
+   +'<div class="ft">Simulação estimativa para apoio à decisão. Os valores dependem das condições vigentes na administradora e no banco no momento da contratação, de reajustes (INCC e índices) e da data de contemplação, que não é garantida. Não constitui proposta nem oferta de crédito. · Osher Capital — '+data+'</div>'
+   +'<div class="bar noprint"><button onclick="window.print()">Salvar como PDF / Imprimir</button><div style="font-size:11px;color:#8a97aa;margin-top:8px">Na janela de impressão, escolha “Salvar como PDF” para enviar ao cliente.</div></div>'
+   +'</body></html>';
+  var w=window.open("","_blank");
+  if(!w){alert("Permita pop-ups para gerar o PDF do comparativo.");return;}
+  w.document.open();w.document.write(html);w.document.close();
 }
 
 function goStep(s){
