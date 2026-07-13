@@ -4,7 +4,7 @@
 <meta charset="UTF-8"><meta http-equiv="Cache-Control" content="no-store">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Painel Comercial — Osher Capital</title>
-<!-- painel v14 · aba Conferência CRM × Planilha (reconcilia vendas do CRM com contratos da planilha por CPF/contrato) · 2026-07-11 · auditoria XSS/logout 2026-07-09 · TODO agrupamento por mês/período/semana = data da 1ª parcela paga (adesão) · 2026-07-06 -->
+<!-- painel v15 · semana comercial SEGUNDA a DOMINGO (wkIdx offset +3, alinhado ao CRM) · 2026-07-13 · aba Conferência CRM × Planilha · 2026-07-11 · auditoria XSS/logout 2026-07-09 · TODO agrupamento por mês/período/semana = data da 1ª parcela paga (adesão) · 2026-07-06 -->
 <!-- auditoria 2026-07-03 -->
 <base target="_top">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -308,8 +308,8 @@ function firstPayYMD(r){var pc=(r&&r.parc)||[];for(var i=0;i<pc.length;i++){var 
 function payMonthYMD(r){return firstPayYMD(r)||ymd(r&&r.data);} /* mês pela 1ª parcela paga (adesão); fallback = data do contrato se nada pago */
 function firstPayISO(r){var pc=(r&&r.parc)||[];for(var i=0;i<pc.length;i++){var v=String(pc[i]==null?'':pc[i]).trim();if(!v||/abert/i.test(v))continue;if(ymd(v))return v.slice(0,10);}return (r&&r.data)?String(r.data).slice(0,10):'';} /* ISO da 1ª parcela paga p/ semana; fallback = data do contrato */
 function ageFrom(n){var p=ymd(n);if(!p)return null;var a=new Date().getFullYear()-p.y;return (a>=18&&a<=90)?a:null;}
-/* semana comercial: DOMINGO a DOMINGO (offset +4 faz a semana começar no domingo) */
-function wkIdx(s){var t=Date.parse(s);if(isNaN(t))return null;return Math.floor((Math.floor(t/864e5)+4)/7);}
+/* semana comercial: SEGUNDA a DOMINGO (offset +3 faz a semana começar na segunda) — alinhado ao CRM 13/07/2026 */
+function wkIdx(s){var t=Date.parse(s);if(isNaN(t))return null;return Math.floor((Math.floor(t/864e5)+3)/7);}
 function tipoNorm(t){t=_nk(t);return t.indexOf('AUTO')===0?'AUTOMÓVEL':(t.indexOf('IMOV')===0?'IMÓVEL':(t?(t.charAt(0)+t.slice(1).toLowerCase()):'N/I'));}
 function donut(items,R,r0){R=R||70;r0=r0||44;var cx=R+15,cy=R+15,tot=items.reduce(function(s,i){return s+i.val;},0),acc=0,p='';
  items.forEach(function(it){var f=tot?it.val/tot:0,a0=acc*6.2832-1.5708;acc+=f;var a1=acc*6.2832-1.5708,lg=f>0.5?1:0;
