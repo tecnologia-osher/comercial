@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>OSHER CAPITAL — CRM Comercial</title><!-- v-pb2 -->
-<!-- crm v16 · semana comercial agora SEGUNDA a DOMINGO (era dom→sáb) — relatório, scorecard, pace, tração e nº da semana; PDF comparativo; comissão real por faixa · 2026-07-13 -->
+<!-- crm v17 · aba “Grupos” (guia de consulta Bancorbrás: prazos, taxas, lances, lance embutido) embutida via iframe, como Playbook/Simulador · semana comercial agora SEGUNDA a DOMINGO (era dom→sáb) — relatório, scorecard, pace, tração e nº da semana; PDF comparativo; comissão real por faixa · 2026-07-13 -->
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300..800&display=swap" rel="stylesheet">
 <style>
@@ -188,6 +188,7 @@ label.fl{display:flex;flex-direction:column;gap:5px;font-size:12px;color:var(--m
     <button data-v="clientes">Clientes</button>
     <button data-v="fincalc">Simulador</button>
     <button data-v="playbook">Playbook</button>
+    <button data-v="guia">Grupos</button>
     <button data-v="vend" data-see="1">Vendedores</button>
     <button data-v="ativ">Atividades</button>
     <button data-v="tracao" data-see="1">Tração</button>
@@ -348,6 +349,14 @@ label.fl{display:flex;flex-direction:column;gap:5px;font-size:12px;color:var(--m
     <h3 style="margin:0"><span class="dot" style="background:var(--gold)"></span>Playbook Comercial — apoio ao vendedor</h3>
     <div class="h3sub">Consórcio explicado, perfis de cliente, roteiros de Reunião 1 e 2, follow-up e casos</div>
     <iframe id="pbFrame" src="playbook.html" onload="syncFinTheme()" style="width:100%;height:84vh;border:1px solid var(--bd);border-radius:12px;margin-top:8px;background:var(--card)"></iframe>
+  </div>
+</section>
+
+<section class="view" id="v-guia">
+  <div class="card" style="padding:10px 12px">
+    <h3 style="margin:0"><span class="dot" style="background:var(--ac2)"></span>Guia de Grupos — Bancorbrás</h3>
+    <div class="h3sub">Prazos, taxas, redutor, lance médio e regra de lance embutido por grupo. Consulta rápida no atendimento.</div>
+    <iframe id="guiaFrame" src="guia-grupos.html" onload="syncFinTheme()" style="width:100%;height:84vh;border:1px solid var(--bd);border-radius:12px;margin-top:8px;background:var(--card)"></iframe>
   </div>
 </section>
 
@@ -1446,7 +1455,7 @@ function renderAll(){if(!ME)return;renderInicio();renderDash();renderConvView();
 function _themeIcon(dark){return dark
  ?'<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><line x1="12" y1="2" x2="12" y2="4"/><line x1="12" y1="20" x2="12" y2="22"/><line x1="4.9" y1="4.9" x2="6.3" y2="6.3"/><line x1="17.7" y1="17.7" x2="19.1" y2="19.1"/><line x1="2" y1="12" x2="4" y2="12"/><line x1="20" y1="12" x2="22" y2="12"/><line x1="4.9" y1="19.1" x2="6.3" y2="17.7"/><line x1="17.7" y1="6.3" x2="19.1" y2="4.9"/></svg>'
  :'<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg>';}
-function syncFinTheme(){var t=document.documentElement.getAttribute('data-theme')==='light'?'light':'dark';var f=document.getElementById('finFrame');if(f&&f.contentDocument){try{f.contentDocument.documentElement.setAttribute('data-theme',t);var tb=f.contentDocument.getElementById('themeBtn');if(tb)tb.textContent=(t==='dark')?'☀ Claro':'☾ Escuro';}catch(e){}}}
+function syncFinTheme(){var t=document.documentElement.getAttribute('data-theme')==='light'?'light':'dark';var f=document.getElementById('finFrame');if(f&&f.contentDocument){try{f.contentDocument.documentElement.setAttribute('data-theme',t);var tb=f.contentDocument.getElementById('themeBtn');if(tb)tb.textContent=(t==='dark')?'☀ Claro':'☾ Escuro';}catch(e){}}var g=document.getElementById('guiaFrame');if(g&&g.contentDocument){try{g.contentDocument.documentElement.setAttribute('data-theme',t);}catch(e){}}}
 function applyTheme(t){document.documentElement.setAttribute('data-theme',t);try{localStorage.setItem('osher_theme',t);}catch(e){}var b=document.getElementById('themeBtn');if(b)b.innerHTML=_themeIcon(t==='dark');syncFinTheme();}
 function initTheme(){var t='dark';try{t=localStorage.getItem('osher_theme')||'dark';}catch(e){}applyTheme(t);}
 function toggleTheme(){var cur=document.documentElement.getAttribute('data-theme')==='light'?'light':'dark';applyTheme(cur==='light'?'dark':'light');}

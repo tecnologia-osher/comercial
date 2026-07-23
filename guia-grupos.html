@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Guia de Consulta — Grupos Bancorbrás | Osher Capital</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --navy:#0b2c51; --gold:#a89e86; --gold-lt:#c2b89e; --gold-dk:#8a6f3e;
+  --bg:#f1f2f2; --card:#ffffff; --card2:#f7f7f5; --text:#0b2c51; --muted:#5b6b7d;
+  --line:#e2e4e6; --pos:#1f9d63; --posbg:#e6f6ee; --neg:#c0392b;
+  --blue:#5b8cff; --chip:#eef0f2; --shadow:0 1px 3px rgba(11,44,81,.08),0 6px 18px rgba(11,44,81,.06);
+}
+html[data-theme="dark"]{
+  --navy:#0b2c51; --bg:#081d36; --card:#0e2743; --card2:#16375a; --text:#f1f2f2; --muted:#9fb2c7;
+  --line:#1c3a5c; --chip:#16375a; --gold:#c2b89e; --pos:#34d399; --posbg:#123a2c; --neg:#f28b82;
+  --shadow:0 1px 3px rgba(0,0,0,.3),0 8px 24px rgba(0,0,0,.28);
+}
+*{box-sizing:border-box}
+body{margin:0;font-family:'Outfit',Inter,system-ui,sans-serif;background:var(--bg);color:var(--text);
+  -webkit-font-smoothing:antialiased;line-height:1.45}
+a{color:inherit}
+.wrap{max-width:1180px;margin:0 auto;padding:22px 20px 60px}
+
+/* Header */
+header{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;
+  padding-bottom:16px;border-bottom:1px solid var(--line)}
+.brand{display:flex;align-items:center;gap:12px}
+.mark{width:42px;height:42px;border-radius:10px;background:var(--navy);display:flex;align-items:center;
+  justify-content:center;flex-shrink:0;border:1px solid var(--gold)}
+.mark svg{width:24px;height:24px}
+.brand h1{font-size:15px;font-weight:700;letter-spacing:.14em;margin:0;text-transform:uppercase}
+.brand p{margin:2px 0 0;font-size:11.5px;font-weight:300;color:var(--gold-dk)}
+html[data-theme="dark"] .brand p{color:var(--gold-lt)}
+.htitle{margin:18px 0 2px;font-size:26px;font-weight:800;letter-spacing:-.01em}
+.hsub{margin:0;color:var(--muted);font-size:14px;font-weight:400}
+.toggle{display:flex;align-items:center;gap:8px;background:var(--card);border:1px solid var(--line);
+  border-radius:999px;padding:6px 12px;cursor:pointer;font-family:inherit;font-size:12.5px;color:var(--text);
+  box-shadow:var(--shadow)}
+.toggle:hover{border-color:var(--gold)}
+.toggle svg{width:15px;height:15px}
+
+/* Info strip */
+.strip{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:20px 0 6px}
+@media(max-width:720px){.strip{grid-template-columns:1fr}}
+.acard{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px 16px;box-shadow:var(--shadow)}
+.acard h3{margin:0 0 10px;font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);font-weight:600;
+  display:flex;align-items:center;gap:8px}
+.acard .dot{width:8px;height:8px;border-radius:50%}
+.daterow{display:flex;justify-content:space-between;font-size:13px;padding:3px 0}
+.daterow span:first-child{color:var(--muted)}
+.daterow b{font-weight:600}
+.pill-now{display:inline-block;font-size:11px;font-weight:600;padding:2px 9px;border-radius:999px;
+  background:var(--navy);color:#f1f2f2;margin-left:8px}
+html[data-theme="dark"] .pill-now{background:var(--gold);color:var(--navy)}
+
+/* Controls */
+.controls{position:sticky;top:0;z-index:20;background:var(--bg);padding:16px 0 12px;margin-top:14px;
+  border-bottom:1px solid var(--line)}
+.searchbox{position:relative;margin-bottom:12px}
+.searchbox svg{position:absolute;left:14px;top:50%;transform:translateY(-50%);width:18px;height:18px;color:var(--muted)}
+#q{width:100%;padding:13px 14px 13px 42px;border:1px solid var(--line);border-radius:12px;background:var(--card);
+  color:var(--text);font-family:inherit;font-size:15px;box-shadow:var(--shadow)}
+#q:focus{outline:none;border-color:var(--gold)}
+.filters{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.chip{border:1px solid var(--line);background:var(--card);color:var(--text);border-radius:999px;
+  padding:7px 14px;font-family:inherit;font-size:13px;font-weight:500;cursor:pointer;transition:.15s}
+.chip:hover{border-color:var(--gold)}
+.chip.on{background:var(--navy);color:#f1f2f2;border-color:var(--navy)}
+html[data-theme="dark"] .chip.on{background:var(--gold);color:var(--navy);border-color:var(--gold)}
+.sep{width:1px;height:24px;background:var(--line);margin:0 4px}
+.chip.embnow.on{background:var(--pos);border-color:var(--pos);color:#fff}
+html[data-theme="dark"] .chip.embnow.on{color:#062015}
+
+/* How-it-works */
+details.how{margin:18px 0 4px;background:var(--card);border:1px solid var(--line);border-radius:14px;
+  box-shadow:var(--shadow);overflow:hidden}
+details.how summary{cursor:pointer;padding:14px 16px;font-weight:600;font-size:14px;list-style:none;
+  display:flex;align-items:center;gap:10px}
+details.how summary::-webkit-details-marker{display:none}
+details.how summary svg{width:16px;height:16px;flex-shrink:0;transition:.2s}
+details.how[open] summary .arw{transform:rotate(90deg)}
+.howbody{padding:2px 18px 18px;font-size:13.5px;color:var(--text)}
+.howbody p{margin:8px 0}
+.howgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px;margin-top:12px}
+.howgrid .b{background:var(--card2);border:1px solid var(--line);border-radius:10px;padding:12px 14px}
+.howgrid .b b{display:block;margin-bottom:4px;font-size:13px}
+.howgrid .b span{font-size:12.5px;color:var(--muted)}
+
+/* Sections + cards */
+.sec{margin-top:30px}
+.sechd{display:flex;align-items:center;gap:10px;margin:0 0 14px}
+.sechd h2{margin:0;font-size:18px;font-weight:700}
+.sechd .ic{width:30px;height:30px;border-radius:8px;background:var(--navy);display:flex;align-items:center;
+  justify-content:center;border:1px solid var(--gold)}
+.sechd .ic svg{width:17px;height:17px;color:#f1f2f2}
+html[data-theme="dark"] .sechd .ic svg{color:var(--gold-lt)}
+.sechd .cnt{font-size:12.5px;color:var(--muted);margin-left:2px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(268px,1fr));gap:14px}
+.g{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:15px 16px;box-shadow:var(--shadow);
+  transition:.15s;position:relative}
+.g:hover{border-color:var(--gold);transform:translateY(-1px)}
+.g .top{display:flex;justify-content:space-between;align-items:flex-start;gap:8px;margin-bottom:12px}
+.g .gnum{font-size:22px;font-weight:800;letter-spacing:-.01em;line-height:1}
+.g .gsub{font-size:11px;color:var(--muted);margin-top:3px;font-weight:500}
+.emb{font-size:10.5px;font-weight:700;padding:4px 9px;border-radius:999px;white-space:nowrap;text-align:center;
+  line-height:1.3}
+.emb.yes{background:var(--posbg);color:var(--pos)}
+.emb.no{background:var(--chip);color:var(--muted)}
+.emb.alt{background:#fdf3e0;color:var(--gold-dk)}
+html[data-theme="dark"] .emb.alt{background:#3a2f1a;color:var(--gold-lt)}
+.rows{display:flex;flex-direction:column;gap:0}
+.r{display:flex;justify-content:space-between;align-items:baseline;padding:6px 0;border-top:1px solid var(--line);font-size:13px}
+.r:first-child{border-top:none}
+.r .k{color:var(--muted)}
+.r .v{font-weight:600;text-align:right}
+.r .v small{font-weight:400;color:var(--muted);font-size:11px}
+.embline{margin-top:11px;padding-top:11px;border-top:1px dashed var(--line);font-size:12px;color:var(--muted);
+  display:flex;gap:7px;align-items:flex-start}
+.embline svg{width:14px;height:14px;flex-shrink:0;margin-top:1px;color:var(--gold-dk)}
+html[data-theme="dark"] .embline svg{color:var(--gold-lt)}
+.embline b{color:var(--text);font-weight:600}
+.nowtag{display:inline-block;margin-left:6px;font-size:9.5px;font-weight:700;padding:1px 7px;border-radius:999px;
+  background:var(--pos);color:#fff;vertical-align:middle}
+html[data-theme="dark"] .nowtag{color:#062015}
+.empty{text-align:center;color:var(--muted);padding:50px 20px;font-size:15px;display:none}
+
+footer{margin-top:44px;padding-top:20px;border-top:1px solid var(--line);text-align:center}
+footer .slg{font-weight:300;font-size:14px;color:var(--gold-dk)}
+html[data-theme="dark"] footer .slg{color:var(--gold-lt)}
+footer .meta{font-size:11.5px;color:var(--muted);margin-top:8px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div class="brand">
+      <div class="mark">
+        <svg viewBox="0 0 24 24" fill="none"><path d="M12 2L3 6.5v6C3 18 7 21.5 12 22c5-.5 9-4 9-9.5v-6L12 2z" stroke="#a89e86" stroke-width="1.4"/><path d="M8.5 12.2l2.4 2.4 4.6-4.9" stroke="#f1f2f2" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </div>
+      <div>
+        <h1>Osher Capital</h1>
+        <p>Investir com segurança, conquistar com muita inteligência.</p>
+      </div>
+    </div>
+    <button class="toggle" id="tg" aria-label="Alternar tema">
+      <svg id="tgi" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M21 12.8A9 9 0 1111.2 3a7 7 0 009.8 9.8z"/></svg>
+      <span id="tgt">Escuro</span>
+    </button>
+  </header>
+
+  <h2 class="htitle">Guia de Consulta — Grupos Bancorbrás</h2>
+  <p class="hsub">Prazos, taxas, lances e regra de lance embutido por grupo. Consulta rápida para o atendimento.</p>
+
+  <div class="strip">
+    <div class="acard">
+      <h3><span class="dot" style="background:var(--blue)"></span>Assembleia deste mês <span id="mesatual"></span></h3>
+      <div class="daterow"><span>Vencimento da parcela</span><b>10/07/2026</b></div>
+      <div class="daterow"><span>Loteria Federal</span><b>11/07/2026</b></div>
+      <div class="daterow"><span>Dia da assembleia</span><b>15/07/2026</b></div>
+      <div class="daterow"><span>Vencimento do lance</span><b>20/07/2026</b></div>
+    </div>
+    <div class="acard">
+      <h3><span class="dot" style="background:var(--gold)"></span>Próxima assembleia</h3>
+      <div class="daterow"><span>Vencimento da parcela</span><b>10/08/2026</b></div>
+      <div class="daterow"><span>Loteria Federal</span><b>12/08/2026</b></div>
+      <div class="daterow"><span>Dia da assembleia</span><b>18/08/2026</b></div>
+      <div class="daterow"><span>Vencimento do lance</span><b>21/08/2026</b></div>
+    </div>
+  </div>
+
+  <div class="controls">
+    <div class="searchbox">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3" stroke-linecap="round"/></svg>
+      <input id="q" placeholder="Buscar por número do grupo (ex.: 1601, 2044, 5030)…" autocomplete="off">
+    </div>
+    <div class="filters">
+      <button class="chip on" data-tipo="all">Todos</button>
+      <button class="chip" data-tipo="imovel">Imóvel</button>
+      <button class="chip" data-tipo="auto">Automóvel</button>
+      <button class="chip" data-tipo="servico">Serviço</button>
+      <div class="sep"></div>
+      <button class="chip embnow" id="embnow">Embute neste mês</button>
+    </div>
+  </div>
+
+  <details class="how">
+    <summary>
+      <svg class="arw" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 6l6 6-6 6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      Como ler este guia (lance embutido, fixo, livre e redutor)
+    </summary>
+    <div class="howbody">
+      <p>O <b>lance embutido</b> permite usar parte da própria carta de crédito como lance, então o cliente ofere um lance maior sem tirar dinheiro do bolso. Na Bancorbrás, cada grupo <b>alterna</b>: oferta o embutido em um tipo de assembleia (ímpar ou par) e não oferta no outro. Confirme sempre a assembleia do mês.</p>
+      <div class="howgrid">
+        <div class="b"><b>Assembleias ímpares / pares</b><span>Meses ímpares = jan, mar, mai, jul, set, nov. Meses pares = fev, abr, jun, ago, out, dez. Cada card mostra em qual delas o grupo embute.</span></div>
+        <div class="b"><b>Lance fixo x lance livre</b><span>Fixo é um percentual pré-definido do plano. Livre é o cliente quem escolhe o percentual. A média de lance mostrada é a do lance livre que costuma contemplar.</span></div>
+        <div class="b"><b>Limite do embutido</b><span>Imóvel e automóvel: até 40% do crédito. Serviço: até 20%. Percentual sobre a carta contratada.</span></div>
+        <div class="b"><b>Redutor de parcela</b><span>Reduz o valor da parcela até a contemplação (20%, 30% ou 50% conforme o grupo). Ótimo argumento de entrada.</span></div>
+      </div>
+      <p style="margin-top:14px;color:var(--muted);font-size:12.5px">A média de lance é histórica e serve de referência do que costuma contemplar; não é garantia. Grupos sem histórico aparecem como “—”. Base: planilha interna Bancorbrás, referência de julho/2026.</p>
+    </div>
+  </details>
+
+  <div id="stage"></div>
+  <div class="empty" id="empty">Nenhum grupo encontrado. Tente outro número.</div>
+
+  <footer>
+    <div class="slg">Investir com segurança, conquistar com muita inteligência.</div>
+    <div class="meta">Osher Capital · Material interno para a equipe comercial · Dados: Bancorbrás — referência jul/2026</div>
+  </footer>
+</div>
+
+<script>
+/* ===== Dados dos grupos =====
+   emb: 'impar' | 'par' | 'todos' (livre todo mês) | 'servico' (livre todo mês, 20%) | 'alterna' (confirmar no mês)
+   embPct: limite do embutido | lance: média de lance livre p/ contemplar (%) ou null
+   pi=prazo inicial (meses), pa=prazo atual, tx=taxa adm total, txp=taxa periódica, txpl='a.a'|'a.m', red=redutor */
+const G=[
+/* IMÓVEL */
+{g:1500,t:'imovel',pi:200,pa:9,tx:'14,50%',txp:'0,87%',txl:'a.a.',red:'—',lance:'11,42%',emb:'impar',embPct:'40%'},
+{g:1501,t:'imovel',pi:200,pa:17,tx:'9,90%',txp:'0,59%',txl:'a.a.',red:'—',lance:'9,25%',emb:'impar',embPct:'40%'},
+{g:1093,t:'imovel',pi:200,pa:30,tx:'15,50%',txp:'0,93%',txl:'a.a.',red:'—',lance:null,emb:'alterna',embPct:'40%'},
+{g:1094,t:'imovel',pi:220,pa:100,tx:'17,50%',txp:'0,95%',txl:'a.a.',red:'30%',lance:'47,05%',emb:'par',embPct:'40%'},
+{g:1095,t:'imovel',pi:220,pa:104,tx:'17,50%',txp:'0,95%',txl:'a.a.',red:'30%',lance:'47,95%',emb:'par',embPct:'40%'},
+{g:1096,t:'imovel',pi:220,pa:119,tx:'18,50%',txp:'1,01%',txl:'a.a.',red:'30%',lance:'53,56%',emb:'impar',embPct:'40%'},
+{g:1097,t:'imovel',pi:220,pa:133,tx:'18,50%',txp:'1,01%',txl:'a.a.',red:'30%',lance:'61,14%',emb:'impar',embPct:'40%'},
+{g:1098,t:'imovel',pi:180,pa:113,tx:'18,50%',txp:'1,23%',txl:'a.a.',red:'30%',lance:'57,92%',emb:'par',embPct:'40%'},
+{g:1200,t:'imovel',pi:220,pa:164,tx:'20,00%',txp:'1,09%',txl:'a.a.',red:'30%',lance:'68,52%',emb:'impar',embPct:'40%'},
+{g:1201,t:'imovel',pi:220,pa:171,tx:'20,00%',txp:'1,09%',txl:'a.a.',red:'30%',lance:'73,18%',emb:'impar',embPct:'40%'},
+{g:1202,t:'imovel',pi:220,pa:186,tx:'21,00%',txp:'1,15%',txl:'a.a.',red:'30%',lance:'67,80%',emb:'impar',embPct:'40%'},
+{g:1203,t:'imovel',pi:180,pa:162,tx:'20,00%',txp:'1,48%',txl:'a.a.',red:'50%',lance:'68,52%',emb:'todos',embPct:'40%'},
+{g:1204,t:'imovel',pi:220,pa:213,tx:'18,70%',txp:'1,05%',txl:'a.a.',red:'30% / 50%',lance:null,emb:'alterna',embPct:'40%'},
+{g:1600,t:'imovel',pi:240,pa:77,tx:'16,50%',txp:'0,83%',txl:'a.a.',red:'30%',lance:'36,46%',emb:'impar',embPct:'40%'},
+{g:1601,t:'imovel',pi:240,pa:96,tx:'17,50%',txp:'0,88%',txl:'a.a.',red:'30%',lance:'40,42%',emb:'todos',embPct:'40%'},
+{g:1602,t:'imovel',pi:240,pa:161,tx:'20,50%',txp:'1,03%',txl:'a.a.',red:'30%',lance:'63,85%',emb:'impar',embPct:'40%'},
+{g:1603,t:'imovel',pi:240,pa:208,tx:'22,00%',txp:'1,27%',txl:'a.a.',red:'50%',lance:'67,26%',emb:'par',embPct:'40%'},
+{g:1604,t:'imovel',pi:240,pa:212,tx:'18,70%',txp:'1,06%',txl:'a.a.',red:'50%',lance:'70,66%',emb:'impar',embPct:'40%'},
+{g:1605,t:'imovel',pi:240,pa:225,tx:'22,00%',txp:'1,17%',txl:'a.a.',red:'30% / 50%',lance:null,emb:'alterna',embPct:'40%'},
+{g:1607,t:'imovel',pi:240,pa:238,tx:'19,13%',txp:'0,96%',txl:'a.a.',red:'30% / 50%',lance:null,emb:'alterna',embPct:'40%'},
+/* AUTOMÓVEL */
+{g:2044,t:'auto',pi:72,pa:14,tx:'15,50%',txp:'0,22%',txl:'a.m.',red:'20%',lance:null,emb:'impar',embPct:'40%'},
+{g:2045,t:'auto',pi:72,pa:34,tx:'16,50%',txp:'0,23%',txl:'a.m.',red:'50%',lance:null,emb:'alterna',embPct:'40%'},
+{g:2046,t:'auto',pi:72,pa:36,tx:'16,50%',txp:'0,23%',txl:'a.m.',red:'50%',lance:'45,25%',emb:'impar',embPct:'40%'},
+{g:2047,t:'auto',pi:72,pa:41,tx:'16,00%',txp:'0,22%',txl:'a.m.',red:'50%',lance:'51,62%',emb:'impar',embPct:'40%'},
+{g:2048,t:'auto',pi:72,pa:49,tx:'17,00%',txp:'0,24%',txl:'a.m.',red:'50%',lance:'51,97%',emb:'par',embPct:'40%'},
+{g:2049,t:'auto',pi:72,pa:57,tx:'18,00%',txp:'0,25%',txl:'a.m.',red:'50%',lance:null,emb:'par',embPct:'40%'},
+{g:2051,t:'auto',pi:72,pa:64,tx:'19,00%',txp:'0,26%',txl:'a.m.',red:'50%',lance:null,emb:'alterna',embPct:'40%'},
+{g:2052,t:'auto',pi:72,pa:72,tx:'16,58%',txp:'0,23%',txl:'a.m.',red:'50%',lance:null,emb:'alterna',embPct:'40%'},
+{g:5027,t:'auto',pi:100,pa:37,tx:'16,00%',txp:'0,16%',txl:'a.m.',red:'50%',lance:'34,75%',emb:'par',embPct:'30%'},
+{g:5028,t:'auto',pi:100,pa:56,tx:'18,00%',txp:'0,18%',txl:'a.m.',red:'50%',lance:'53,42%',emb:'par',embPct:'30%'},
+{g:5029,t:'auto',pi:100,pa:64,tx:'18,50%',txp:'0,19%',txl:'a.m.',red:'50%',lance:'53,75%',emb:'par',embPct:'30%'},
+{g:5030,t:'auto',pi:100,pa:68,tx:'18,50%',txp:'0,27%',txl:'a.m.',red:'50%',lance:'56,75%',emb:'par',embPct:'30%'},
+{g:5031,t:'auto',pi:100,pa:70,tx:'18,50%',txp:'0,26%',txl:'a.m.',red:'50%',lance:'52,67%',emb:'par',embPct:'30%'},
+{g:5032,t:'auto',pi:90,pa:65,tx:'18,00%',txp:'0,28%',txl:'a.m.',red:'50%',lance:'49,54%',emb:'impar',embPct:'30%'},
+{g:5033,t:'auto',pi:90,pa:74,tx:'19,00%',txp:'0,26%',txl:'a.m.',red:'50%',lance:'61,11%',emb:'par',embPct:'30%'},
+{g:5034,t:'auto',pi:90,pa:80,tx:'19,00%',txp:'0,24%',txl:'a.m.',red:'50%',lance:'35,79%',emb:'par',embPct:'30%'},
+{g:5035,t:'auto',pi:90,pa:88,tx:'15,60%',txp:'0,18%',txl:'a.m.',red:'50%',lance:null,emb:'alterna',embPct:'30%'},
+/* SERVIÇO */
+{g:3104,t:'servico',pi:48,pa:2,tx:'10,50%',txp:'0,22%',txl:'a.m.',red:'20%',lance:null,emb:'servico',embPct:'20%'},
+{g:3105,t:'servico',pi:48,pa:6,tx:'10,50%',txp:'0,22%',txl:'a.m.',red:'20%',lance:null,emb:'servico',embPct:'20%'},
+{g:3106,t:'servico',pi:48,pa:12,tx:'14,50%',txp:'0,30%',txl:'a.m.',red:'20%',lance:null,emb:'servico',embPct:'20%'},
+{g:3107,t:'servico',pi:48,pa:17,tx:'14,50%',txp:'0,30%',txl:'a.m.',red:'20%',lance:null,emb:'servico',embPct:'20%'},
+{g:3108,t:'servico',pi:48,pa:23,tx:'18,50%',txp:'0,39%',txl:'a.m.',red:'20%',lance:null,emb:'servico',embPct:'20%'},
+{g:3109,t:'servico',pi:48,pa:47,tx:'17,20%',txp:'0,36%',txl:'a.m.',red:'20%',lance:null,emb:'servico',embPct:'20%'},
+];
+
+const TIPOS={
+  imovel:{nome:'Imóvel',icon:'<path d="M3 11l9-7 9 7"/><path d="M5 10v10h14V10"/><path d="M10 20v-6h4v6"/>'},
+  auto:{nome:'Automóvel',icon:'<path d="M5 16l1.5-5A2 2 0 018.4 9.6h7.2a2 2 0 011.9 1.4L19 16"/><path d="M4 16h16v3H4z"/><circle cx="7.5" cy="19" r="1.3"/><circle cx="16.5" cy="19" r="1.3"/>'},
+  servico:{nome:'Serviço',icon:'<path d="M14 7a3 3 0 00-4 4l-6 6 2 2 6-6a3 3 0 004-4l-2 2-2-2 2-2z"/>'},
+};
+
+/* mês atual: ímpar (jan/mar/mai/jul/set/nov) ou par */
+const now=new Date();
+const mesNum=now.getMonth()+1;
+const mesPar= mesNum%2===0 ? 'par':'impar';
+const meses=['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
+document.getElementById('mesatual').innerHTML='<span class="pill-now">'+meses[mesNum-1]+' · '+(mesPar==='impar'?'ÍMPAR':'PAR')+'</span>';
+
+/* embute neste mês? */
+function embutHoje(x){
+  if(x.emb==='servico'||x.emb==='todos') return true;
+  if(x.emb==='alterna') return null; /* indefinido */
+  return x.emb===mesPar;
+}
+function embLabel(x){
+  const p=x.embPct;
+  if(x.emb==='servico') return {cls:'yes',txt:'Embute '+p,det:'Lance livre embute até <b>'+p+'</b> do crédito em <b>todos os meses</b>.'};
+  if(x.emb==='todos') return {cls:'yes',txt:'Embute '+p,det:'Lance livre embute até <b>'+p+'</b> do crédito em <b>todas as assembleias</b>.'};
+  if(x.emb==='alterna') return {cls:'alt',txt:'Alterna',det:'Embute até <b>'+p+'</b> em assembleias alternadas — <b>confirme a assembleia do mês</b> no sistema.'};
+  const mesTxt=x.emb==='impar'?'ÍMPARES':'PARES';
+  const outro=x.emb==='impar'?'pares':'ímpares';
+  return {cls:'yes',txt:'Embute nas '+mesTxt.toLowerCase(),det:'Embute até <b>'+p+'</b> do crédito nas assembleias <b>'+mesTxt+'</b>. Nas '+outro+', não embute.'};
+}
+
+let fTipo='all', fEmbNow=false, fQ='';
+
+function render(){
+  const stage=document.getElementById('stage');
+  stage.innerHTML='';
+  let total=0;
+  for(const key of ['imovel','auto','servico']){
+    if(fTipo!=='all'&&fTipo!==key) continue;
+    let list=G.filter(x=>x.t===key);
+    if(fQ) list=list.filter(x=>String(x.g).includes(fQ));
+    if(fEmbNow) list=list.filter(x=>embutHoje(x)===true);
+    if(!list.length) continue;
+    total+=list.length;
+    const sec=document.createElement('div');
+    sec.className='sec';
+    const T=TIPOS[key];
+    sec.innerHTML='<div class="sechd"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">'+T.icon+'</svg></div><h2>'+T.nome+'</h2><span class="cnt">'+list.length+' grupo'+(list.length>1?'s':'')+'</span></div>';
+    const grid=document.createElement('div');grid.className='grid';
+    for(const x of list){
+      const e=embLabel(x);
+      const hoje=embutHoje(x);
+      const nowtag = hoje===true ? '<span class="nowtag">EMBUTE ESTE MÊS</span>' : '';
+      const card=document.createElement('div');card.className='g';
+      card.innerHTML=
+        '<div class="top"><div><div class="gnum">'+x.g+'</div><div class="gsub">'+T.nome+' · Bancorbrás</div></div>'+
+        '<div class="emb '+e.cls+'">'+e.txt+'</div></div>'+
+        '<div class="rows">'+
+          '<div class="r"><span class="k">Prazo</span><span class="v">'+x.pi+' meses <small>· faltam '+x.pa+'</small></span></div>'+
+          '<div class="r"><span class="k">Taxa de adm.</span><span class="v">'+x.tx+' <small>· '+x.txp+' '+x.txl+'</small></span></div>'+
+          '<div class="r"><span class="k">Redutor de parcela</span><span class="v">'+x.red+'</span></div>'+
+          '<div class="r"><span class="k">Lance médio p/ contemplar</span><span class="v">'+(x.lance?x.lance:'—')+'</span></div>'+
+        '</div>'+
+        '<div class="embline"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 2l3 7h7l-5.5 4.5L18 22l-6-4-6 4 1.5-8.5L2 9h7z" stroke-linejoin="round"/></svg><span>'+e.det+nowtag+'</span></div>';
+      grid.appendChild(card);
+    }
+    sec.appendChild(grid);stage.appendChild(sec);
+  }
+  document.getElementById('empty').style.display= total? 'none':'block';
+}
+
+/* eventos */
+document.getElementById('q').addEventListener('input',e=>{fQ=e.target.value.trim();render();});
+document.querySelectorAll('.chip[data-tipo]').forEach(c=>c.addEventListener('click',()=>{
+  document.querySelectorAll('.chip[data-tipo]').forEach(o=>o.classList.remove('on'));
+  c.classList.add('on');fTipo=c.dataset.tipo;render();
+}));
+document.getElementById('embnow').addEventListener('click',function(){
+  fEmbNow=!fEmbNow;this.classList.toggle('on',fEmbNow);render();
+});
+
+/* tema */
+const tg=document.getElementById('tg'),tgt=document.getElementById('tgt'),tgi=document.getElementById('tgi');
+const sun='<circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/>';
+const moon='<path d="M21 12.8A9 9 0 1111.2 3a7 7 0 009.8 9.8z"/>';
+function syncThemeBtn(){var d=document.documentElement.getAttribute('data-theme')==='dark';tgt.textContent=d?'Claro':'Escuro';tgi.innerHTML=d?sun:moon;}
+tg.addEventListener('click',()=>{
+  var d=document.documentElement.getAttribute('data-theme')==='dark';
+  document.documentElement.setAttribute('data-theme',d?'light':'dark');
+  syncThemeBtn();
+});
+/* quando embutido no CRM, herda o tema definido pelo app hospedeiro */
+new MutationObserver(syncThemeBtn).observe(document.documentElement,{attributes:true,attributeFilter:['data-theme']});
+syncThemeBtn();
+
+render();
+</script>
+</body>
+</html>
