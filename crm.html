@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>OSHER CAPITAL — CRM Comercial</title><!-- v-pb2 -->
-<!-- crm v17 · aba “Grupos” (guia de consulta Bancorbrás: prazos, taxas, lances, lance embutido) embutida via iframe, como Playbook/Simulador · semana comercial agora SEGUNDA a DOMINGO (era dom→sáb) — relatório, scorecard, pace, tração e nº da semana; PDF comparativo; comissão real por faixa · 2026-07-13 -->
+<!-- crm v18 · alerta de novos leads no CRM: banner + verificação automática a cada 90s (vendedor vê só os leads de tráfego dele; admin/diretor vê todos os novos), "Ver no funil" filtra Tráfego · 2026-07-27 -->
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300..800&display=swap" rel="stylesheet">
 <style>
@@ -801,6 +801,15 @@ async function cloudPullDeals(){try{var B=SB_URL+'/rest/v1/';if(!_getTok())retur
   DB.deals=Object.keys(byId).map(function(k){return byId[k];});
   var srvIds={};srv.forEach(function(d){srvIds[d.id]=1;});var localOnly=(DB.deals||[]).filter(function(d){return d&&d.id&&!srvIds[d.id];});if(localOnly.length)cloudPush();
   if(typeof ensureCfg==='function')ensureCfg();return true;}catch(e){console.warn('cloudPull falhou',e);}return false;}
+/* ===== ALERTA DE NOVOS LEADS NO CRM (v18) — aviso quando entra lead novo; para vendedor, só os de tráfego dele ===== */
+function _leadTs(d){return (d&&(d.recebidoEm||d.criadoEm))||'';}
+function _seenKey(){return 'osher_seenLeads_'+((ME&&ME.nome)||'anon');}
+function _lastSeen(){try{return localStorage.getItem(_seenKey())||'';}catch(e){return '';}}
+function _setSeen(ts){try{localStorage.setItem(_seenKey(),ts||new Date().toISOString());}catch(e){}}
+function novosLeads(){if(!ME)return [];var ls=_lastSeen();var all=(DB.deals||[]);var mine=canSeeAll()?all.slice():all.filter(function(d){return d&&d.vendedor===ME.nome;});if(!ls){var mx='';mine.forEach(function(d){var t=_leadTs(d);if(t>mx)mx=t;});_setSeen(mx||new Date().toISOString());return [];}return mine.filter(function(d){if(!d)return false;var t=_leadTs(d);if(!t||t<=ls)return false;return canSeeAll()?true:isTrafficLead(d);});}
+function leadAlertUI(on,msg,seller){var b=document.getElementById('leadAlert');if(!b){if(!on)return;b=document.createElement('div');b.id='leadAlert';b.style.cssText='position:fixed;bottom:16px;right:16px;z-index:99999;max-width:340px;background:#0b2c51;color:#f1f2f2;border:1px solid #c2b89e;border-radius:12px;padding:14px 16px;font-size:13px;box-shadow:0 6px 24px rgba(0,0,0,.35)';b.innerHTML='<div style="display:flex;align-items:center;gap:8px;margin-bottom:10px"><span style="display:inline-block;width:9px;height:9px;border-radius:50%;background:#c2b89e"></span><span id="leadAlertMsg" style="font-weight:600;line-height:1.4"></span></div><div style="display:flex;gap:8px"><button id="leadAlertGo" style="background:#c2b89e;color:#0b2c51;border:0;border-radius:8px;padding:6px 12px;font-weight:700;cursor:pointer">Ver no funil</button><button id="leadAlertOk" style="background:transparent;color:#f1f2f2;border:1px solid rgba(255,255,255,.4);border-radius:8px;padding:6px 12px;cursor:pointer">Ok, vi</button></div>';document.body.appendChild(b);document.getElementById('leadAlertOk').onclick=function(){_setSeen(new Date().toISOString());leadAlertUI(false);};document.getElementById('leadAlertGo').onclick=function(){_setSeen(new Date().toISOString());leadAlertUI(false);try{if(typeof QF!=='undefined'&&b._seller){QF.traf=true;QF.ativo=false;}var nb=document.querySelector('#nav [data-v="pipe"]');if(nb)nb.click();if(typeof syncQFUI==='function')syncQFUI();if(typeof renderBoard==='function')renderBoard();}catch(e){}};}b._seller=!!seller;var m=document.getElementById('leadAlertMsg');if(on&&m)m.textContent=msg;b.style.display=on?'block':'none';}
+function checkNewLeads(){try{if(!ME)return;var nv=novosLeads();if(!nv.length)return;var traf=nv.filter(isTrafficLead).length;var msg=canSeeAll()?(nv.length+' novo(s) lead(s) no CRM'+(traf?(' · '+traf+' de tráfego'):'')):('Você recebeu '+nv.length+' novo(s) lead(s) de tráfego');leadAlertUI(true,msg,!canSeeAll());}catch(e){console.warn('checkNewLeads',e);}}
+var _leadPoll=null;function startLeadPoll(){if(_leadPoll)return;_leadPoll=setInterval(function(){if(!ME||!_getTok()||_sessionDead)return;cloudPullDeals().then(function(ok){if(!ok)return;save();try{if(document.getElementById('v-pipe')&&document.getElementById('v-pipe').classList.contains('on')&&typeof renderBoard==='function')renderBoard();}catch(e){}checkNewLeads();});},90000);}
 /* ===== CONTRATOS (carteira real p/ aniversariantes) — leitura, em memória, sem persistir PII ===== */
 var CONTR=[];
 async function cloudPullContratos(){try{var B=SB_URL+'/rest/v1/';if(!_getTok())return false;var r=await authFetch(B+'contratos?select=cliente,nascimento,vendedor,cidade&limit=5000',{});if(!r.ok)return false;var pg=await r.json();if(!Array.isArray(pg))return false;CONTR=pg;return true;}catch(e){console.warn('cloudPullContratos falhou',e);}return false;}
@@ -888,7 +897,7 @@ async function doLogin(){
   _saveTok(j);
  }catch(e){err.textContent='Erro ao entrar: '+e.message;err.style.display='block';return;}
  err.style.display='none';ME=m;try{localStorage.setItem(MEKEY,m.email);}catch(e){}
- el('ovLogin').classList.remove('on');el('app').classList.remove('hidden');applyRole();renderAll();await cloudPullDeals();save();renderAll();cloudPullContratos().then(function(ok){if(ok)renderInicio();});cloudPullRouting().then(function(ok){if(ok)renderFila();});
+ el('ovLogin').classList.remove('on');el('app').classList.remove('hidden');applyRole();renderAll();await cloudPullDeals();save();renderAll();checkNewLeads();startLeadPoll();cloudPullContratos().then(function(ok){if(ok)renderInicio();});cloudPullRouting().then(function(ok){if(ok)renderFila();});
 }
 function logout(){ME=null;window.__crmtok=null;try{clearTimeout(_refT);}catch(e){}try{localStorage.removeItem(MEKEY);}catch(e){}try{localStorage.removeItem('osher_crm_tok');}catch(e){}try{localStorage.removeItem('osher_crm_rtok');}catch(e){}try{localStorage.removeItem('osher_crm_texp');}catch(e){}el('liPass').value='';el('app').classList.add('hidden');el('ovLogin').classList.add('on');}
 function resolveMe(){try{var e=localStorage.getItem(MEKEY);if(e){var m=memberByEmail(e);if(m&&m.papel!=='externo'){ME=m;return true;}}}catch(e){}return false;}
@@ -1466,7 +1475,7 @@ ensureCfg();
 fillSelects();
 initMasks();
 initTheme();
-if(resolveMe()){el('ovLogin').classList.remove('on');el('app').classList.remove('hidden');applyRole();renderAll();try{_scheduleRefresh(+localStorage.getItem('osher_crm_texp')||0);}catch(e){}cloudPullDeals().then(function(ok){if(ok){save();renderAll();}});cloudPullContratos().then(function(ok){if(ok)renderInicio();});cloudPullRouting().then(function(ok){if(ok)renderFila();});}
+if(resolveMe()){el('ovLogin').classList.remove('on');el('app').classList.remove('hidden');applyRole();renderAll();try{_scheduleRefresh(+localStorage.getItem('osher_crm_texp')||0);}catch(e){}cloudPullDeals().then(function(ok){if(ok){save();renderAll();}checkNewLeads();startLeadPoll();});cloudPullContratos().then(function(ok){if(ok)renderInicio();});cloudPullRouting().then(function(ok){if(ok)renderFila();});}
 else{el('ovLogin').classList.add('on');}
 </script>
 </body>
