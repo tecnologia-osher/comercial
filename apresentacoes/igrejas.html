@@ -1,0 +1,724 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>O caminho do templo</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@200..800&display=swap" rel="stylesheet">
+<style>
+/* v5 · palco · 400 pastores · 10 min · 08/07/2026
+   Abre pela dor, sem entregar o tema. Surpresa antes de dado, dado como prova.
+   Linguagem editorial: hairlines douradas, grão de filme, vinheta, tipografia cinética,
+   comparativo com contadores em duelo, QR de agendamento no clímax. */
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{height:100%}
+:root{
+  --bg:#081d36;
+  --txt:#f1f2f2;
+  --sec:rgba(241,242,242,.6);
+  --ter:rgba(241,242,242,.36);
+  --gold:#a89e86;
+  --gold-txt:#c2b89e;
+  --gold-hi:#e9dfc4;
+  --gold-lo:#8f8468;
+  --red:#ff5a4e;
+  --line:rgba(168,158,134,.26);
+  --ease:cubic-bezier(.22,1,.36,1);
+  --ease-io:cubic-bezier(.65,0,.35,1);
+}
+body{background:radial-gradient(ellipse 120% 90% at 50% 0%,#0a2342 0%,var(--bg) 55%,#050f1f 100%);color:var(--txt);font-family:'Outfit',Inter,system-ui,-apple-system,sans-serif;overflow:hidden;-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
+.deck{position:fixed;inset:0}
+
+/* ---- Cinema: grão de filme + vinheta ---- */
+#grain{position:fixed;inset:0;pointer-events:none;z-index:46;opacity:.055;background-image:url("data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%27%20width%3D%27260%27%20height%3D%27260%27%3E%3Cfilter%20id%3D%27n%27%3E%3CfeTurbulence%20type%3D%27fractalNoise%27%20baseFrequency%3D%270.85%27%20numOctaves%3D%272%27%20stitchTiles%3D%27stitch%27%2F%3E%3CfeColorMatrix%20type%3D%27saturate%27%20values%3D%270%27%2F%3E%3C%2Ffilter%3E%3Crect%20width%3D%27260%27%20height%3D%27260%27%20filter%3D%27url%28%23n%29%27%2F%3E%3C%2Fsvg%3E")}
+#vignette{position:fixed;inset:0;pointer-events:none;z-index:45;background:radial-gradient(ellipse 90% 82% at 50% 46%,transparent 58%,rgba(2,8,17,.5) 100%)}
+
+/* ---- Atmosfera: uma luz por humor ---- */
+.mood{position:fixed;inset:0;pointer-events:none;z-index:0;opacity:0;transition:opacity 2.2s var(--ease-io)}
+#m-neutro{background:radial-gradient(ellipse 60% 46% at 50% 40%,rgba(194,184,158,.07),transparent 64%);animation:breathe 14s ease-in-out infinite alternate}
+#m-dor{background:radial-gradient(ellipse 66% 54% at 50% 58%,rgba(255,90,78,.085),transparent 66%)}
+#m-virada{background:radial-gradient(ellipse 58% 46% at 50% 38%,rgba(194,184,158,.13),transparent 64%)}
+body.mood-neutro #m-neutro,body.mood-dor #m-dor,body.mood-virada #m-virada{opacity:1}
+@keyframes breathe{from{opacity:.55}to{opacity:1}}
+
+/* ---- Slides: dissolve com profundidade ---- */
+.slide{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:7vh 6vw 11vh;opacity:0;visibility:hidden;transform:scale(1.04);filter:blur(14px);transition:opacity .9s var(--ease),transform .9s var(--ease),filter .9s var(--ease),visibility 0s linear .9s;pointer-events:none;z-index:1}
+.slide.active{opacity:1;visibility:visible;transform:scale(1);filter:blur(0);pointer-events:auto;z-index:2;transition:opacity .9s var(--ease),transform .9s var(--ease),filter .9s var(--ease),visibility 0s}
+.slide.leaving{transform:scale(.965)}
+
+/* ---- Tipografia ---- */
+.label{font-size:.85rem;font-weight:500;text-transform:uppercase;letter-spacing:.28em;color:var(--gold-txt)}
+.label.kick{margin-bottom:4.5vh}
+.display{font-size:clamp(3.4rem,9.5vw,10.5rem);font-weight:230;line-height:1.04;letter-spacing:-.04em}
+.display.b{font-weight:650}
+h1,h2{font-weight:inherit}
+.head{font-size:clamp(2.5rem,5.4vw,5.6rem);font-weight:240;line-height:1.07;letter-spacing:-.035em;max-width:22ch}
+.head b{font-weight:650;letter-spacing:-.03em}
+.apoio{font-size:clamp(1.3rem,2vw,2rem);font-weight:300;line-height:1.5;color:var(--sec);max-width:44ch}
+.apoio.strong{color:var(--txt)}
+.gold,.gword{background:linear-gradient(105deg,var(--gold-hi) 0%,var(--gold-txt) 46%,var(--gold-lo) 100%);-webkit-background-clip:text;background-clip:text;color:transparent;-webkit-text-fill-color:transparent}
+.divider{width:88px;height:1px;background:var(--line);margin:26px auto}
+.g64{margin-top:min(64px,6vh)}
+.g48{margin-top:min(48px,4.5vh)}
+.g32{margin-top:min(32px,3vh)}
+
+/* ---- Reveal palavra a palavra ---- */
+.rev .wi{display:inline-block;opacity:0;transform:translateY(.55em);filter:blur(16px);transition:opacity 1.1s var(--ease),transform 1.1s var(--ease),filter 1.1s var(--ease)}
+.slide.active .rev .wi{opacity:1;transform:none;filter:blur(0)}
+
+/* ---- Fragmentos ---- */
+[data-frag]{opacity:0;transform:translateY(26px);filter:blur(9px);transition:opacity .95s var(--ease),transform .95s var(--ease),filter .95s var(--ease)}
+[data-frag].fon{opacity:1;transform:none;filter:blur(0)}
+[data-swap]{transform:none!important;transition:opacity .95s var(--ease),filter .95s var(--ease)}
+[data-swap].fon{opacity:0}
+[data-swap].fon.cur{opacity:1}
+.clearable{transition:opacity .85s var(--ease),filter .85s var(--ease)}
+.slide.cleared .clearable{opacity:0;filter:blur(8px)}
+
+/* ---- Marca ---- */
+.wm{letter-spacing:.34em;font-size:clamp(1.1rem,1.8vw,1.5rem);white-space:nowrap}
+.wm b{font-weight:800;color:var(--txt)}
+.wm span{font-weight:300;color:var(--gold-txt)}
+.wm.big{font-size:clamp(1.5rem,2.8vw,2.3rem)}
+.slogan{font-weight:300;font-style:italic;color:var(--gold-txt);font-size:clamp(1.05rem,1.6vw,1.4rem)}
+
+/* ---- Abertura: mídia full-bleed (vídeo local com fallback de foto) ---- */
+.hookbg{position:absolute;inset:0;z-index:0;overflow:hidden}
+.hookbg img,.hookbg video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;filter:brightness(.42) saturate(.75)}
+.hookbg img{animation:kenburns 24s var(--ease) infinite alternate}
+.hookbg .scrim{position:absolute;inset:0;background:linear-gradient(180deg,rgba(8,29,54,.55),rgba(8,29,54,.25) 45%,rgba(8,29,54,.92))}
+.hook-lines{position:relative;z-index:2}
+.hookline{font-size:clamp(2.6rem,6vw,6.4rem);font-weight:240;line-height:1.12;letter-spacing:-.035em}
+.hookline b{font-weight:650}
+
+/* ---- Frases em sequência (uma substitui a outra) ---- */
+.heroswap{position:relative;width:100%;min-height:30vh}
+.heroswap .num,.heroswap .phr{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:0 4vw}
+.phr p{font-size:clamp(2rem,4.4vw,4.6rem);font-weight:280;line-height:1.2;letter-spacing:-.03em;max-width:26ch}
+.phr .de-novo{display:block;margin-top:14px;font-size:.85rem;font-weight:500;text-transform:uppercase;letter-spacing:.28em;color:var(--ter)}
+.punch{font-size:clamp(2.2rem,4.6vw,4.8rem);font-weight:650;line-height:1.15;letter-spacing:-.03em}
+.punch .soft{font-weight:240;color:var(--sec)}
+
+/* ---- Contador de juros ---- */
+#drain{font-size:clamp(4.2rem,11vw,11.5rem);font-weight:200;line-height:1;letter-spacing:-.035em;color:var(--red);font-variant-numeric:tabular-nums;text-shadow:0 0 100px rgba(255,90,78,.38)}
+.drainleg{margin-top:20px;font-size:clamp(1.2rem,1.8vw,1.6rem);font-weight:300;color:var(--sec)}
+.drainsm{margin-top:8px;font-size:.9rem;font-weight:300;color:var(--ter)}
+.mordomia{font-size:clamp(2rem,3.6vw,3.8rem);font-weight:600;line-height:1.22;letter-spacing:-.02em;max-width:24ch}
+.vref{display:block;margin-top:18px;font-size:.85rem;font-weight:500;text-transform:uppercase;letter-spacing:.28em;color:var(--ter)}
+
+/* ---- Duelo: o mesmo templo, dois caminhos ---- */
+.duel{display:grid;grid-template-columns:1fr 1px 1fr;gap:0 3.5vw;align-items:stretch;width:100%;max-width:1150px}
+.duel .vs{background:var(--line)}
+.lane{padding:1.2rem 0}
+.lane .ln-l{font-size:.85rem;font-weight:500;text-transform:uppercase;letter-spacing:.28em;color:var(--ter);margin-bottom:1.4rem}
+.lane .ln-n{font-size:clamp(2.6rem,6vw,6rem);font-weight:220;line-height:1;letter-spacing:-.035em;font-variant-numeric:tabular-nums}
+.lane.bad .ln-n{color:var(--red);text-shadow:0 0 70px rgba(255,90,78,.3)}
+.lane.good .ln-n{background:linear-gradient(105deg,var(--gold-hi),var(--gold-txt) 46%,var(--gold-lo));-webkit-background-clip:text;background-clip:text;color:transparent;-webkit-text-fill-color:transparent}
+.lane .ln-s{margin-top:1rem;font-size:clamp(1rem,1.4vw,1.25rem);font-weight:300;color:var(--sec);line-height:1.5}
+.duelpunch{font-size:clamp(1.8rem,3.2vw,3.2rem);font-weight:600;line-height:1.25;letter-spacing:-.02em;max-width:30ch}
+.duelpunch .n{color:var(--gold-txt)}
+
+/* ---- Número herói ---- */
+.heron{font-size:clamp(4.6rem,11.5vw,11.5rem);font-weight:200;line-height:1;letter-spacing:-.04em;font-variant-numeric:tabular-nums;background:linear-gradient(180deg,#fff 18%,rgba(241,242,242,.6) 100%);-webkit-background-clip:text;background-clip:text;color:transparent;-webkit-text-fill-color:transparent}
+.herol{margin-top:18px;font-size:clamp(1.2rem,1.9vw,1.7rem);font-weight:300;color:var(--sec);max-width:36ch}
+
+/* ---- Lista editorial (sem caixas): hairline dourada ---- */
+.ed{display:grid;gap:0 3vw;grid-template-columns:repeat(4,1fr);width:100%;max-width:1280px;text-align:left}
+.ed .it{border-top:1px solid var(--line);padding-top:1.4rem;position:relative}
+.ed .it .n{font-size:.8rem;font-weight:500;letter-spacing:.28em;color:var(--gold-txt);margin-bottom:1rem}
+.ed .it h3{font-size:clamp(1.15rem,1.6vw,1.5rem);font-weight:600;letter-spacing:-.01em;margin-bottom:.55rem;line-height:1.25}
+.ed .it p{font-size:clamp(.98rem,1.3vw,1.2rem);font-weight:300;color:var(--sec);line-height:1.55}
+
+/* ---- Passos editoriais com numeral fantasma e linha ---- */
+.tl{position:relative;width:100%;max-width:1280px;padding-top:2.6rem}
+.tl .track{position:absolute;top:1rem;left:1%;right:1%;height:1px;background:rgba(168,158,134,.2)}
+.tl .fill{position:absolute;left:0;top:0;bottom:0;width:var(--tp,0%);background:linear-gradient(90deg,var(--gold),var(--gold-txt));transition:width .9s var(--ease-io)}
+.tl .dot{position:absolute;top:50%;left:var(--tp,0%);width:11px;height:11px;margin:-5.5px 0 0 -5.5px;border-radius:50%;background:var(--gold-txt);box-shadow:0 0 16px rgba(194,184,158,.9);transition:left .9s var(--ease-io)}
+.steps{display:grid;gap:0 3vw;grid-template-columns:repeat(4,1fr);width:100%;text-align:left}
+.step{position:relative;padding-top:4.6rem}
+.step::before{content:attr(data-n);position:absolute;top:.2rem;left:-.06em;font-size:clamp(3.4rem,6.4vw,6.4rem);font-weight:200;line-height:1;letter-spacing:-.04em;color:transparent;-webkit-text-stroke:1px rgba(194,184,158,.34);transition:color .6s ease}
+.step.fon::before{color:rgba(194,184,158,.16)}
+.step h3{font-size:clamp(1.15rem,1.6vw,1.5rem);font-weight:600;margin-bottom:.5rem;line-height:1.25}
+.step p{font-size:clamp(.98rem,1.3vw,1.2rem);font-weight:300;color:var(--sec);line-height:1.55}
+
+/* ---- Fotos full-bleed ---- */
+@keyframes kenburns{from{transform:scale(1.09)}to{transform:scale(1.02)}}
+.photo{position:absolute;inset:0;z-index:1;overflow:hidden}
+.photo img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;filter:brightness(.48) saturate(.8);transform:scale(1.02)}
+.photo.fon.cur img{animation:kenburns 16s var(--ease) forwards}
+.photo .scrim{position:absolute;inset:0;background:linear-gradient(180deg,rgba(8,29,54,.42),rgba(8,29,54,.12) 46%,rgba(8,29,54,.92))}
+.photo figcaption{position:absolute;left:8vw;right:8vw;bottom:12vh;text-align:center}
+.photo .pl{display:block;font-size:.82rem;font-weight:500;text-transform:uppercase;letter-spacing:.28em;color:var(--gold-txt);margin-bottom:14px}
+.photo h3{font-size:clamp(2rem,3.8vw,4rem);font-weight:350;line-height:1.15;letter-spacing:-.025em}
+.photo-head{position:relative;z-index:2}
+
+/* ---- Ticker de resultados (uma linha, hairlines verticais) ---- */
+.ticker{display:flex;justify-content:center;align-items:stretch;width:100%;max-width:1240px}
+.tk{flex:1;padding:0 2.4vw}
+.tk + .tk{border-left:1px solid var(--line)}
+.tk .n{font-size:clamp(2.1rem,4.4vw,4.4rem);font-weight:220;line-height:1.05;letter-spacing:-.03em;font-variant-numeric:tabular-nums}
+.tk .l{margin-top:.7rem;font-size:clamp(.92rem,1.25vw,1.15rem);font-weight:300;color:var(--gold-txt);line-height:1.45}
+
+/* ---- CTA: QR de agendamento ---- */
+.cta-wrap{display:flex;align-items:center;justify-content:center;gap:5vw;flex-wrap:wrap}
+.qrcard{background:#f1f2f2;border-radius:26px;padding:clamp(18px,2.4vh,26px);box-shadow:0 30px 90px rgba(2,8,17,.55),0 0 0 1px rgba(168,158,134,.35),0 0 70px rgba(194,184,158,.14);line-height:0}
+.qrcard svg{width:clamp(200px,30vh,320px);height:clamp(200px,30vh,320px);display:block}
+.qrlegend{margin-top:14px;text-align:center;font-size:.85rem;font-weight:600;text-transform:uppercase;letter-spacing:.24em;color:#081d36;line-height:1.4}
+.cta-side{text-align:left;max-width:34ch}
+.cta-side .big{font-size:clamp(1.6rem,2.6vw,2.6rem);font-weight:600;line-height:1.25;letter-spacing:-.02em}
+.cta-side .free{margin-top:1rem;font-size:clamp(1.1rem,1.6vw,1.5rem);font-weight:300;color:var(--sec);line-height:1.5}
+.cta-side .free b{color:var(--gold-txt);font-weight:600}
+.chips{margin-top:1.8rem;display:flex;flex-direction:column;gap:.9rem}
+.chip{display:flex;align-items:center;gap:.8rem;font-size:clamp(1.15rem,1.9vw,1.7rem);font-weight:600;letter-spacing:.01em}
+.chip svg{width:24px;height:24px;stroke:var(--gold-txt);fill:none;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round;flex:none}
+
+/* ---- Citação final ---- */
+.closequote{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:8vh 8vw;text-align:center;z-index:2}
+.closequote p{font-size:clamp(2rem,3.8vw,4.2rem);font-weight:275;line-height:1.3;letter-spacing:-.025em;max-width:26ch}
+.closequote cite{display:block;margin-top:28px;font-style:normal;font-size:.82rem;font-weight:500;text-transform:uppercase;letter-spacing:.28em;color:var(--ter)}
+.fin{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:8vh 8vw;text-align:center;z-index:3}
+
+/* ---- Nota de rodapé ---- */
+.note{position:absolute;left:6vw;right:6vw;bottom:5vh;font-size:.95rem;font-weight:300;color:var(--sec);letter-spacing:.02em;z-index:2}
+.notesrc{display:block;margin-top:4px;font-size:.76rem;font-weight:300;color:var(--ter)}
+
+/* ---- Cromo mínimo ---- */
+#counter{position:fixed;right:4.5vw;bottom:4.5vh;font-size:.78rem;font-weight:300;letter-spacing:.22em;color:var(--txt);opacity:.35;z-index:48;font-variant-numeric:tabular-nums}
+#prog{position:fixed;left:0;bottom:0;height:2px;width:0;background:linear-gradient(90deg,var(--gold-lo),var(--gold-txt));z-index:50;transition:width .7s var(--ease)}
+#help{position:fixed;inset:0;background:rgba(5,15,31,.96);display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;opacity:0;pointer-events:none;transition:opacity .3s;z-index:60}
+#help.open{opacity:1;pointer-events:auto}
+#help h3{font-size:.82rem;font-weight:500;text-transform:uppercase;letter-spacing:.24em;color:var(--gold-txt);margin-bottom:24px}
+#help p{font-size:1rem;font-weight:300;color:var(--txt);line-height:2.2;max-width:46ch}
+#help kbd{font-family:inherit;font-size:1rem;font-weight:600;color:var(--txt);border-bottom:1px solid rgba(241,242,242,.3);padding:0 .2em}
+
+@media (max-height:780px){
+  .g64{margin-top:34px}
+  .g48{margin-top:24px}
+  .label.kick{margin-bottom:3vh}
+  .head{font-size:clamp(2.1rem,4.6vw,4.2rem)}
+  #drain{font-size:clamp(3rem,8vw,7.5rem)}
+  .heron{font-size:clamp(3.4rem,9vw,8.5rem)}
+  .heroswap{min-height:26vh}
+  .qrcard svg{width:clamp(170px,26vh,260px);height:clamp(170px,26vh,260px)}
+}
+@media (max-width:1000px){
+  .ed,.steps{grid-template-columns:1fr 1fr;gap:2.2rem 2rem}
+  .tl{padding-top:0}
+  .tl .track{display:none}
+  .duel{grid-template-columns:1fr;gap:1rem}
+  .duel .vs{display:none}
+  .lane{padding:.4rem 0}
+  .lane .ln-l{margin-bottom:.6rem}
+  .lane .ln-s{margin-top:.5rem}
+  .duelpunch{font-size:clamp(1.25rem,2.8vw,2.1rem)}
+  .note{font-size:.78rem;bottom:2vh}
+  .ticker{flex-wrap:wrap;gap:1.6rem 0}
+  .tk{flex:1 1 40%}
+  .cta-side{text-align:center}
+  .chips{align-items:center}
+}
+@media (prefers-reduced-motion: reduce){
+  *,*::before,*::after{animation:none!important;transition:none!important}
+  [data-frag]{opacity:1!important;transform:none!important;filter:none!important}
+  [data-swap].fon{opacity:0!important}
+  [data-swap].fon.cur{opacity:1!important}
+  .rev .wi{opacity:1!important;transform:none!important;filter:none!important}
+  .slide{transform:none!important;filter:none!important}
+  .tl{--tp:100%!important}
+}
+</style>
+</head>
+<body class="mood-neutro">
+<div class="mood" id="m-neutro" aria-hidden="true"></div>
+<div class="mood" id="m-dor" aria-hidden="true"></div>
+<div class="mood" id="m-virada" aria-hidden="true"></div>
+<div id="vignette" aria-hidden="true"></div>
+<div id="grain" aria-hidden="true"></div>
+<div class="deck">
+
+<!-- 1 · Abertura fria: a cena, sem logo, sem tema -->
+<section class="slide active" data-mood="neutro">
+  <div class="hookbg" aria-hidden="true">
+    <img src="https://images.unsplash.com/photo-1676247675471-318c831785cd?auto=format&fit=crop&w=1800&q=80" alt="" onerror="this.remove()">
+    <video autoplay muted loop playsinline preload="auto" onerror="this.remove()">
+      <source src="abertura.mp4" type="video/mp4" onerror="this.closest('video').remove()">
+    </video>
+    <div class="scrim"></div>
+  </div>
+  <div class="hook-lines">
+    <div class="label kick rev">Domingo, 9h da manhã</div>
+    <h1 class="hookline rev">O culto está cheio.</h1>
+    <div class="hookline g32" data-frag><b>Tem gente do lado de fora.</b></div>
+  </div>
+</section>
+
+<!-- 2 · O punch -->
+<section class="slide" data-mood="neutro">
+  <h2 class="display rev">Toda igreja cresce.</h2>
+  <div class="display b" data-frag>O prédio não.</div>
+</section>
+
+<!-- 3 · A luta que todo pastor conhece -->
+<section class="slide" data-mood="dor">
+  <div class="clearable">
+    <div class="label kick">Talvez o irmão conheça essa história</div>
+    <div class="heroswap">
+      <div class="phr" data-frag data-swap="luta"><p>O terreno ao lado foi vendido.</p><span class="de-novo">De novo</span></div>
+      <div class="phr" data-frag data-swap="luta"><p>O banco pediu mais um documento.</p><span class="de-novo">De novo</span></div>
+      <div class="phr" data-frag data-swap="luta"><p>"CNPJ religioso? Vamos precisar analisar."</p><span class="de-novo">De novo</span></div>
+    </div>
+  </div>
+  <div class="punch" data-frag data-clear style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:8vh 8vw;z-index:3">
+    <span class="soft">Para a igreja, o banco diz não.</span>
+    <span class="g32">E quando diz sim, cobra caro.</span>
+  </div>
+</section>
+
+<!-- 4 · O custo que ninguém vê -->
+<section class="slide" data-mood="dor">
+  <div class="clearable">
+    <div class="label kick">Enquanto estamos aqui</div>
+    <div data-frag>
+      <div id="drain" data-drain="250">R$ 0,00</div>
+      <p class="drainleg">em juros, saindo de dízimos e ofertas e indo para os bancos</p>
+      <p class="drainsm">Ritmo ilustrativo.</p>
+    </div>
+  </div>
+  <div data-frag data-clear style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:8vh 8vw;z-index:3">
+    <div class="mordomia">"O que toma emprestado é servo do que empresta."</div>
+    <span class="vref">Provérbios 22:7</span>
+  </div>
+</section>
+
+<!-- 5 · Surpresa: o mesmo templo, dois caminhos -->
+<section class="slide" data-mood="dor">
+  <div class="label kick">Na ponta do lápis</div>
+  <h2 class="head rev">O mesmo templo. <b>Dois caminhos.</b></h2>
+  <p class="apoio g32" data-frag>Um imóvel de R$ 1 milhão para a igreja:</p>
+  <div class="duel g48">
+    <div class="lane bad" data-frag>
+      <div class="ln-l">Financiamento</div>
+      <div class="ln-n cnt">R$ 2,1 mi</div>
+      <div class="ln-s">pagos ao banco até o fim do contrato, com os juros</div>
+    </div>
+    <div class="vs" aria-hidden="true"></div>
+    <div class="lane good" data-frag>
+      <div class="ln-l">Compra planejada</div>
+      <div class="ln-n cnt">R$ 1,25 mi</div>
+      <div class="ln-s">com taxa de administração transparente, sem juros</div>
+    </div>
+  </div>
+  <div class="duelpunch g48" data-frag>A diferença passa de <span class="n">R$ 800 mil</span>. É a casa pastoral inteira, que fica na obra.</div>
+  <p class="note"><span class="notesrc">Simulação ilustrativa: financiamento de 20 anos a juros de mercado versus consórcio com taxa de administração. Valores variam por contrato e grupo.</span></p>
+</section>
+
+<!-- 6 · A pergunta -->
+<section class="slide" data-mood="virada">
+  <h2 class="head rev" style="max-width:24ch">E se a igreja pudesse construir <b class="gold">sem pagar juros?</b></h2>
+</section>
+
+<!-- 7 · A revelação -->
+<section class="slide" data-mood="virada">
+  <div class="label kick">Esse caminho existe</div>
+  <h2 class="head rev">E o Brasil <b>já usa.</b></h2>
+  <div class="heroswap g48">
+    <div class="num" data-frag data-swap="prova"><div class="heron cnt">1 em 4</div><div class="herol">imóveis comprados com crédito no país passa por ele</div></div>
+    <div class="num" data-frag data-swap="prova"><div class="heron cnt">12,76 mi</div><div class="herol">de brasileiros participam hoje</div></div>
+  </div>
+  <div class="g48" data-frag>
+    <div class="punch"><span class="soft">O nome é</span> consórcio imobiliário.</div>
+    <p class="apoio g32" style="max-width:52ch">Compra planejada, em grupo, sem juros. Existe apenas a taxa de administração, o preço do serviço, diluída em todo o prazo.</p>
+  </div>
+  <p class="note"><span class="notesrc">Fonte: ABAC, dezembro de 2025. Contemplação por sorteio ou lance, sem prazo garantido.</span></p>
+</section>
+
+<!-- 8 · Segurança: é lei -->
+<section class="slide" data-mood="virada">
+  <div class="label kick">Segurança</div>
+  <h2 class="head rev">Não é confiança. <b>É lei.</b></h2>
+  <div class="ed g64">
+    <div class="it" data-frag>
+      <div class="n">01</div>
+      <h3>Lei federal 11.795</h3>
+      <p>O consórcio é um sistema criado por lei, com regras públicas desde 2008.</p>
+    </div>
+    <div class="it" data-frag>
+      <div class="n">02</div>
+      <h3>Banco Central fiscaliza</h3>
+      <p>O BACEN normatiza, fiscaliza e pode intervir para proteger o grupo.</p>
+    </div>
+    <div class="it" data-frag>
+      <div class="n">03</div>
+      <h3>Patrimônio separado</h3>
+      <p>Por lei, o dinheiro do grupo não se mistura com o caixa de quem administra.</p>
+    </div>
+    <div class="it" data-frag>
+      <div class="n">04</div>
+      <h3>Contemplação garantida</h3>
+      <p>Todo participante em dia recebe a carta até o encerramento do grupo.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 9 · Como funciona -->
+<section class="slide" data-mood="neutro">
+  <div class="label kick">Na prática</div>
+  <h2 class="head rev">Quatro passos até <b>a chave</b></h2>
+  <div class="tl g64">
+    <div class="track"><div class="fill"></div><div class="dot"></div></div>
+    <div class="steps">
+      <div class="step" data-n="01" data-frag>
+        <h3>A igreja entra em um grupo</h3>
+        <p>Define o valor da carta e o prazo, com curadoria independente.</p>
+      </div>
+      <div class="step" data-n="02" data-frag>
+        <h3>Parcela que cabe no fluxo</h3>
+        <p>Mensalidade desenhada para o fluxo de dízimos e ofertas, com folga.</p>
+      </div>
+      <div class="step" data-n="03" data-frag>
+        <h3>Assembleias mensais</h3>
+        <p>Todo mês há contemplações, por sorteio ou por lance estratégico.</p>
+      </div>
+      <div class="step" data-n="04" data-frag>
+        <h3>Poder de compra à vista</h3>
+        <p>Com a carta na mão, a igreja negocia terreno e obra como quem paga à vista.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 10 · O que isso constrói -->
+<section class="slide" data-mood="neutro">
+  <div class="photo-head clearable">
+    <div class="label kick">O que isso constrói</div>
+    <h2 class="head rev">A expansão não precisa <b>esperar o banco</b></h2>
+  </div>
+  <figure class="photo" data-frag data-swap="fotos" data-clear>
+    <img loading="lazy" src="https://images.unsplash.com/photo-1565953522043-baea26b83b7e?auto=format&fit=crop&w=1800&q=80" alt="" onerror="this.closest('figure').remove()">
+    <div class="scrim"></div>
+    <figcaption><span class="pl">01</span><h3>O terreno vizinho</h3></figcaption>
+  </figure>
+  <figure class="photo" data-frag data-swap="fotos" data-clear>
+    <img loading="lazy" src="https://images.unsplash.com/photo-1644221967423-151b418d9659?auto=format&fit=crop&w=1800&q=80" alt="" onerror="this.closest('figure').remove()">
+    <div class="scrim"></div>
+    <figcaption><span class="pl">02</span><h3>O templo próprio</h3></figcaption>
+  </figure>
+  <figure class="photo" data-frag data-swap="fotos" data-clear>
+    <img loading="lazy" src="https://images.unsplash.com/photo-1636714289409-e06a4dfc617c?auto=format&fit=crop&w=1800&q=80" alt="" onerror="this.closest('figure').remove()">
+    <div class="scrim"></div>
+    <figcaption><span class="pl">03</span><h3>Construção e reforma, sem puxadinho</h3></figcaption>
+  </figure>
+  <figure class="photo" data-frag data-swap="fotos" data-clear>
+    <img loading="lazy" src="https://images.unsplash.com/photo-1560518883-ce09059eeffa?auto=format&fit=crop&w=1800&q=80" alt="" onerror="this.closest('figure').remove()">
+    <div class="scrim"></div>
+    <figcaption><span class="pl">04</span><h3>A casa pastoral</h3></figcaption>
+  </figure>
+</section>
+
+<!-- 11 · Apresentação pessoal (sem marca) -->
+<section class="slide" data-mood="neutro">
+  <div class="label kick">Quem caminha com a igreja</div>
+  <h2 class="head rev">Pedro <b>Ferreira</b></h2>
+  <p class="apoio g32" data-frag style="max-width:52ch">Consultoria patrimonial independente. Eu sento do lado da igreja na mesa, da escolha do grupo à entrega da chave.</p>
+  <div class="ticker g64">
+    <div class="tk" data-frag><div class="n cnt">R$ 68 mi+</div><div class="l">em crédito estruturado desde 2025</div></div>
+    <div class="tk" data-frag><div class="n cnt">141</div><div class="l">clientes com estratégia caso a caso</div></div>
+    <div class="tk" data-frag><div class="n cnt">32</div><div class="l">contemplações entregues</div></div>
+    <div class="tk" data-frag><div class="n">BSB</div><div class="l">de Brasília para todo o Brasil</div></div>
+  </div>
+  <p class="note"><span class="notesrc">Números de julho de 2026, entre imóveis e veículos.</span></p>
+</section>
+
+<!-- 12 · CTA: o QR -->
+<section class="slide" data-mood="virada">
+  <div class="label kick">O próximo passo leva 30 segundos</div>
+  <h2 class="head rev" style="max-width:26ch">Vamos desenhar o caminho <b class="gold">do seu templo?</b></h2>
+  <div class="cta-wrap g48">
+    <div class="qrcard" data-frag>
+      <svg viewBox="0 0 49 49" xmlns="http://www.w3.org/2000/svg" shape-rendering="crispEdges"><path d="M0 0h7v1h-7zM9 0h2v1h-2zM12 0h3v1h-3zM17 0h1v1h-1zM19 0h1v1h-1zM21 0h1v1h-1zM24 0h1v1h-1zM29 0h2v1h-2zM32 0h2v1h-2zM40 0h1v1h-1zM42 0h7v1h-7zM0 1h1v1h-1zM6 1h1v1h-1zM9 1h1v1h-1zM11 1h1v1h-1zM15 1h3v1h-3zM19 1h1v1h-1zM22 1h4v1h-4zM27 1h1v1h-1zM32 1h1v1h-1zM34 1h1v1h-1zM36 1h5v1h-5zM42 1h1v1h-1zM48 1h1v1h-1zM0 2h1v1h-1zM2 2h3v1h-3zM6 2h1v1h-1zM8 2h4v1h-4zM13 2h3v1h-3zM17 2h4v1h-4zM23 2h4v1h-4zM28 2h1v1h-1zM30 2h3v1h-3zM39 2h2v1h-2zM42 2h1v1h-1zM44 2h3v1h-3zM48 2h1v1h-1zM0 3h1v1h-1zM2 3h3v1h-3zM6 3h1v1h-1zM8 3h3v1h-3zM15 3h5v1h-5zM24 3h4v1h-4zM31 3h1v1h-1zM36 3h1v1h-1zM39 3h1v1h-1zM42 3h1v1h-1zM44 3h3v1h-3zM48 3h1v1h-1zM0 4h1v1h-1zM2 4h3v1h-3zM6 4h1v1h-1zM8 4h1v1h-1zM15 4h1v1h-1zM17 4h1v1h-1zM21 4h6v1h-6zM30 4h4v1h-4zM37 4h1v1h-1zM42 4h1v1h-1zM44 4h3v1h-3zM48 4h1v1h-1zM0 5h1v1h-1zM6 5h1v1h-1zM8 5h1v1h-1zM10 5h4v1h-4zM16 5h1v1h-1zM19 5h1v1h-1zM21 5h2v1h-2zM26 5h1v1h-1zM29 5h1v1h-1zM34 5h2v1h-2zM38 5h1v1h-1zM42 5h1v1h-1zM48 5h1v1h-1zM0 6h7v1h-7zM8 6h1v1h-1zM10 6h1v1h-1zM12 6h1v1h-1zM14 6h1v1h-1zM16 6h1v1h-1zM18 6h1v1h-1zM20 6h1v1h-1zM22 6h1v1h-1zM24 6h1v1h-1zM26 6h1v1h-1zM28 6h1v1h-1zM30 6h1v1h-1zM32 6h1v1h-1zM34 6h1v1h-1zM36 6h1v1h-1zM38 6h1v1h-1zM40 6h1v1h-1zM42 6h7v1h-7zM8 7h1v1h-1zM11 7h1v1h-1zM16 7h2v1h-2zM22 7h1v1h-1zM26 7h1v1h-1zM28 7h1v1h-1zM30 7h4v1h-4zM35 7h1v1h-1zM37 7h1v1h-1zM39 7h1v1h-1zM0 8h1v1h-1zM2 8h5v1h-5zM11 8h5v1h-5zM17 8h2v1h-2zM20 8h1v1h-1zM22 8h5v1h-5zM30 8h1v1h-1zM34 8h4v1h-4zM39 8h2v1h-2zM42 8h5v1h-5zM1 9h3v1h-3zM5 9h1v1h-1zM9 9h1v1h-1zM11 9h2v1h-2zM15 9h1v1h-1zM18 9h1v1h-1zM21 9h1v1h-1zM23 9h3v1h-3zM29 9h2v1h-2zM32 9h1v1h-1zM35 9h2v1h-2zM42 9h2v1h-2zM48 9h1v1h-1zM2 10h6v1h-6zM10 10h2v1h-2zM14 10h2v1h-2zM19 10h2v1h-2zM24 10h4v1h-4zM34 10h1v1h-1zM36 10h1v1h-1zM38 10h1v1h-1zM45 10h1v1h-1zM47 10h2v1h-2zM0 11h1v1h-1zM2 11h1v1h-1zM4 11h1v1h-1zM9 11h2v1h-2zM13 11h3v1h-3zM18 11h3v1h-3zM25 11h1v1h-1zM28 11h1v1h-1zM30 11h3v1h-3zM35 11h1v1h-1zM40 11h1v1h-1zM43 11h2v1h-2zM47 11h2v1h-2zM0 12h1v1h-1zM2 12h3v1h-3zM6 12h1v1h-1zM9 12h1v1h-1zM12 12h4v1h-4zM17 12h2v1h-2zM22 12h4v1h-4zM27 12h1v1h-1zM29 12h1v1h-1zM36 12h1v1h-1zM40 12h1v1h-1zM45 12h4v1h-4zM2 13h1v1h-1zM4 13h2v1h-2zM11 13h3v1h-3zM17 13h4v1h-4zM22 13h1v1h-1zM25 13h1v1h-1zM27 13h1v1h-1zM29 13h2v1h-2zM32 13h1v1h-1zM35 13h3v1h-3zM39 13h1v1h-1zM42 13h1v1h-1zM44 13h2v1h-2zM47 13h1v1h-1zM1 14h4v1h-4zM6 14h3v1h-3zM10 14h2v1h-2zM13 14h2v1h-2zM17 14h1v1h-1zM20 14h3v1h-3zM24 14h1v1h-1zM26 14h1v1h-1zM29 14h1v1h-1zM33 14h1v1h-1zM35 14h2v1h-2zM38 14h3v1h-3zM45 14h1v1h-1zM47 14h2v1h-2zM0 15h1v1h-1zM3 15h3v1h-3zM9 15h1v1h-1zM12 15h2v1h-2zM15 15h1v1h-1zM17 15h4v1h-4zM22 15h1v1h-1zM27 15h1v1h-1zM30 15h1v1h-1zM32 15h2v1h-2zM35 15h1v1h-1zM38 15h2v1h-2zM42 15h3v1h-3zM48 15h1v1h-1zM2 16h1v1h-1zM4 16h5v1h-5zM11 16h1v1h-1zM13 16h1v1h-1zM16 16h2v1h-2zM20 16h2v1h-2zM24 16h1v1h-1zM26 16h1v1h-1zM28 16h4v1h-4zM33 16h1v1h-1zM36 16h2v1h-2zM40 16h1v1h-1zM46 16h1v1h-1zM3 17h1v1h-1zM8 17h1v1h-1zM10 17h1v1h-1zM13 17h1v1h-1zM16 17h1v1h-1zM18 17h2v1h-2zM22 17h2v1h-2zM27 17h2v1h-2zM30 17h2v1h-2zM35 17h3v1h-3zM42 17h2v1h-2zM47 17h1v1h-1zM2 18h6v1h-6zM9 18h1v1h-1zM13 18h2v1h-2zM16 18h2v1h-2zM23 18h1v1h-1zM25 18h2v1h-2zM28 18h1v1h-1zM31 18h1v1h-1zM33 18h4v1h-4zM38 18h1v1h-1zM40 18h2v1h-2zM43 18h1v1h-1zM45 18h1v1h-1zM48 18h1v1h-1zM2 19h3v1h-3zM7 19h3v1h-3zM12 19h1v1h-1zM14 19h1v1h-1zM16 19h1v1h-1zM19 19h1v1h-1zM23 19h1v1h-1zM25 19h4v1h-4zM31 19h2v1h-2zM37 19h2v1h-2zM40 19h1v1h-1zM42 19h3v1h-3zM1 20h1v1h-1zM5 20h3v1h-3zM9 20h1v1h-1zM11 20h1v1h-1zM16 20h3v1h-3zM20 20h2v1h-2zM23 20h2v1h-2zM26 20h2v1h-2zM30 20h1v1h-1zM33 20h4v1h-4zM38 20h3v1h-3zM42 20h1v1h-1zM46 20h1v1h-1zM48 20h1v1h-1zM0 21h2v1h-2zM3 21h2v1h-2zM9 21h2v1h-2zM14 21h3v1h-3zM19 21h1v1h-1zM21 21h1v1h-1zM24 21h3v1h-3zM28 21h1v1h-1zM30 21h1v1h-1zM32 21h2v1h-2zM35 21h1v1h-1zM37 21h1v1h-1zM41 21h5v1h-5zM1 22h12v1h-12zM14 22h1v1h-1zM16 22h1v1h-1zM19 22h2v1h-2zM22 22h5v1h-5zM28 22h2v1h-2zM34 22h3v1h-3zM38 22h1v1h-1zM40 22h5v1h-5zM47 22h2v1h-2zM0 23h5v1h-5zM8 23h1v1h-1zM12 23h1v1h-1zM14 23h6v1h-6zM21 23h2v1h-2zM26 23h1v1h-1zM28 23h5v1h-5zM37 23h1v1h-1zM40 23h1v1h-1zM44 23h2v1h-2zM1 24h4v1h-4zM6 24h1v1h-1zM8 24h2v1h-2zM11 24h1v1h-1zM16 24h1v1h-1zM18 24h1v1h-1zM21 24h2v1h-2zM24 24h1v1h-1zM26 24h1v1h-1zM29 24h2v1h-2zM33 24h1v1h-1zM35 24h3v1h-3zM40 24h1v1h-1zM42 24h1v1h-1zM44 24h1v1h-1zM46 24h2v1h-2zM0 25h1v1h-1zM4 25h1v1h-1zM8 25h3v1h-3zM12 25h1v1h-1zM14 25h1v1h-1zM17 25h3v1h-3zM21 25h2v1h-2zM26 25h2v1h-2zM30 25h2v1h-2zM36 25h1v1h-1zM39 25h2v1h-2zM44 25h2v1h-2zM0 26h2v1h-2zM3 26h7v1h-7zM13 26h1v1h-1zM15 26h5v1h-5zM22 26h6v1h-6zM31 26h1v1h-1zM33 26h2v1h-2zM36 26h9v1h-9zM48 26h1v1h-1zM2 27h1v1h-1zM7 27h2v1h-2zM16 27h1v1h-1zM18 27h2v1h-2zM21 27h2v1h-2zM28 27h6v1h-6zM35 27h1v1h-1zM37 27h1v1h-1zM40 27h1v1h-1zM47 27h1v1h-1zM0 28h1v1h-1zM2 28h3v1h-3zM6 28h5v1h-5zM13 28h3v1h-3zM19 28h1v1h-1zM21 28h2v1h-2zM24 28h2v1h-2zM27 28h1v1h-1zM30 28h1v1h-1zM34 28h1v1h-1zM36 28h1v1h-1zM39 28h1v1h-1zM41 28h2v1h-2zM44 28h1v1h-1zM46 28h1v1h-1zM48 28h1v1h-1zM3 29h1v1h-1zM7 29h3v1h-3zM11 29h2v1h-2zM14 29h1v1h-1zM16 29h2v1h-2zM21 29h1v1h-1zM23 29h1v1h-1zM27 29h1v1h-1zM29 29h2v1h-2zM33 29h1v1h-1zM35 29h1v1h-1zM37 29h1v1h-1zM39 29h1v1h-1zM41 29h3v1h-3zM45 29h1v1h-1zM1 30h1v1h-1zM3 30h4v1h-4zM9 30h1v1h-1zM11 30h3v1h-3zM16 30h4v1h-4zM22 30h1v1h-1zM25 30h1v1h-1zM32 30h1v1h-1zM34 30h2v1h-2zM38 30h3v1h-3zM42 30h1v1h-1zM44 30h2v1h-2zM47 30h2v1h-2zM1 31h1v1h-1zM4 31h1v1h-1zM7 31h6v1h-6zM15 31h2v1h-2zM18 31h1v1h-1zM21 31h3v1h-3zM26 31h1v1h-1zM29 31h1v1h-1zM32 31h3v1h-3zM37 31h2v1h-2zM41 31h1v1h-1zM0 32h2v1h-2zM3 32h4v1h-4zM9 32h1v1h-1zM13 32h1v1h-1zM16 32h6v1h-6zM23 32h1v1h-1zM25 32h1v1h-1zM27 32h1v1h-1zM31 32h1v1h-1zM36 32h1v1h-1zM38 32h4v1h-4zM43 32h4v1h-4zM2 33h2v1h-2zM5 33h1v1h-1zM10 33h4v1h-4zM16 33h4v1h-4zM21 33h5v1h-5zM30 33h1v1h-1zM32 33h1v1h-1zM35 33h3v1h-3zM39 33h3v1h-3zM47 33h1v1h-1zM0 34h3v1h-3zM4 34h1v1h-1zM6 34h1v1h-1zM12 34h2v1h-2zM16 34h1v1h-1zM18 34h2v1h-2zM21 34h1v1h-1zM23 34h1v1h-1zM25 34h1v1h-1zM27 34h1v1h-1zM30 34h1v1h-1zM33 34h2v1h-2zM36 34h1v1h-1zM38 34h2v1h-2zM42 34h2v1h-2zM45 34h1v1h-1zM48 34h1v1h-1zM1 35h2v1h-2zM5 35h1v1h-1zM7 35h1v1h-1zM13 35h1v1h-1zM17 35h2v1h-2zM20 35h1v1h-1zM22 35h9v1h-9zM33 35h1v1h-1zM37 35h2v1h-2zM40 35h1v1h-1zM43 35h1v1h-1zM47 35h2v1h-2zM0 36h2v1h-2zM6 36h1v1h-1zM8 36h1v1h-1zM15 36h1v1h-1zM17 36h1v1h-1zM20 36h1v1h-1zM22 36h1v1h-1zM31 36h1v1h-1zM35 36h3v1h-3zM39 36h2v1h-2zM42 36h1v1h-1zM44 36h1v1h-1zM46 36h3v1h-3zM1 37h1v1h-1zM5 37h1v1h-1zM8 37h1v1h-1zM10 37h4v1h-4zM15 37h1v1h-1zM18 37h2v1h-2zM21 37h4v1h-4zM28 37h1v1h-1zM30 37h2v1h-2zM33 37h1v1h-1zM35 37h3v1h-3zM42 37h1v1h-1zM45 37h1v1h-1zM1 38h1v1h-1zM5 38h2v1h-2zM8 38h1v1h-1zM11 38h1v1h-1zM14 38h6v1h-6zM22 38h1v1h-1zM25 38h1v1h-1zM27 38h1v1h-1zM29 38h1v1h-1zM31 38h1v1h-1zM34 38h1v1h-1zM36 38h1v1h-1zM38 38h6v1h-6zM47 38h2v1h-2zM1 39h3v1h-3zM8 39h3v1h-3zM14 39h1v1h-1zM16 39h3v1h-3zM21 39h1v1h-1zM24 39h1v1h-1zM26 39h1v1h-1zM28 39h3v1h-3zM32 39h1v1h-1zM34 39h2v1h-2zM40 39h3v1h-3zM45 39h1v1h-1zM47 39h2v1h-2zM0 40h3v1h-3zM6 40h1v1h-1zM8 40h1v1h-1zM13 40h3v1h-3zM20 40h8v1h-8zM29 40h2v1h-2zM34 40h3v1h-3zM38 40h11v1h-11zM8 41h1v1h-1zM14 41h1v1h-1zM16 41h3v1h-3zM21 41h2v1h-2zM26 41h3v1h-3zM30 41h1v1h-1zM32 41h1v1h-1zM36 41h1v1h-1zM40 41h1v1h-1zM44 41h2v1h-2zM47 41h1v1h-1zM0 42h7v1h-7zM11 42h1v1h-1zM14 42h1v1h-1zM16 42h1v1h-1zM18 42h1v1h-1zM21 42h2v1h-2zM24 42h1v1h-1zM26 42h2v1h-2zM29 42h1v1h-1zM34 42h1v1h-1zM36 42h3v1h-3zM40 42h1v1h-1zM42 42h1v1h-1zM44 42h3v1h-3zM48 42h1v1h-1zM0 43h1v1h-1zM6 43h1v1h-1zM8 43h1v1h-1zM12 43h1v1h-1zM14 43h1v1h-1zM16 43h1v1h-1zM18 43h5v1h-5zM26 43h1v1h-1zM28 43h1v1h-1zM31 43h3v1h-3zM38 43h1v1h-1zM40 43h1v1h-1zM44 43h2v1h-2zM47 43h1v1h-1zM0 44h1v1h-1zM2 44h3v1h-3zM6 44h1v1h-1zM8 44h3v1h-3zM14 44h3v1h-3zM18 44h1v1h-1zM22 44h6v1h-6zM29 44h2v1h-2zM34 44h1v1h-1zM36 44h2v1h-2zM40 44h7v1h-7zM48 44h1v1h-1zM0 45h1v1h-1zM2 45h3v1h-3zM6 45h1v1h-1zM8 45h2v1h-2zM12 45h1v1h-1zM15 45h1v1h-1zM19 45h5v1h-5zM27 45h1v1h-1zM29 45h3v1h-3zM33 45h1v1h-1zM35 45h3v1h-3zM40 45h2v1h-2zM43 45h3v1h-3zM48 45h1v1h-1zM0 46h1v1h-1zM2 46h3v1h-3zM6 46h1v1h-1zM8 46h2v1h-2zM11 46h2v1h-2zM14 46h1v1h-1zM16 46h2v1h-2zM20 46h1v1h-1zM23 46h3v1h-3zM27 46h1v1h-1zM32 46h5v1h-5zM38 46h2v1h-2zM41 46h1v1h-1zM43 46h1v1h-1zM0 47h1v1h-1zM6 47h1v1h-1zM11 47h5v1h-5zM17 47h1v1h-1zM19 47h2v1h-2zM23 47h2v1h-2zM27 47h1v1h-1zM29 47h1v1h-1zM31 47h2v1h-2zM38 47h3v1h-3zM42 47h1v1h-1zM48 47h1v1h-1zM0 48h7v1h-7zM8 48h2v1h-2zM11 48h3v1h-3zM18 48h1v1h-1zM20 48h1v1h-1zM23 48h3v1h-3zM28 48h1v1h-1zM31 48h1v1h-1zM34 48h3v1h-3zM39 48h1v1h-1zM46 48h3v1h-3z" fill="#081d36"/></svg>
+      <div class="qrlegend">Aponte a câmera</div>
+    </div>
+    <div class="cta-side" data-frag>
+      <div class="big">Diagnóstico gratuito para a sua igreja.</div>
+      <div class="free">30 minutos com o conselho e o tesoureiro. <b>Sem custo, sem compromisso.</b></div>
+      <div class="chips">
+        <div class="chip">
+          <svg viewBox="0 0 24 24"><path d="M12 3a9 9 0 0 0-7.7 13.6L3 21l4.5-1.2A9 9 0 1 0 12 3z"/><path d="M8.8 9.2c.2-.5.4-.5.7-.5h.6c.2 0 .4 0 .6.4l.8 1.9c.1.3.1.5-.1.7l-.5.6c-.1.2-.2.4 0 .7a7 7 0 0 0 2.9 2.8c.3.1.5.1.7-.1l.6-.7c.2-.3.4-.2.7-.1l1.8.9c.3.2.4.3.4.6v.7c0 .3-.1.6-.5.8-.4.2-1.2.5-2.4.1a10 10 0 0 1-4.6-3.4c-1-1.3-1.6-2.6-1.7-3.4-.1-.8 0-1.5 0-2z"/></svg>
+          WhatsApp: (61) 98228-6044
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 13 · Fecho -->
+<section class="slide" data-mood="virada">
+  <div class="closequote clearable">
+    <p>"Os planos bem elaborados levam à <b class="gold">fartura</b>."</p>
+    <cite>Provérbios 21:5</cite>
+  </div>
+  <div class="fin" data-frag data-clear>
+    <h2 class="head"><b>Obrigado.</b></h2>
+    <div class="divider"></div>
+    <p class="slogan">Que o próximo capítulo da sua igreja comece hoje.</p>
+  </div>
+</section>
+
+</div>
+
+<div id="prog" aria-hidden="true"></div>
+<div id="counter">1 / 13</div>
+
+<div id="help">
+  <h3>Navegação</h3>
+  <p>
+    <kbd>&#8594;</kbd> ou <kbd>Espaço</kbd> avança<br>
+    <kbd>&#8592;</kbd> volta<br>
+    Clique na metade direita da tela avança, na esquerda volta<br>
+    Cada avanço revela o próximo bloco do slide<br>
+    <kbd>ESC</kbd> mostra ou oculta esta ajuda
+  </p>
+</div>
+
+<script>
+(function () {
+  var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var slides = Array.prototype.slice.call(document.querySelectorAll('.slide'));
+  var total = slides.length;
+  var counter = document.getElementById('counter');
+  var prog = document.getElementById('prog');
+  var help = document.getElementById('help');
+  var cur = 0;
+
+  /* Reveal por palavra, preservando peso e gradiente dourado */
+  var revs = document.querySelectorAll('.rev');
+  for (var r = 0; r < revs.length; r++) {
+    var el = revs[r];
+    var tokens = [];
+    var kids = Array.prototype.slice.call(el.childNodes);
+    for (var k = 0; k < kids.length; k++) {
+      var node = kids[k];
+      var cls = node.nodeType === 1 ? ((node.className || '') + ' ' + node.nodeName.toLowerCase()) : '';
+      var words = (node.textContent || '').split(/\s+/).filter(function (x) { return x.length; });
+      for (var w2 = 0; w2 < words.length; w2++) tokens.push({ t: words[w2], c: cls });
+    }
+    el.textContent = '';
+    for (var w = 0; w < tokens.length; w++) {
+      var inner = document.createElement('span');
+      inner.className = 'wi';
+      if (/\bgold\b/.test(tokens[w].c)) inner.classList.add('gword');
+      if (/\bb\b/.test(tokens[w].c)) inner.style.fontWeight = '650';
+      if (/\bspan\b/.test(tokens[w].c) && el.classList.contains('wm')) inner.style.fontWeight = '300';
+      inner.textContent = tokens[w].t;
+      inner.style.transitionDelay = (w * 90) + 'ms';
+      el.appendChild(inner);
+      if (w < tokens.length - 1) el.appendChild(document.createTextNode(' '));
+    }
+  }
+
+  var frags = [];
+  var shown = [];
+  for (var s = 0; s < total; s++) {
+    frags.push(Array.prototype.slice.call(slides[s].querySelectorAll('[data-frag]')));
+    shown.push(0);
+  }
+
+  function applyFrags(n, batch) {
+    for (var i = 0; i < frags[n].length; i++) {
+      var on = reduce || i < shown[n];
+      frags[n][i].style.transitionDelay = (on && batch) ? (i * 100) + 'ms' : '0ms';
+      if (on) frags[n][i].classList.add('fon');
+      else frags[n][i].classList.remove('fon');
+    }
+  }
+
+  /* Grupos sequenciais: só o último revelado fica em cena.
+     data-clear tira de cena os elementos .clearable do slide. */
+  function syncSwaps(n) {
+    var els = slides[n].querySelectorAll('[data-swap]');
+    var groups = {};
+    var i;
+    for (i = 0; i < els.length; i++) {
+      var g = els[i].getAttribute('data-swap');
+      if (!groups[g]) groups[g] = [];
+      groups[g].push(els[i]);
+    }
+    for (var key in groups) {
+      var last = null;
+      for (i = 0; i < groups[key].length; i++) {
+        groups[key][i].classList.remove('cur');
+        if (groups[key][i].classList.contains('fon')) last = groups[key][i];
+      }
+      if (last) last.classList.add('cur');
+    }
+    slides[n].classList.toggle('cleared', !!slides[n].querySelector('[data-clear].fon'));
+  }
+
+  /* Linha dourada dos passos acompanha os fragmentos revelados */
+  function updateLines(n) {
+    var tls = slides[n].querySelectorAll('.tl');
+    for (var i = 0; i < tls.length; i++) {
+      var steps = tls[i].querySelectorAll('[data-frag]');
+      var on = tls[i].querySelectorAll('[data-frag].fon').length;
+      var pct;
+      if (steps.length > 1) { pct = Math.max(0, on - 1) / (steps.length - 1) * 100; }
+      else { pct = on ? 100 : 0; }
+      tls[i].style.setProperty('--tp', pct + '%');
+    }
+  }
+
+  function countEl(el) {
+    var finalText = el.getAttribute('data-final');
+    if (!finalText) { finalText = el.textContent; el.setAttribute('data-final', finalText); }
+    var m = finalText.match(/(\d+(?:,\d+)?)/);
+    if (!m || reduce) { el.textContent = finalText; return; }
+    var target = parseFloat(m[1].replace(',', '.'));
+    var dec = (m[1].split(',')[1] || '').length;
+    var pre = finalText.slice(0, m.index);
+    var post = finalText.slice(m.index + m[1].length);
+    if (el._raf) cancelAnimationFrame(el._raf);
+    var t0 = null;
+    var dur = 1500;
+    function frame(ts) {
+      if (t0 === null) t0 = ts;
+      var p = Math.min((ts - t0) / dur, 1);
+      var e = 1 - Math.pow(1 - p, 3);
+      el.textContent = pre + (target * e).toFixed(dec).replace('.', ',') + post;
+      if (p < 1) { el._raf = requestAnimationFrame(frame); } else { el.textContent = finalText; }
+    }
+    el._raf = requestAnimationFrame(frame);
+  }
+
+  function countVisible(n) {
+    var els = slides[n].querySelectorAll('.cnt');
+    for (var i = 0; i < els.length; i++) {
+      var host = els[i].closest ? els[i].closest('[data-frag]') : null;
+      if (!host || host.classList.contains('fon')) countEl(els[i]);
+    }
+  }
+
+  var drainRaf = null;
+  function stopDrain() { if (drainRaf) { cancelAnimationFrame(drainRaf); drainRaf = null; } }
+  function drainVisible(n) {
+    var d = slides[n].querySelector('[data-drain]');
+    if (!d) return null;
+    var host = d.closest ? d.closest('[data-frag]') : null;
+    if (host && !host.classList.contains('fon')) return null;
+    return d;
+  }
+  function startDrain(n) {
+    stopDrain();
+    var d = drainVisible(n);
+    if (!d) return;
+    var rate = parseFloat(d.getAttribute('data-drain')) || 100;
+    if (reduce) {
+      d.textContent = 'R$ ' + (rate * 60).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+      return;
+    }
+    var v = 0;
+    var last = null;
+    function frame(ts) {
+      if (last !== null) v += rate * (ts - last) / 1000;
+      last = ts;
+      d.textContent = 'R$ ' + v.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+      drainRaf = requestAnimationFrame(frame);
+    }
+    drainRaf = requestAnimationFrame(frame);
+  }
+
+  function updateProg() {
+    if (!prog) return;
+    var f = frags[cur].length;
+    var sub = (reduce || !f) ? 1 : (shown[cur] / f);
+    var p = ((cur + sub) / total) * 100;
+    prog.style.width = Math.min(100, p) + '%';
+  }
+
+  function setMood(n) {
+    var mood = slides[n].getAttribute('data-mood') || 'neutro';
+    document.body.className = 'mood-' + mood;
+  }
+
+  function show(n, back) {
+    if (n < 0) n = 0;
+    if (n > total - 1) n = total - 1;
+    var old = cur;
+    slides[old].classList.remove('active');
+    slides[old].classList.add('leaving');
+    (function (o) {
+      setTimeout(function () { slides[o].classList.remove('leaving'); }, 1000);
+    })(old);
+    cur = n;
+    shown[cur] = (back || reduce) ? frags[cur].length : 0;
+    applyFrags(cur, back || reduce);
+    syncSwaps(cur);
+    updateLines(cur);
+    slides[cur].classList.add('active');
+    setMood(cur);
+    counter.textContent = (cur + 1) + ' / ' + total;
+    countVisible(cur);
+    startDrain(cur);
+    updateProg();
+  }
+
+  function next() {
+    if (!reduce && shown[cur] < frags[cur].length) {
+      var el = frags[cur][shown[cur]];
+      shown[cur]++;
+      el.style.transitionDelay = '0ms';
+      el.classList.add('fon');
+      syncSwaps(cur);
+      updateLines(cur);
+      var cs = el.querySelectorAll('.cnt');
+      for (var i = 0; i < cs.length; i++) countEl(cs[i]);
+      if (el.classList.contains('cnt')) countEl(el);
+      if (el.hasAttribute('data-drain') || el.querySelector('[data-drain]')) startDrain(cur);
+      updateProg();
+      return;
+    }
+    if (cur < total - 1) show(cur + 1, false);
+  }
+
+  function prev() {
+    if (!reduce && shown[cur] > 0) {
+      shown[cur]--;
+      var el = frags[cur][shown[cur]];
+      el.style.transitionDelay = '0ms';
+      el.classList.remove('fon');
+      syncSwaps(cur);
+      updateLines(cur);
+      var dd = el.hasAttribute('data-drain') ? el : el.querySelector('[data-drain]');
+      if (dd) { stopDrain(); dd.textContent = 'R$ 0,00'; }
+      updateProg();
+      return;
+    }
+    if (cur > 0) show(cur - 1, true);
+  }
+
+  document.addEventListener('keydown', function (e) {
+    if (e.key === 'ArrowRight' || e.key === ' ' || e.key === 'PageDown') {
+      e.preventDefault();
+      next();
+    } else if (e.key === 'ArrowLeft' || e.key === 'PageUp') {
+      e.preventDefault();
+      prev();
+    } else if (e.key === 'Escape') {
+      help.classList.toggle('open');
+    }
+  });
+
+  document.addEventListener('click', function (e) {
+    if (help.classList.contains('open')) { help.classList.remove('open'); return; }
+    if (e.target.closest && e.target.closest('a')) return;
+    if (e.clientX > window.innerWidth / 2) { next(); } else { prev(); }
+  });
+
+  slides[0].classList.remove('active');
+  void slides[0].offsetWidth;
+  show(0);
+})();
+</script>
+</body>
+</html>

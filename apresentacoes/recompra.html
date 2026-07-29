@@ -1,0 +1,774 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Osher Capital · Recompra do Seu Imóvel: Saia dos Juros do Banco</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300..800&display=swap" rel="stylesheet">
+<style>
+/* v2 · redesign cinematográfico · 05/07/2026 */
+:root{
+  --navy:#081d36;
+  --navy2:#0b2c51;
+  --card:#0e2743;
+  --text:#f1f2f2;
+  --gold:#a89e86;
+  --goldsoft:#c2b89e;
+  --muted:#c9cdd4;
+  --line:rgba(168,158,134,.28);
+  --red:#e26d6d;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{height:100%}
+body{
+  background:var(--navy);
+  color:var(--text);
+  font-family:'Outfit',Inter,system-ui,-apple-system,sans-serif;
+  overflow:hidden;
+  -webkit-font-smoothing:antialiased;
+}
+/* ===== Orbe de luz contínua (fundo dos slides navy) ===== */
+.orb{
+  position:fixed;z-index:0;pointer-events:none;
+  width:56vmax;height:56vmax;left:-14vmax;top:-16vmax;border-radius:50%;
+  background:radial-gradient(circle at 50% 50%,rgba(168,158,134,.17),rgba(168,158,134,.05) 45%,transparent 70%);
+  filter:blur(28px);
+  animation:orbdrift 30s ease-in-out infinite alternate;
+}
+@keyframes orbdrift{
+  0%{transform:translate(0,0) scale(1)}
+  50%{transform:translate(48vw,20vh) scale(1.18)}
+  100%{transform:translate(76vw,54vh) scale(.9)}
+}
+/* ===== Slides ===== */
+.slide{
+  position:fixed;inset:0;z-index:1;isolation:isolate;
+  display:flex;flex-direction:column;justify-content:center;align-items:center;
+  text-align:center;
+  padding:6vh 7vw 12vh;
+  --fg:var(--text);--sub:var(--muted);--cardbg:var(--card);--linec:var(--line);
+  --kick:var(--goldsoft);--goldnum:var(--goldsoft);
+  color:var(--fg);
+  opacity:0;visibility:hidden;transform:translateY(24px);
+  transition:opacity .6s ease-out,transform .6s ease-out,visibility 0s linear .6s;
+}
+.slide.active{
+  opacity:1;visibility:visible;transform:none;
+  transition:opacity .6s ease-out,transform .6s ease-out;
+}
+.slide.light{
+  background:#f1f2f2;
+  --fg:#0b2c51;--sub:#3f4f68;--cardbg:#ffffff;--linec:rgba(11,44,81,.14);
+  --kick:#6b6049;--goldnum:#7d7157;
+}
+/* ===== Tipografia ===== */
+.kicker{
+  font-size:clamp(11px,1vw,14px);
+  letter-spacing:.34em;text-transform:uppercase;
+  color:var(--kick);font-weight:500;margin-bottom:20px;
+}
+h1.xl{font-weight:800;font-size:clamp(2.6rem,7vw,6rem);line-height:1.03;letter-spacing:-.02em;max-width:16ch}
+h2{font-weight:800;font-size:clamp(1.9rem,4.6vw,3.5rem);line-height:1.08;letter-spacing:-.015em;max-width:24ch}
+h2.lg{font-size:clamp(2.2rem,5.4vw,4.4rem);max-width:20ch}
+.lead{
+  font-size:clamp(15px,1.6vw,22px);font-weight:300;color:var(--sub);
+  max-width:62ch;margin-top:18px;line-height:1.55;
+}
+.punch{font-size:clamp(1.25rem,2.2vw,2rem);font-weight:600;color:var(--gold);margin-top:5vh;line-height:1.3}
+.wordmark{font-size:clamp(24px,2.8vw,42px);letter-spacing:.2em;white-space:nowrap}
+.wordmark .wm1{font-weight:800;color:var(--text)}
+.wordmark .wm2{font-weight:300;color:var(--gold)}
+.wordmark.big{font-size:clamp(34px,4.2vw,60px)}
+.rule{width:64px;height:2px;background:var(--gold);margin:30px auto}
+.slogan{font-size:clamp(14px,1.5vw,20px);font-weight:300;font-style:italic;color:var(--goldsoft)}
+.hint{margin-top:6vh;font-size:clamp(11px,.95vw,13px);font-weight:300;color:var(--goldsoft);letter-spacing:.08em}
+/* Reveal palavra a palavra */
+.wr .w{display:inline-block;opacity:0;transform:translateY(.45em);filter:blur(4px)}
+.slide.active .wr.go .w{
+  opacity:1;transform:none;filter:none;
+  transition:opacity .55s ease-out,transform .55s ease-out,filter .55s ease-out;
+  transition-delay:calc(.15s + var(--wi)*60ms);
+}
+/* ===== Fragmentos ===== */
+.frag{opacity:0;transform:translateY(18px);transition:opacity .5s ease-out,transform .5s ease-out}
+.frag.on{opacity:1;transform:none}
+/* ===== Números gigantes ===== */
+.mega{margin-top:4vh}
+.meganum{font-size:clamp(4rem,12vw,10rem);font-weight:800;color:var(--goldnum);line-height:.95;letter-spacing:-.02em;font-variant-numeric:tabular-nums;white-space:nowrap}
+.megadesc{font-size:clamp(1rem,1.6vw,1.4rem);font-weight:300;color:var(--sub);margin-top:12px}
+.statrow{display:flex;gap:clamp(18px,4vw,56px);margin-top:5vh;justify-content:center;flex-wrap:wrap}
+.stat{text-align:center}
+.stat .n{font-size:clamp(2.2rem,4.5vw,4rem);font-weight:800;color:var(--goldnum);line-height:1;white-space:nowrap;font-variant-numeric:tabular-nums}
+.stat .d{font-size:clamp(.78rem,1.05vw,1rem);font-weight:300;color:var(--sub);margin-top:8px;max-width:22ch}
+/* ===== Grades e cards ===== */
+.grid{display:grid;gap:clamp(12px,1.6vw,20px);width:min(1120px,100%);margin-top:32px}
+.g2{grid-template-columns:repeat(2,1fr)}
+.g3{grid-template-columns:repeat(3,1fr)}
+.g4{grid-template-columns:repeat(4,1fr)}
+.card{
+  background:var(--cardbg);
+  border:1px solid var(--linec);
+  border-radius:16px;
+  padding:clamp(18px,2vw,28px) clamp(16px,1.8vw,24px);
+  text-align:left;
+}
+.card svg{width:clamp(22px,2vw,28px);height:clamp(22px,2vw,28px);stroke:var(--gold);fill:none;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round;margin-bottom:14px;display:block}
+.card h3{font-size:clamp(15px,1.35vw,19px);font-weight:600;margin-bottom:8px;line-height:1.3;color:var(--fg)}
+.card p{font-size:clamp(13px,1.1vw,16px);font-weight:300;color:var(--sub);line-height:1.55}
+.list{display:grid;grid-template-columns:1fr;gap:clamp(10px,1.4vw,16px);width:100%;max-width:660px;margin-top:28px}
+.list .card{display:flex;gap:16px;align-items:flex-start;padding:clamp(14px,1.6vw,20px) clamp(16px,1.8vw,22px)}
+.list .card svg{margin:3px 0 0;flex:0 0 auto}
+.note{margin-top:24px;font-size:clamp(11px,.9vw,13px);font-weight:300;color:var(--kick)}
+.contact{display:flex;gap:clamp(16px,3vw,48px);margin-top:36px;flex-wrap:wrap;justify-content:center}
+.contact .c{display:flex;align-items:center;gap:12px;background:var(--cardbg);border:1px solid var(--linec);border-radius:12px;padding:16px 26px}
+.contact svg{width:22px;height:22px;stroke:var(--gold);fill:none;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
+.contact span{font-size:clamp(15px,1.5vw,21px);font-weight:600}
+.legal{
+  position:absolute;bottom:7.5vh;left:0;right:0;
+  font-size:clamp(10px,.85vw,12px);font-weight:300;color:var(--kick);
+  padding:0 8vw;line-height:1.5;
+}
+/* ===== Passos com linha dourada e ponto viajante ===== */
+.tl{position:relative;width:min(1120px,100%);padding-top:46px;margin-top:26px}
+.tl .track{position:absolute;top:22px;left:2%;right:2%;height:2px;background:var(--linec);border-radius:2px}
+.tl .fill{position:absolute;left:0;top:0;bottom:0;width:var(--tp,0%);background:linear-gradient(90deg,var(--gold),var(--goldsoft));transition:width .9s cubic-bezier(.4,0,.2,1)}
+.tl .dot{position:absolute;top:50%;left:var(--tp,0%);width:12px;height:12px;margin:-6px 0 0 -6px;border-radius:50%;background:var(--goldsoft);box-shadow:0 0 14px rgba(194,184,158,.9);transition:left .9s cubic-bezier(.4,0,.2,1)}
+.steps{display:grid;grid-template-columns:repeat(4,1fr);gap:clamp(12px,1.6vw,20px)}
+.step{background:var(--cardbg);border:1px solid var(--linec);border-radius:14px;padding:clamp(18px,2vw,26px) clamp(16px,1.6vw,22px);text-align:left}
+.step .num{
+  width:34px;height:34px;border-radius:50%;
+  border:1.5px solid var(--gold);color:var(--gold);
+  display:flex;align-items:center;justify-content:center;
+  font-weight:700;font-size:15px;margin-bottom:14px;
+  transition:background-color .5s ease,color .5s ease,box-shadow .5s ease;
+}
+.step.on .num{background-color:var(--gold);color:var(--navy);box-shadow:0 0 18px rgba(168,158,134,.5)}
+.step h3{font-size:clamp(15px,1.35vw,19px);font-weight:600;margin-bottom:8px;line-height:1.3;color:var(--fg)}
+.step p{font-size:clamp(13px,1.1vw,16px);font-weight:300;color:var(--sub);line-height:1.55}
+/* ===== Contador de juros escorrendo + barra da parcela ===== */
+.drainwrap{margin-top:30px}
+#drain{font-size:clamp(2.6rem,7vw,5.6rem);font-weight:800;color:#e57f7f;line-height:1;letter-spacing:-.02em;font-variant-numeric:tabular-nums}
+.drainleg{margin-top:12px;font-size:clamp(.95rem,1.5vw,1.25rem);font-weight:300;color:var(--sub);max-width:52ch;margin-left:auto;margin-right:auto}
+.drainsm{margin-top:6px;font-size:clamp(10px,.85vw,12px);font-weight:300;color:var(--kick)}
+.pbar{width:min(760px,100%);margin-top:30px;text-align:left}
+.pbar .plab{font-size:clamp(11px,1vw,14px);letter-spacing:.18em;text-transform:uppercase;color:var(--goldsoft);font-weight:500;margin-bottom:10px}
+.pbar .ptrack{display:flex;height:clamp(44px,7vh,60px);border-radius:12px;overflow:hidden;border:1px solid var(--line);background:rgba(241,242,242,.04)}
+.pbar .seg{display:flex;align-items:center;justify-content:center;font-size:clamp(12px,1.1vw,15px);font-weight:600;white-space:nowrap;overflow:hidden;width:0;transition:width 1.2s cubic-bezier(.4,0,.2,1)}
+.pbar .segj{background:rgba(226,109,109,.3);color:#f0b9b9;border-right:1px solid rgba(226,109,109,.5)}
+.pbar .sega{background:rgba(168,158,134,.28);color:var(--goldsoft)}
+.pbar.on .segj{width:76%}
+.pbar.on .sega{width:24%}
+/* ===== Antes e depois em split ===== */
+.ba{display:flex;width:min(1000px,100%);margin-top:34px;border-radius:18px;overflow:hidden;border:1px solid var(--linec);text-align:left}
+.ba-side{flex:1 1 0;min-width:0;padding:clamp(22px,2.4vw,36px);transition:flex-grow .9s cubic-bezier(.4,0,.2,1),opacity .5s ease-out,transform .5s ease-out}
+.ba-side h3{font-size:clamp(16px,1.5vw,21px);font-weight:700;margin-bottom:10px;line-height:1.3}
+.ba-side p{font-size:clamp(13px,1.15vw,17px);font-weight:300;line-height:1.55}
+.ba-before{background:var(--navy);color:#f1f2f2}
+.ba-before h3{color:#f0b9b9}
+.ba-before p{color:#c9cdd4}
+.ba-after{background:#ffffff;color:#0b2c51}
+.ba-after h3{color:#7d7157}
+.ba-after p{color:#3f4f68}
+.ba.grown .ba-after{flex-grow:2.1}
+/* ===== Duas parcelas lado a lado (transparência) ===== */
+.duo{display:flex;gap:16px;margin-top:26px;flex-wrap:wrap;justify-content:center}
+.parcchip{background:var(--cardbg);border:1px solid var(--linec);border-radius:12px;padding:14px 24px;font-weight:600;font-size:clamp(13px,1.2vw,17px);transition:opacity .9s ease,filter .9s ease,transform .5s ease}
+.parcchip.fin{border-color:rgba(226,109,109,.55);color:#f0b9b9}
+.parcchip.cons{color:var(--goldsoft)}
+.parcchip.faded{opacity:.12;filter:grayscale(1)}
+/* ===== HUD, barra de progresso, ajuda ===== */
+.hud{
+  position:fixed;bottom:0;left:0;right:0;z-index:5;pointer-events:none;
+  display:flex;justify-content:space-between;align-items:center;
+  padding:16px 28px;
+  font-size:11px;letter-spacing:.24em;color:var(--goldsoft);
+}
+.hud .hm b{font-weight:800;color:var(--text)}
+.hud .hm span{font-weight:300;color:var(--gold)}
+body.on-light .hud{color:#6b6049}
+body.on-light .hud .hm b{color:#0b2c51}
+body.on-light .hud .hm span{color:#7d7157}
+.bar{position:fixed;bottom:0;left:0;right:0;height:2px;background:rgba(168,158,134,.15);z-index:6}
+body.on-light .bar{background:rgba(11,44,81,.12)}
+#barfill{height:100%;width:0;background:var(--gold);transition:width .45s ease}
+.help{
+  position:fixed;inset:0;z-index:20;
+  background:rgba(4,12,24,.9);
+  display:flex;align-items:center;justify-content:center;
+  opacity:0;visibility:hidden;transition:opacity .3s ease,visibility 0s linear .3s;
+}
+.help.open{opacity:1;visibility:visible;transition:opacity .3s ease}
+.help-box{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:36px 44px;max-width:440px;text-align:left;color:var(--text)}
+.help-box h3{font-size:18px;font-weight:700;margin-bottom:18px;letter-spacing:.06em}
+.help-box ul{list-style:none}
+.help-box li{font-size:14px;font-weight:300;color:var(--muted);padding:7px 0;display:flex;gap:14px;align-items:baseline}
+.help-box li b{font-weight:600;color:var(--goldsoft);min-width:140px;display:inline-block}
+/* ===== Fotos: full-bleed duotone e painel ===== */
+.bg{position:absolute;inset:0;z-index:-1;overflow:hidden;background:var(--navy)}
+.bg img{width:100%;height:100%;object-fit:cover;filter:grayscale(.92) contrast(1.06) brightness(.95);animation:kenburns 26s ease-in-out infinite alternate}
+.bg .shade{position:absolute;inset:0;background:linear-gradient(180deg,rgba(8,29,54,.78),rgba(8,29,54,.95))}
+.panel{position:absolute;z-index:-1;right:0;top:0;bottom:0;width:min(42vw,640px);overflow:hidden}
+.panel img{width:100%;height:100%;object-fit:cover;filter:grayscale(.85) contrast(1.05);animation:kenburns 22s ease-in-out infinite alternate}
+.panel .tint{position:absolute;inset:0;background:linear-gradient(90deg,#081d36 0%,rgba(8,29,54,.25) 40%,rgba(8,29,54,.5) 100%)}
+.light .panel .tint{background:linear-gradient(90deg,#f1f2f2 0%,rgba(241,242,242,.15) 40%,rgba(11,44,81,.22) 100%)}
+@keyframes kenburns{from{transform:scale(1)}to{transform:scale(1.09)}}
+.has-panel{align-items:flex-start;text-align:left;padding-right:min(46vw,680px)}
+.has-panel h2{max-width:20ch}
+.has-panel .lead{margin-left:0}
+.has-panel .legal{text-align:left;padding-right:min(46vw,680px)}
+.has-panel .duo{justify-content:flex-start}
+/* ===== Partículas (capa e encerramento) ===== */
+.dust{position:absolute;inset:0;z-index:-1;pointer-events:none;overflow:hidden}
+.dust i{position:absolute;border-radius:50%;background:var(--gold);filter:blur(1.5px);opacity:.25;animation:drift 16s ease-in-out infinite}
+.dust i:nth-child(1){left:8%;top:24%;width:6px;height:6px;animation-duration:14s}
+.dust i:nth-child(2){left:16%;top:66%;width:8px;height:8px;animation-duration:17s;animation-delay:-3s}
+.dust i:nth-child(3){left:26%;top:38%;width:5px;height:5px;animation-duration:15s;animation-delay:-7s}
+.dust i:nth-child(4){left:34%;top:78%;width:7px;height:7px;animation-duration:19s;animation-delay:-2s}
+.dust i:nth-child(5){left:44%;top:16%;width:6px;height:6px;animation-duration:16s;animation-delay:-9s}
+.dust i:nth-child(6){left:55%;top:70%;width:5px;height:5px;animation-duration:14s;animation-delay:-5s}
+.dust i:nth-child(7){left:63%;top:30%;width:8px;height:8px;animation-duration:18s;animation-delay:-11s}
+.dust i:nth-child(8){left:72%;top:60%;width:6px;height:6px;animation-duration:15s;animation-delay:-4s}
+.dust i:nth-child(9){left:80%;top:20%;width:5px;height:5px;animation-duration:17s;animation-delay:-8s}
+.dust i:nth-child(10){left:88%;top:48%;width:7px;height:7px;animation-duration:16s;animation-delay:-6s}
+.dust i:nth-child(11){left:50%;top:86%;width:6px;height:6px;animation-duration:18s;animation-delay:-12s}
+.dust i:nth-child(12){left:12%;top:88%;width:5px;height:5px;animation-duration:15s;animation-delay:-10s}
+@keyframes drift{0%,100%{transform:translate(0,0)}33%{transform:translate(14px,-24px)}66%{transform:translate(-10px,-42px)}}
+.credits{position:absolute;bottom:6.5vh;left:0;right:0;font-size:10px;font-weight:300;color:rgba(194,184,158,.55);letter-spacing:.12em}
+/* ===== Movimento reduzido ===== */
+@media (prefers-reduced-motion: reduce){
+  .slide{transform:none;transition:opacity .3s ease,visibility 0s linear .3s}
+  .slide.active{transition:opacity .3s ease}
+  .frag{opacity:1;transform:none;transition:none}
+  .wr .w{opacity:1;transform:none;filter:none}
+  .slide.active .wr.go .w{transition:none;transition-delay:0s}
+  .orb,.dust i,.bg img,.panel img{animation:none}
+  .tl{--tp:100%!important}
+  .tl .fill,.tl .dot{transition:none}
+  .step .num{transition:none}
+  .pbar .seg{transition:none}
+  .ba-side{transition:none}
+  .parcchip{transition:none}
+}
+/* ===== Responsivo ===== */
+@media (max-width:980px){
+  .g4{grid-template-columns:repeat(2,1fr)}
+  .g3{grid-template-columns:1fr}
+  .g2{grid-template-columns:1fr}
+  .steps{grid-template-columns:repeat(2,1fr)}
+  .slide{padding:6vh 6vw 13vh}
+  .panel{display:none}
+  .has-panel{padding-right:6vw;align-items:center;text-align:center}
+  .has-panel .legal{padding-right:8vw;text-align:center}
+  .ba{flex-direction:column}
+  .meganum{white-space:normal}
+}
+</style>
+</head>
+<body>
+
+<div class="orb" aria-hidden="true"></div>
+
+<!-- 1 · CAPA -->
+<section class="slide active">
+  <div class="bg"><img src="https://images.unsplash.com/photo-1565953522043-baea26b83b7e?auto=format&fit=crop&w=1800&q=80" alt="" onerror="this.parentElement.remove()"><div class="shade"></div></div>
+  <div class="dust" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+  <div class="wordmark big"><span class="wm1">OSHER</span> <span class="wm2">CAPITAL</span></div>
+  <div class="rule"></div>
+  <h1 class="xl wr">Recompra do Seu Imóvel</h1>
+  <p class="lead" style="margin-top:24px">Saia dos juros do banco. Uma estratégia para quitar o seu financiamento com a carta de crédito.</p>
+  <p class="slogan" style="margin-top:34px">Investir com segurança, conquistar com muita inteligência.</p>
+  <p class="hint">Clique ou use as setas para avançar · ESC mostra a ajuda</p>
+</section>
+
+<!-- 2 · QUEM É A OSHER -->
+<section class="slide has-panel">
+  <div class="panel"><img src="https://images.unsplash.com/photo-1515263487990-61b07816b324?auto=format&fit=crop&w=1800&q=80" alt="" loading="lazy" onerror="var s=this.closest('.slide');if(s){s.classList.remove('has-panel');}this.parentElement.remove()"><div class="tint"></div></div>
+  <div class="kicker">Quem somos</div>
+  <h2 class="wr">Consultoria de inteligência patrimonial</h2>
+  <p class="lead">Começamos pelo seu objetivo e desenhamos a estratégia. O produto vem depois. De Brasília para todo o Brasil.</p>
+  <div class="list">
+    <div class="card frag">
+      <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="3"/></svg>
+      <div>
+        <h3>Multimarca e independente</h3>
+        <p>Não pertencemos a nenhuma administradora. Fazemos a curadoria dos melhores grupos, sempre pelo seu interesse.</p>
+      </div>
+    </div>
+    <div class="card frag">
+      <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M8 12.5l3 3 5.5-6.5"/></svg>
+      <div>
+        <h3>Do seu lado da mesa</h3>
+        <p>O banco vende o produto dele. Nós trabalhamos para você, do desenho da estratégia ao pós-venda.</p>
+      </div>
+    </div>
+    <div class="card frag">
+      <svg viewBox="0 0 24 24"><path d="M12 3l9 5-9 5-9-5z"/><path d="M3 13.5l9 5 9-5"/></svg>
+      <div>
+        <h3>Mais de uma ferramenta</h3>
+        <p>Consórcio, Home Equity e Financiamento no portfólio. Usamos a ferramenta certa para o seu caso.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 3 · RESULTADOS -->
+<section class="slide light">
+  <div class="kicker">Resultados</div>
+  <h2 class="wr">Entrega comprovada, com números reais</h2>
+  <div class="mega frag">
+    <div class="meganum">R$ 68 mi+</div>
+    <div class="megadesc">em crédito vendido, entre imóveis e veículos</div>
+  </div>
+  <div class="statrow">
+    <div class="stat frag"><div class="n">141</div><div class="d">clientes atendidos com estratégia caso a caso</div></div>
+    <div class="stat frag"><div class="n">32</div><div class="d">contemplações entregues aos nossos clientes</div></div>
+    <div class="stat frag"><div class="n">28</div><div class="d">delas nos últimos 12 meses</div></div>
+  </div>
+  <p class="note">Números de julho de 2026, base interna Osher Capital.</p>
+</section>
+
+<!-- 4 · A DOR: JUROS ESCORRENDO -->
+<section class="slide">
+  <div class="kicker">A conta do financiamento</div>
+  <h2 class="wr">A maior fatia da sua parcela é juro</h2>
+  <p class="lead">Principalmente nos primeiros anos, a parcela abate pouco do saldo devedor. A maior parte vai para o banco.</p>
+  <div class="pbar frag">
+    <div class="plab">Onde vai cada real da sua parcela</div>
+    <div class="ptrack">
+      <div class="seg segj">Juros</div>
+      <div class="seg sega">Amortização</div>
+    </div>
+  </div>
+  <div class="drainwrap frag">
+    <div id="drain" data-drain="130">R$ 0,00</div>
+    <p class="drainleg">de juros escorrendo para o banco num saldo devedor de R$ 400 mil, enquanto este slide está aberto</p>
+    <p class="drainsm">Ritmo ilustrativo.</p>
+  </div>
+</section>
+
+<!-- 5 · A DOR: O QUE ISSO SIGNIFICA -->
+<section class="slide">
+  <div class="kicker">A conta do financiamento</div>
+  <div class="grid g2">
+    <div class="card frag">
+      <svg viewBox="0 0 24 24"><path d="M4 19h16"/><path d="M6 17l4-4 3 2 5-8"/></svg>
+      <h3>Juros compostos por décadas</h3>
+      <p>Em contratos longos, o total pago pode chegar perto do dobro do valor do imóvel.</p>
+    </div>
+    <div class="card frag">
+      <svg viewBox="0 0 24 24"><path d="M3 10l9-6 9 6"/><path d="M5 10v8M10 10v8M14 10v8M19 10v8"/><path d="M3 18h18M3 21h18"/></svg>
+      <h3>O banco recebe primeiro</h3>
+      <p>Enquanto o contrato corre, você paga o juro antes de construir o seu patrimônio de verdade.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 6 · A SAÍDA -->
+<section class="slide light has-panel">
+  <div class="panel"><img src="https://images.unsplash.com/photo-1560518883-ce09059eeffa?auto=format&fit=crop&w=1800&q=80" alt="" loading="lazy" onerror="var s=this.closest('.slide');if(s){s.classList.remove('has-panel');}this.parentElement.remove()"><div class="tint"></div></div>
+  <div class="kicker">Uma saída prevista nas regras do sistema</div>
+  <h2 class="wr">A carta de crédito pode quitar o financiamento do seu próprio imóvel</h2>
+  <p class="lead">A regra do sistema permite usar a carta imobiliária para quitar o saldo devedor do financiamento em nome do consorciado. Você recompra o seu imóvel do banco.</p>
+  <p class="legal">Condições variam por administradora e contrato. Validamos o enquadramento caso a caso, por escrito, antes da adesão.</p>
+</section>
+
+<!-- 7 · COMO FUNCIONA -->
+<section class="slide light">
+  <div class="kicker">Como funciona</div>
+  <h2 class="wr">Quatro passos até a quitação</h2>
+  <div class="tl">
+    <div class="track"><div class="fill"></div><div class="dot"></div></div>
+    <div class="steps">
+      <div class="step frag">
+        <div class="num">1</div>
+        <h3>Cota planejada</h3>
+        <p>Dimensionamos o crédito pelo seu saldo devedor e a parcela pelo seu orçamento.</p>
+      </div>
+      <div class="step frag">
+        <div class="num">2</div>
+        <h3>Estratégia de lance</h3>
+        <p>Calculamos o lance com dados do grupo para buscar a contemplação.</p>
+      </div>
+      <div class="step frag">
+        <div class="num">3</div>
+        <h3>Contemplação</h3>
+        <p>Você recebe a carta de crédito, por sorteio ou lance.</p>
+      </div>
+      <div class="step frag">
+        <div class="num">4</div>
+        <h3>Quitação do saldo</h3>
+        <p>A carta quita o financiamento. O banco sai da história.</p>
+      </div>
+    </div>
+  </div>
+  <p class="note">Contemplação por sorteio ou lance, sem prazo garantido.</p>
+</section>
+
+<!-- 8 · O QUE MUDA: ANTES E DEPOIS -->
+<section class="slide light">
+  <div class="kicker">O que muda na prática</div>
+  <h2 class="wr">Os juros futuros ficam com você</h2>
+  <div class="ba" id="ba1">
+    <div class="ba-side ba-before frag">
+      <h3>Hoje: parcela com juros</h3>
+      <p>Exemplo genérico: num saldo de R$ 400 mil com 20 anos pela frente, os juros futuros podem somar centenas de milhares de reais.</p>
+    </div>
+    <div class="ba-side ba-after frag" data-expand="#ba1">
+      <h3>Depois: parcela sem juros</h3>
+      <p>Quitado o banco, fica a parcela do consórcio, só com taxa de administração. A diferença fica no seu bolso, mês a mês.</p>
+    </div>
+  </div>
+  <p class="legal">Simulação ilustrativa. Contemplação por sorteio ou lance, sem prazo garantido. Resultado depende de taxa de administração, prazo e vacância.</p>
+</section>
+
+<!-- 9 · TRANSIÇÃO -->
+<section class="slide has-panel">
+  <div class="panel"><img src="https://images.unsplash.com/photo-1758691031730-640885ad19e5?auto=format&fit=crop&w=1800&q=80" alt="" loading="lazy" onerror="var s=this.closest('.slide');if(s){s.classList.remove('has-panel');}this.parentElement.remove()"><div class="tint"></div></div>
+  <div class="kicker">Transparência total</div>
+  <h2 class="wr">Sim, existe um período com duas parcelas</h2>
+  <p class="lead">Até a contemplação, a parcela do consórcio convive com a do financiamento. É por isso que o desenho da cota importa tanto.</p>
+  <div class="duo">
+    <div class="parcchip fin frag" id="finparc">Parcela do financiamento</div>
+    <div class="parcchip cons frag">Parcela do consórcio</div>
+  </div>
+  <div class="grid g2">
+    <div class="card frag">
+      <svg viewBox="0 0 24 24"><rect x="4" y="7" width="16" height="13" rx="1.5"/><path d="M4 11h16M9 7V4h6v3"/></svg>
+      <h3>Cota dimensionada</h3>
+      <p>A parcela do consórcio é calculada para caber junto com a atual, por um período planejado.</p>
+    </div>
+    <div class="card frag">
+      <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3.5 2"/></svg>
+      <h3>Lance para encurtar</h3>
+      <p>A estratégia de lance existe para reduzir essa fase de transição. Sem prazo garantido.</p>
+    </div>
+  </div>
+  <p class="note frag" data-fade-target="#finparc">Um aperto temporário e planejado, em troca de eliminar anos de juros futuros. Na quitação, a parcela do financiamento desaparece.</p>
+</section>
+
+<!-- 10 · GARANTIAS -->
+<section class="slide light">
+  <div class="kicker">Suas garantias</div>
+  <h2 class="wr">Não é confiança. É lei.</h2>
+  <div class="grid g3">
+    <div class="card frag">
+      <svg viewBox="0 0 24 24"><path d="M12 4v16M8 20h8"/><path d="M6 7l-3 6h6zM18 7l-3 6h6z"/><path d="M4 7h16"/></svg>
+      <h3>Lei 11.795/2008</h3>
+      <p>O consórcio é um sistema criado por lei, com regras claras para todos.</p>
+    </div>
+    <div class="card frag">
+      <svg viewBox="0 0 24 24"><path d="M3 10l9-6 9 6"/><path d="M5 10v8M10 10v8M14 10v8M19 10v8"/><path d="M3 18h18M3 21h18"/></svg>
+      <h3>Fiscalização do Banco Central</h3>
+      <p>O BACEN normatiza, fiscaliza e pode intervir para proteger o grupo.</p>
+    </div>
+    <div class="card frag">
+      <svg viewBox="0 0 24 24"><rect x="4" y="10" width="16" height="10" rx="2"/><path d="M8 10V7a4 4 0 018 0v3"/></svg>
+      <h3>Patrimônio segregado</h3>
+      <p>O dinheiro do grupo é separado do caixa da administradora. Ela é só a gestora.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 11 · POR QUE COM A OSHER -->
+<section class="slide">
+  <div class="kicker">Por que com a Osher</div>
+  <h2 class="wr">Um estrategista do seu lado</h2>
+  <div class="grid g3">
+    <div class="card frag">
+      <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="6"/><path d="M15.5 15.5L21 21"/></svg>
+      <h3>Curadoria independente</h3>
+      <p>Comparamos grupos de várias administradoras e escolhemos pelo seu interesse.</p>
+    </div>
+    <div class="card frag">
+      <svg viewBox="0 0 24 24"><path d="M4 19h16"/><path d="M6 16l4-5 3 3 5-7"/><circle cx="18" cy="7" r="1.6"/></svg>
+      <h3>Inteligência de lances</h3>
+      <p>Histórico do grupo, saúde da administradora e sazonalidade, tudo vira cálculo.</p>
+    </div>
+    <div class="card frag">
+      <svg viewBox="0 0 24 24"><rect x="5" y="3" width="14" height="18" rx="2"/><path d="M9 8h6M9 12h6M9 16h4"/></svg>
+      <h3>Enquadramento validado</h3>
+      <p>Confirmamos as condições de quitação com a administradora antes da adesão, por escrito.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 12 · PRÓXIMO PASSO -->
+<section class="slide">
+  <div class="bg"><img src="https://images.unsplash.com/photo-1625426078245-6911839409dd?auto=format&fit=crop&w=1800&q=80" alt="" loading="lazy" onerror="this.parentElement.remove()"><div class="shade"></div></div>
+  <div class="kicker">Próximo passo</div>
+  <h2 class="wr">Análise gratuita do seu financiamento</h2>
+  <p class="lead">Traga três números: saldo devedor, taxa de juros e prazo restante. A gente calcula quanto de juro futuro dá para eliminar.</p>
+  <div class="contact">
+    <div class="c frag">
+      <svg viewBox="0 0 24 24"><path d="M6 3h4l1.5 5-2.5 2c1 2.6 2.6 4.2 5 5.2l2-2.5 5 1.5v4c0 1-1 1.8-2 1.8C10.5 20 4 13.5 4 5c0-1 1-2 2-2z"/></svg>
+      <span>(61) 98228-6044</span>
+    </div>
+    <div class="c frag">
+      <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c2.5 2.4 4 5.6 4 9s-1.5 6.6-4 9c-2.5-2.4-4-5.6-4-9s1.5-6.6 4-9z"/></svg>
+      <span>oshersolucoes.com.br</span>
+    </div>
+  </div>
+  <p class="legal">Simulação ilustrativa. Contemplação por sorteio ou lance, sem prazo garantido. Resultado depende de taxa de administração, prazo e vacância.</p>
+</section>
+
+<!-- 13 · ENCERRAMENTO -->
+<section class="slide">
+  <div class="dust" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+  <div class="wordmark big"><span class="wm1">OSHER</span> <span class="wm2">CAPITAL</span></div>
+  <div class="rule"></div>
+  <p class="slogan">Investir com segurança, conquistar com muita inteligência.</p>
+  <p class="credits">Fotos: Unsplash</p>
+</section>
+
+<footer class="hud">
+  <div class="hm"><b>OSHER</b> <span>CAPITAL</span></div>
+  <div id="counter">1 / 13</div>
+</footer>
+<div class="bar"><div id="barfill"></div></div>
+
+<div class="help" id="help">
+  <div class="help-box">
+    <h3>Navegação</h3>
+    <ul>
+      <li><b>Seta direita / Espaço</b> avança</li>
+      <li><b>Seta esquerda</b> volta</li>
+      <li><b>Clique à direita</b> avança</li>
+      <li><b>Clique à esquerda</b> volta</li>
+      <li><b>Home / End</b> primeiro e último slide</li>
+      <li><b>ESC</b> mostra ou oculta esta ajuda</li>
+    </ul>
+  </div>
+</div>
+
+<script>
+(function () {
+  var slides = document.querySelectorAll('.slide');
+  var total = slides.length;
+  var current = 0;
+  var counter = document.getElementById('counter');
+  var barfill = document.getElementById('barfill');
+  var help = document.getElementById('help');
+  var reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var cuFrames = [];
+
+  function esc(s) {
+    return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+  }
+
+  /* Reveal palavra a palavra: quebra os titulos em spans com stagger de 60ms */
+  var wrs = document.querySelectorAll('.wr');
+  for (var w = 0; w < wrs.length; w++) {
+    var words = wrs[w].textContent.split(/\s+/);
+    var out = '';
+    var wi = 0;
+    for (var x = 0; x < words.length; x++) {
+      if (words[x] === '') { continue; }
+      out += '<span class="w" style="--wi:' + wi + '">' + esc(words[x]) + '</span> ';
+      wi++;
+    }
+    wrs[w].innerHTML = out.replace(/\s+$/, '');
+  }
+  requestAnimationFrame(function () {
+    requestAnimationFrame(function () {
+      for (var g = 0; g < wrs.length; g++) { wrs[g].classList.add('go'); }
+    });
+  });
+
+  /* Fragmentos: blocos entram um por clique */
+  var fragsBySlide = [];
+  var fragCount = [];
+  for (var s = 0; s < total; s++) {
+    fragsBySlide.push(slides[s].querySelectorAll('.frag'));
+    fragCount.push(0);
+  }
+
+  function hook(el, on) {
+    var t = el.getAttribute('data-fade-target');
+    if (t) {
+      var tg = document.querySelector(t);
+      if (tg) { if (on) { tg.classList.add('faded'); } else { tg.classList.remove('faded'); } }
+    }
+    var b = el.getAttribute('data-build');
+    if (b) {
+      var ids = b.split(',');
+      for (var q = 0; q < ids.length; q++) {
+        var bd = document.getElementById(ids[q]);
+        if (bd) { if (on) { bd.classList.add('up'); } else { bd.classList.remove('up'); } }
+      }
+    }
+    var ex = el.getAttribute('data-expand');
+    if (ex) {
+      var host = document.querySelector(ex);
+      if (host) { if (on) { host.classList.add('grown'); } else { host.classList.remove('grown'); } }
+    }
+  }
+
+  /* Count-up dos numeros-chave */
+  function cancelCounts() {
+    for (var j = 0; j < cuFrames.length; j++) { cancelAnimationFrame(cuFrames[j]); }
+    cuFrames = [];
+  }
+  function setFinal(el) {
+    if (!el.getAttribute('data-final')) { el.setAttribute('data-final', el.textContent); }
+    el.textContent = el.getAttribute('data-final');
+  }
+  function countUpEl(el) {
+    if (!el.getAttribute('data-final')) { el.setAttribute('data-final', el.textContent); }
+    var fin = el.getAttribute('data-final');
+    var m = fin.match(/\d+(?:,\d+)?/);
+    if (!m || reduceMotion) { el.textContent = fin; return; }
+    var numStr = m[0];
+    var target = parseFloat(numStr.replace(',', '.'));
+    var dec = (numStr.split(',')[1] || '').length;
+    var pre = fin.slice(0, m.index);
+    var post = fin.slice(m.index + numStr.length);
+    var t0 = null;
+    var dur = 1100;
+    function stepFrame(ts) {
+      if (t0 === null) { t0 = ts; }
+      var p = Math.min((ts - t0) / dur, 1);
+      var e = 1 - Math.pow(1 - p, 3);
+      if (p < 1) {
+        el.textContent = pre + (target * e).toFixed(dec).replace('.', ',') + post;
+        cuFrames.push(requestAnimationFrame(stepFrame));
+      } else {
+        el.textContent = fin;
+      }
+    }
+    cuFrames.push(requestAnimationFrame(stepFrame));
+  }
+
+  /* Linha dourada dos quatro passos: preenche e o ponto viaja */
+  function updateTl(slide) {
+    var tls = slide.querySelectorAll('.tl');
+    for (var i = 0; i < tls.length; i++) {
+      var st = tls[i].querySelectorAll('.frag');
+      var on = tls[i].querySelectorAll('.frag.on').length;
+      var pct;
+      if (st.length > 1) { pct = Math.max(0, on - 1) / (st.length - 1) * 100; }
+      else { pct = on ? 100 : 0; }
+      tls[i].style.setProperty('--tp', pct + '%');
+    }
+  }
+
+  /* Contador de juros escorrendo */
+  var drainRaf = null;
+  function stopDrain() {
+    if (drainRaf) { cancelAnimationFrame(drainRaf); drainRaf = null; }
+  }
+  function startDrain(slide) {
+    stopDrain();
+    var d = slide.querySelector('[data-drain]');
+    if (!d) { return; }
+    var rate = parseFloat(d.getAttribute('data-drain')) || 100;
+    if (reduceMotion) {
+      d.textContent = 'R$ ' + (rate * 60).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+      return;
+    }
+    var v = 0;
+    var last = null;
+    function frame(ts) {
+      if (last !== null) { v += rate * (ts - last) / 1000; }
+      last = ts;
+      d.textContent = 'R$ ' + v.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+      drainRaf = requestAnimationFrame(frame);
+    }
+    drainRaf = requestAnimationFrame(frame);
+  }
+
+  function applyFrags(idx) {
+    var fr = fragsBySlide[idx];
+    for (var k = 0; k < fr.length; k++) {
+      var on = reduceMotion || k < fragCount[idx];
+      var was = fr[k].classList.contains('on');
+      if (on) { fr[k].classList.add('on'); } else { fr[k].classList.remove('on'); }
+      hook(fr[k], on);
+      var nums = fr[k].querySelectorAll('.n, .meganum');
+      for (var y = 0; y < nums.length; y++) {
+        if (on && !was) { countUpEl(nums[y]); }
+        else if (!on) { setFinal(nums[y]); }
+      }
+    }
+    updateTl(slides[idx]);
+  }
+
+  function countUpLoose(slide) {
+    var nums = slide.querySelectorAll('.n, .meganum');
+    for (var i = 0; i < nums.length; i++) {
+      if (!nums[i].closest('.frag')) { countUpEl(nums[i]); }
+    }
+  }
+
+  function render() {
+    cancelCounts();
+    for (var k = 0; k < total; k++) {
+      if (k === current) { slides[k].classList.add('active'); }
+      else { slides[k].classList.remove('active'); }
+    }
+    if (slides[current].classList.contains('light')) { document.body.classList.add('on-light'); }
+    else { document.body.classList.remove('on-light'); }
+    counter.textContent = (current + 1) + ' / ' + total;
+    barfill.style.width = (((current + 1) / total) * 100) + '%';
+    applyFrags(current);
+    countUpLoose(slides[current]);
+    startDrain(slides[current]);
+  }
+
+  function go(n) {
+    if (n < 0) { n = 0; }
+    if (n > total - 1) { n = total - 1; }
+    if (n === current) { return; }
+    var forward = n > current;
+    current = n;
+    fragCount[current] = forward ? 0 : fragsBySlide[current].length;
+    render();
+  }
+
+  function next() {
+    if (!reduceMotion && fragCount[current] < fragsBySlide[current].length) {
+      fragCount[current]++;
+      applyFrags(current);
+      return;
+    }
+    go(current + 1);
+  }
+
+  function prev() {
+    if (!reduceMotion && fragCount[current] > 0) {
+      fragCount[current]--;
+      applyFrags(current);
+      return;
+    }
+    go(current - 1);
+  }
+
+  document.addEventListener('keydown', function (e) {
+    if (e.key === 'ArrowRight' || e.key === ' ' || e.key === 'PageDown') {
+      e.preventDefault(); next();
+    } else if (e.key === 'ArrowLeft' || e.key === 'PageUp') {
+      e.preventDefault(); prev();
+    } else if (e.key === 'Escape') {
+      help.classList.toggle('open');
+    } else if (e.key === 'Home') {
+      e.preventDefault(); go(0);
+    } else if (e.key === 'End') {
+      e.preventDefault(); go(total - 1);
+    }
+  });
+
+  document.addEventListener('click', function (e) {
+    if (help.classList.contains('open')) {
+      help.classList.remove('open');
+      return;
+    }
+    if (e.clientX > window.innerWidth / 2) { next(); }
+    else { prev(); }
+  });
+
+  render();
+})();
+</script>
+</body>
+</html>

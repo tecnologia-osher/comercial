@@ -1,0 +1,757 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Osher Capital · Alavancagem Patrimonial com Consórcio</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300..800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --navy:#081d36;
+  --navy2:#0b2c51;
+  --card:#0e2743;
+  --text:#f1f2f2;
+  --gold:#a89e86;
+  --goldsoft:#c2b89e;
+  --muted:#c9cdd4;
+  --line:rgba(168,158,134,.28);
+  --red:#e26d6d;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{height:100%}
+body{
+  background:var(--navy);
+  color:var(--text);
+  font-family:'Outfit',Inter,system-ui,-apple-system,sans-serif;
+  overflow:hidden;
+  -webkit-font-smoothing:antialiased;
+}
+/* ===== Orbe de luz contínua (fundo dos slides navy) ===== */
+.orb{
+  position:fixed;z-index:0;pointer-events:none;
+  width:56vmax;height:56vmax;left:-14vmax;top:-16vmax;border-radius:50%;
+  background:radial-gradient(circle at 50% 50%,rgba(168,158,134,.17),rgba(168,158,134,.05) 45%,transparent 70%);
+  filter:blur(28px);
+  animation:orbdrift 30s ease-in-out infinite alternate;
+}
+@keyframes orbdrift{
+  0%{transform:translate(0,0) scale(1)}
+  50%{transform:translate(48vw,20vh) scale(1.18)}
+  100%{transform:translate(76vw,54vh) scale(.9)}
+}
+/* ===== Slides ===== */
+.slide{
+  position:fixed;inset:0;z-index:1;isolation:isolate;
+  display:flex;flex-direction:column;justify-content:center;align-items:center;
+  text-align:center;
+  padding:6vh 7vw 12vh;
+  --fg:var(--text);--sub:var(--muted);--cardbg:var(--card);--linec:var(--line);
+  --kick:var(--goldsoft);--goldnum:var(--goldsoft);
+  color:var(--fg);
+  opacity:0;visibility:hidden;transform:translateY(24px);
+  transition:opacity .6s ease-out,transform .6s ease-out,visibility 0s linear .6s;
+}
+.slide.active{
+  opacity:1;visibility:visible;transform:none;
+  transition:opacity .6s ease-out,transform .6s ease-out;
+}
+.slide.light{
+  background:#f1f2f2;
+  --fg:#0b2c51;--sub:#3f4f68;--cardbg:#ffffff;--linec:rgba(11,44,81,.14);
+  --kick:#6b6049;--goldnum:#7d7157;
+}
+/* ===== Tipografia ===== */
+.kicker{
+  font-size:clamp(11px,1vw,14px);
+  letter-spacing:.34em;text-transform:uppercase;
+  color:var(--kick);font-weight:500;margin-bottom:20px;
+}
+h1.xl{font-weight:800;font-size:clamp(2.6rem,7vw,6rem);line-height:1.03;letter-spacing:-.02em;max-width:16ch}
+h2{font-weight:800;font-size:clamp(1.9rem,4.6vw,3.5rem);line-height:1.08;letter-spacing:-.015em;max-width:24ch}
+h2.lg{font-size:clamp(2.2rem,5.4vw,4.4rem);max-width:20ch}
+.lead{
+  font-size:clamp(15px,1.6vw,22px);font-weight:300;color:var(--sub);
+  max-width:62ch;margin-top:18px;line-height:1.55;
+}
+.punch{font-size:clamp(1.25rem,2.2vw,2rem);font-weight:600;color:var(--gold);margin-top:5vh;line-height:1.3}
+.takeover{font-weight:800;font-size:clamp(2.6rem,7vw,6rem);line-height:1.05;letter-spacing:-.02em;color:var(--goldsoft);margin-top:2.5vh;max-width:16ch}
+.wordmark{font-size:clamp(24px,2.8vw,42px);letter-spacing:.2em;white-space:nowrap}
+.wordmark .wm1{font-weight:800;color:var(--text)}
+.wordmark .wm2{font-weight:300;color:var(--gold)}
+.wordmark.big{font-size:clamp(34px,4.2vw,60px)}
+.rule{width:64px;height:2px;background:var(--gold);margin:30px auto}
+.slogan{font-size:clamp(14px,1.5vw,20px);font-weight:300;font-style:italic;color:var(--goldsoft)}
+.hint{margin-top:6vh;font-size:clamp(11px,.95vw,13px);font-weight:300;color:var(--goldsoft);letter-spacing:.08em}
+/* Reveal palavra a palavra */
+.wr .w{display:inline-block;opacity:0;transform:translateY(.45em);filter:blur(4px)}
+.slide.active .wr.go .w{
+  opacity:1;transform:none;filter:none;
+  transition:opacity .55s ease-out,transform .55s ease-out,filter .55s ease-out;
+  transition-delay:calc(.15s + var(--wi)*60ms);
+}
+/* ===== Fragmentos ===== */
+.frag{opacity:0;transform:translateY(18px);transition:opacity .5s ease-out,transform .5s ease-out}
+.frag.on{opacity:1;transform:none}
+/* ===== Números gigantes ===== */
+.mega{margin-top:4vh}
+.meganum{font-size:clamp(4rem,12vw,10rem);font-weight:800;color:var(--goldnum);line-height:.95;letter-spacing:-.02em;font-variant-numeric:tabular-nums;white-space:nowrap}
+.megadesc{font-size:clamp(1rem,1.6vw,1.4rem);font-weight:300;color:var(--sub);margin-top:12px}
+.statrow{display:flex;gap:clamp(18px,4vw,56px);margin-top:5vh;justify-content:center;flex-wrap:wrap}
+.stat{text-align:center}
+.stat .n{font-size:clamp(2.2rem,4.5vw,4rem);font-weight:800;color:var(--goldnum);line-height:1;white-space:nowrap;font-variant-numeric:tabular-nums}
+.stat .d{font-size:clamp(.78rem,1.05vw,1rem);font-weight:300;color:var(--sub);margin-top:8px;max-width:22ch}
+/* ===== Grades e cards ===== */
+.grid{display:grid;gap:clamp(12px,1.6vw,20px);width:min(1120px,100%);margin-top:32px}
+.g2{grid-template-columns:repeat(2,1fr)}
+.g3{grid-template-columns:repeat(3,1fr)}
+.g4{grid-template-columns:repeat(4,1fr)}
+.card{
+  background:var(--cardbg);
+  border:1px solid var(--linec);
+  border-radius:16px;
+  padding:clamp(18px,2vw,28px) clamp(16px,1.8vw,24px);
+  text-align:left;
+}
+.card svg{width:clamp(22px,2vw,28px);height:clamp(22px,2vw,28px);stroke:var(--gold);fill:none;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round;margin-bottom:14px;display:block}
+.card h3{font-size:clamp(15px,1.35vw,19px);font-weight:600;margin-bottom:8px;line-height:1.3;color:var(--fg)}
+.card p{font-size:clamp(13px,1.1vw,16px);font-weight:300;color:var(--sub);line-height:1.55}
+.list{display:grid;grid-template-columns:1fr;gap:clamp(10px,1.4vw,16px);width:100%;max-width:660px;margin-top:28px}
+.list .card{display:flex;gap:16px;align-items:flex-start;padding:clamp(14px,1.6vw,20px) clamp(16px,1.8vw,22px)}
+.list .card svg{margin:3px 0 0;flex:0 0 auto}
+.note{margin-top:24px;font-size:clamp(11px,.9vw,13px);font-weight:300;color:var(--kick)}
+.contact{display:flex;gap:clamp(16px,3vw,48px);margin-top:36px;flex-wrap:wrap;justify-content:center}
+.contact .c{display:flex;align-items:center;gap:12px;background:var(--cardbg);border:1px solid var(--linec);border-radius:12px;padding:16px 26px}
+.contact svg{width:22px;height:22px;stroke:var(--gold);fill:none;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
+.contact span{font-size:clamp(15px,1.5vw,21px);font-weight:600}
+.legal{
+  position:absolute;bottom:7.5vh;left:0;right:0;
+  font-size:clamp(10px,.85vw,12px);font-weight:300;color:var(--kick);
+  padding:0 8vw;line-height:1.5;
+}
+/* ===== HUD, barra de progresso, ajuda ===== */
+.hud{
+  position:fixed;bottom:0;left:0;right:0;z-index:5;pointer-events:none;
+  display:flex;justify-content:space-between;align-items:center;
+  padding:16px 28px;
+  font-size:11px;letter-spacing:.24em;color:var(--goldsoft);
+}
+.hud .hm b{font-weight:800;color:var(--text)}
+.hud .hm span{font-weight:300;color:var(--gold)}
+body.on-light .hud{color:#6b6049}
+body.on-light .hud .hm b{color:#0b2c51}
+body.on-light .hud .hm span{color:#7d7157}
+.bar{position:fixed;bottom:0;left:0;right:0;height:2px;background:rgba(168,158,134,.15);z-index:6}
+body.on-light .bar{background:rgba(11,44,81,.12)}
+#barfill{height:100%;width:0;background:var(--gold);transition:width .45s ease}
+.help{
+  position:fixed;inset:0;z-index:20;
+  background:rgba(4,12,24,.9);
+  display:flex;align-items:center;justify-content:center;
+  opacity:0;visibility:hidden;transition:opacity .3s ease,visibility 0s linear .3s;
+}
+.help.open{opacity:1;visibility:visible;transition:opacity .3s ease}
+.help-box{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:36px 44px;max-width:440px;text-align:left;color:var(--text)}
+.help-box h3{font-size:18px;font-weight:700;margin-bottom:18px;letter-spacing:.06em}
+.help-box ul{list-style:none}
+.help-box li{font-size:14px;font-weight:300;color:var(--muted);padding:7px 0;display:flex;gap:14px;align-items:baseline}
+.help-box li b{font-weight:600;color:var(--goldsoft);min-width:140px;display:inline-block}
+/* ===== Fotos: full-bleed duotone e painel ===== */
+.bg{position:absolute;inset:0;z-index:-1;overflow:hidden;background:var(--navy)}
+.bg img{width:100%;height:100%;object-fit:cover;filter:grayscale(.92) contrast(1.06) brightness(.95);animation:kenburns 26s ease-in-out infinite alternate}
+.bg .shade{position:absolute;inset:0;background:linear-gradient(180deg,rgba(8,29,54,.78),rgba(8,29,54,.95))}
+.panel{position:absolute;z-index:-1;right:0;top:0;bottom:0;width:min(42vw,640px);overflow:hidden}
+.panel img{width:100%;height:100%;object-fit:cover;filter:grayscale(.85) contrast(1.05);animation:kenburns 22s ease-in-out infinite alternate}
+.panel .tint{position:absolute;inset:0;background:linear-gradient(90deg,#081d36 0%,rgba(8,29,54,.25) 40%,rgba(8,29,54,.5) 100%)}
+.light .panel .tint{background:linear-gradient(90deg,#f1f2f2 0%,rgba(241,242,242,.15) 40%,rgba(11,44,81,.22) 100%)}
+@keyframes kenburns{from{transform:scale(1)}to{transform:scale(1.09)}}
+.has-panel{align-items:flex-start;text-align:left;padding-right:min(46vw,680px)}
+.has-panel h2{max-width:20ch}
+.has-panel .lead{margin-left:0}
+.has-panel .legal{text-align:left;padding-right:min(46vw,680px)}
+/* ===== Diagrama Estratégia 1: Renda ===== */
+.rdiag{width:min(600px,100%);height:auto;margin-top:26px;display:block}
+.rdiag .rdt{font-family:'Outfit',Inter,sans-serif;font-size:16px;font-weight:600;fill:#7d7157;letter-spacing:.06em}
+.rdiag .rdt2{font-family:'Outfit',Inter,sans-serif;font-size:17px;font-weight:700;fill:#0b2c51}
+.rdiag .rdt3{font-family:'Outfit',Inter,sans-serif;font-size:14px;font-weight:600;fill:#0b2c51}
+.rdflow{stroke-dasharray:7 9;animation:dashmove 1.5s linear infinite}
+@keyframes dashmove{to{stroke-dashoffset:-32}}
+.rdshrink{transform-box:fill-box;transform-origin:left center;animation:shrinkbar 6s ease-in-out infinite alternate}
+@keyframes shrinkbar{from{transform:scaleX(1)}to{transform:scaleX(.36)}}
+/* ===== Skyline Estratégia 2: Carteira ===== */
+.sky{width:min(840px,94%);height:auto;margin-top:20px;display:block}
+.bld{transform-box:fill-box;transform-origin:50% 100%;transform:scaleY(.02);opacity:0;transition:transform .9s cubic-bezier(.2,.85,.3,1.05),opacity .5s ease}
+.bld.up{transform:scaleY(1);opacity:1}
+/* ===== Partículas (capa e encerramento) ===== */
+.dust{position:absolute;inset:0;z-index:-1;pointer-events:none;overflow:hidden}
+.dust i{position:absolute;border-radius:50%;background:var(--gold);filter:blur(1.5px);opacity:.25;animation:drift 16s ease-in-out infinite}
+.dust i:nth-child(1){left:8%;top:24%;width:6px;height:6px;animation-duration:14s}
+.dust i:nth-child(2){left:16%;top:66%;width:8px;height:8px;animation-duration:17s;animation-delay:-3s}
+.dust i:nth-child(3){left:26%;top:38%;width:5px;height:5px;animation-duration:15s;animation-delay:-7s}
+.dust i:nth-child(4){left:34%;top:78%;width:7px;height:7px;animation-duration:19s;animation-delay:-2s}
+.dust i:nth-child(5){left:44%;top:16%;width:6px;height:6px;animation-duration:16s;animation-delay:-9s}
+.dust i:nth-child(6){left:55%;top:70%;width:5px;height:5px;animation-duration:14s;animation-delay:-5s}
+.dust i:nth-child(7){left:63%;top:30%;width:8px;height:8px;animation-duration:18s;animation-delay:-11s}
+.dust i:nth-child(8){left:72%;top:60%;width:6px;height:6px;animation-duration:15s;animation-delay:-4s}
+.dust i:nth-child(9){left:80%;top:20%;width:5px;height:5px;animation-duration:17s;animation-delay:-8s}
+.dust i:nth-child(10){left:88%;top:48%;width:7px;height:7px;animation-duration:16s;animation-delay:-6s}
+.dust i:nth-child(11){left:50%;top:86%;width:6px;height:6px;animation-duration:18s;animation-delay:-12s}
+.dust i:nth-child(12){left:12%;top:88%;width:5px;height:5px;animation-duration:15s;animation-delay:-10s}
+@keyframes drift{0%,100%{transform:translate(0,0)}33%{transform:translate(14px,-24px)}66%{transform:translate(-10px,-42px)}}
+.credits{position:absolute;bottom:6.5vh;left:0;right:0;font-size:10px;font-weight:300;color:rgba(194,184,158,.55);letter-spacing:.12em}
+/* ===== Movimento reduzido ===== */
+@media (prefers-reduced-motion: reduce){
+  .slide{transform:none;transition:opacity .3s ease,visibility 0s linear .3s}
+  .slide.active{transition:opacity .3s ease}
+  .frag{opacity:1;transform:none;transition:none}
+  .wr .w{opacity:1;transform:none;filter:none}
+  .slide.active .wr.go .w{transition:none;transition-delay:0s}
+  .orb,.dust i,.bg img,.panel img{animation:none}
+  .rdflow,.rdshrink{animation:none}
+  .bld{transform:none;opacity:1;transition:none}
+}
+/* ===== Responsivo ===== */
+@media (max-width:980px){
+  .g4{grid-template-columns:repeat(2,1fr)}
+  .g3{grid-template-columns:1fr}
+  .g2{grid-template-columns:1fr}
+  .slide{padding:6vh 6vw 13vh}
+  .panel{display:none}
+  .has-panel{padding-right:6vw}
+  .has-panel .legal{padding-right:8vw}
+  .meganum{white-space:normal}
+}
+</style>
+</head>
+<body>
+
+<div class="orb" aria-hidden="true"></div>
+
+<!-- 1 · CAPA -->
+<section class="slide active">
+  <div class="bg"><img src="https://images.unsplash.com/photo-1515263487990-61b07816b324?auto=format&fit=crop&w=1800&q=80" alt="" onerror="this.parentElement.remove()"><div class="shade"></div></div>
+  <div class="dust" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+  <div class="wordmark big"><span class="wm1">OSHER</span> <span class="wm2">CAPITAL</span></div>
+  <div class="rule"></div>
+  <h1 class="xl wr">Alavancagem Patrimonial com Consórcio</h1>
+  <p class="lead" style="margin-top:24px">Como controlar ativos grandes com desembolso pequeno, dentro de um sistema regulado por lei.</p>
+  <p class="slogan" style="margin-top:34px">Investir com segurança, conquistar com muita inteligência.</p>
+  <p class="hint">Clique ou use as setas para avançar · ESC mostra a ajuda</p>
+</section>
+
+<!-- 2 · QUEM É A OSHER -->
+<section class="slide has-panel">
+  <div class="panel"><img src="https://images.unsplash.com/photo-1758686254415-9348b5b5df01?auto=format&fit=crop&w=1800&q=80" alt="" loading="lazy" onerror="var s=this.closest('.slide');if(s){s.classList.remove('has-panel');}this.parentElement.remove()"><div class="tint"></div></div>
+  <div class="kicker">Quem somos</div>
+  <h2 class="wr">Consultoria de inteligência patrimonial</h2>
+  <p class="lead">Começamos pelo seu objetivo e desenhamos a estratégia. O produto vem depois. De Brasília para todo o Brasil.</p>
+  <div class="list">
+    <div class="card frag">
+      <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="3"/></svg>
+      <div>
+        <h3>Multimarca e independente</h3>
+        <p>Não pertencemos a nenhuma administradora. Fazemos a curadoria dos melhores grupos, sempre pelo seu interesse.</p>
+      </div>
+    </div>
+    <div class="card frag">
+      <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M8 12.5l3 3 5.5-6.5"/></svg>
+      <div>
+        <h3>Do seu lado da mesa</h3>
+        <p>O banco vende o produto dele. Nós trabalhamos para você, do desenho da estratégia ao pós-venda.</p>
+      </div>
+    </div>
+    <div class="card frag">
+      <svg viewBox="0 0 24 24"><path d="M12 3l9 5-9 5-9-5z"/><path d="M3 13.5l9 5 9-5"/></svg>
+      <div>
+        <h3>Mais de uma ferramenta</h3>
+        <p>Consórcio, Home Equity e Financiamento no portfólio. Usamos a ferramenta certa para o seu caso.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 3 · RESULTADOS -->
+<section class="slide light">
+  <div class="kicker">Resultados</div>
+  <h2 class="wr">Entrega comprovada, com números reais</h2>
+  <div class="mega frag">
+    <div class="meganum">R$ 68 mi+</div>
+    <div class="megadesc">em crédito vendido, entre imóveis e veículos</div>
+  </div>
+  <div class="statrow">
+    <div class="stat frag"><div class="n">141</div><div class="d">clientes atendidos com estratégia caso a caso</div></div>
+    <div class="stat frag"><div class="n">32</div><div class="d">contemplações entregues aos nossos clientes</div></div>
+    <div class="stat frag"><div class="n">28</div><div class="d">delas nos últimos 12 meses</div></div>
+  </div>
+  <p class="note">Números de julho de 2026, base interna Osher Capital.</p>
+</section>
+
+<!-- 4 · MERCADO -->
+<section class="slide">
+  <div class="bg"><img src="https://images.unsplash.com/photo-1624204386084-dd8c05e32226?auto=format&fit=crop&w=1800&q=80" alt="" loading="lazy" onerror="this.parentElement.remove()"><div class="shade"></div></div>
+  <div class="kicker">O mercado</div>
+  <h2 class="wr">O Brasil abraçou o consórcio</h2>
+  <p class="lead">2025 foi o melhor ano da história do sistema, com recorde de adesões e de crédito.</p>
+  <div class="mega frag">
+    <div class="meganum">5,16 mi</div>
+    <div class="megadesc">novas adesões em 2025, recorde histórico</div>
+  </div>
+  <div class="statrow">
+    <div class="stat frag"><div class="n">R$ 500 bi</div><div class="d">em crédito comercializado no ano</div></div>
+    <div class="stat frag"><div class="n">+48%</div><div class="d">crescimento do consórcio de imóveis em 2025</div></div>
+    <div class="stat frag"><div class="n">1 em 4</div><div class="d">aquisições de imóveis com crédito passa pelo consórcio</div></div>
+  </div>
+  <p class="note">Fonte: ABAC, dados de dezembro de 2025.</p>
+</section>
+
+<!-- 5 · A TESE -->
+<section class="slide">
+  <div class="kicker">A tese</div>
+  <h2 class="wr">Controlar um ativo grande com desembolso pequeno</h2>
+  <p class="lead">A renda e a eventual valorização incidem sobre o valor cheio do ativo. O que sai do seu bolso é uma fração dele.</p>
+  <p class="punch frag">O produto é a ferramenta.</p>
+  <p class="takeover frag">A estratégia é o patrimônio.</p>
+</section>
+
+<!-- 6 · ESTRATÉGIA 1: RENDA -->
+<section class="slide light has-panel">
+  <div class="panel"><img src="https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&w=1800&q=80" alt="" loading="lazy" onerror="var s=this.closest('.slide');if(s){s.classList.remove('has-panel');}this.parentElement.remove()"><div class="tint"></div></div>
+  <div class="kicker">Estratégia 1 · Renda</div>
+  <h2 class="wr">O imóvel que ajuda a se pagar</h2>
+  <svg class="rdiag" viewBox="0 0 760 258" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+    <g stroke="#0b2c51" stroke-width="2" fill="none">
+      <rect x="42" y="52" width="118" height="146" rx="4"/>
+      <path d="M84 198v-26h34v26"/>
+    </g>
+    <g fill="#a89e86">
+      <rect x="58" y="68" width="13" height="15"/><rect x="86" y="68" width="13" height="15"/><rect x="114" y="68" width="13" height="15"/><rect x="132" y="68" width="13" height="15"/>
+      <rect x="58" y="98" width="13" height="15"/><rect x="86" y="98" width="13" height="15"/><rect x="114" y="98" width="13" height="15"/><rect x="132" y="98" width="13" height="15"/>
+      <rect x="58" y="128" width="13" height="15"/><rect x="86" y="128" width="13" height="15"/><rect x="132" y="128" width="13" height="15"/>
+      <rect x="58" y="158" width="13" height="15"/><rect x="114" y="158" width="13" height="15"/>
+    </g>
+    <path class="rdflow" d="M180 108 C 300 38, 440 38, 556 98" fill="none" stroke="#7d7157" stroke-width="3"/>
+    <polygon points="566,103 548.7,102 554.9,89.6" fill="#7d7157"/>
+    <text x="370" y="46" text-anchor="middle" class="rdt">aluguel</text>
+    <rect x="566" y="92" width="150" height="62" rx="10" fill="none" stroke="#0b2c51" stroke-width="2"/>
+    <text x="641" y="130" text-anchor="middle" class="rdt2">parcela</text>
+    <text x="42" y="240" class="rdt3">seu desembolso líquido</text>
+    <rect x="266" y="222" width="450" height="20" rx="10" fill="none" stroke="rgba(11,44,81,.28)" stroke-width="1.5"/>
+    <rect class="rdshrink" x="270" y="226" width="442" height="12" rx="6" fill="#e26d6d"/>
+  </svg>
+  <div class="list">
+    <div class="card frag">
+      <svg viewBox="0 0 24 24"><rect x="4" y="7" width="16" height="13" rx="1.5"/><path d="M4 11h16M9 7V4h6v3"/></svg>
+      <div>
+        <h3>Crédito de R$ 500 mil</h3>
+        <p>Contemplado, você compra o imóvel à vista, com poder real de negociação no preço.</p>
+      </div>
+    </div>
+    <div class="card frag">
+      <svg viewBox="0 0 24 24"><path d="M4 11l8-7 8 7"/><path d="M6 10v10h12V10"/><path d="M10 20v-6h4v6"/></svg>
+      <div>
+        <h3>Imóvel alugado</h3>
+        <p>O ativo entra em operação e começa a gerar renda todos os meses.</p>
+      </div>
+    </div>
+    <div class="card frag">
+      <svg viewBox="0 0 24 24"><path d="M4 19h16"/><path d="M6 16l4-5 3 3 5-7"/></svg>
+      <div>
+        <h3>Aluguel cobre boa parte da parcela</h3>
+        <p>Seu desembolso líquido mensal cai. O inquilino ajuda a construir o seu patrimônio.</p>
+      </div>
+    </div>
+  </div>
+  <p class="legal">Simulação ilustrativa. Contemplação por sorteio ou lance, sem prazo garantido. Resultado depende de taxa de administração, prazo e vacância.</p>
+</section>
+
+<!-- 7 · ESTRATÉGIA 2: CARTEIRA -->
+<section class="slide">
+  <div class="kicker">Estratégia 2 · Longo prazo</div>
+  <h2 class="wr">Carteira de imóveis, contemplação a contemplação</h2>
+  <svg class="sky" viewBox="0 0 900 240" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+    <line x1="40" y1="223" x2="860" y2="223" stroke="#a89e86" stroke-width="2" opacity=".55"/>
+    <g id="b1" class="bld">
+      <rect x="96" y="116" width="92" height="106" fill="#a89e86"/>
+      <g fill="#081d36" opacity=".5"><rect x="112" y="132" width="10" height="12"/><rect x="136" y="132" width="10" height="12"/><rect x="160" y="132" width="10" height="12"/><rect x="112" y="160" width="10" height="12"/><rect x="160" y="160" width="10" height="12"/><rect x="112" y="188" width="10" height="12"/><rect x="136" y="188" width="10" height="12"/></g>
+    </g>
+    <g id="b2" class="bld">
+      <rect x="222" y="150" width="70" height="72" fill="#c2b89e"/>
+      <g fill="#081d36" opacity=".5"><rect x="236" y="164" width="9" height="11"/><rect x="258" y="164" width="9" height="11"/><rect x="236" y="192" width="9" height="11"/><rect x="258" y="192" width="9" height="11"/></g>
+    </g>
+    <g id="b3" class="bld" style="transition-delay:.18s">
+      <rect x="326" y="76" width="102" height="146" fill="#a89e86"/>
+      <g fill="#081d36" opacity=".5"><rect x="344" y="92" width="10" height="12"/><rect x="370" y="92" width="10" height="12"/><rect x="396" y="92" width="10" height="12"/><rect x="344" y="122" width="10" height="12"/><rect x="396" y="122" width="10" height="12"/><rect x="344" y="152" width="10" height="12"/><rect x="370" y="152" width="10" height="12"/><rect x="396" y="152" width="10" height="12"/><rect x="370" y="182" width="10" height="12"/></g>
+    </g>
+    <g id="b4" class="bld">
+      <rect x="462" y="128" width="80" height="94" fill="#c2b89e"/>
+      <g fill="#081d36" opacity=".5"><rect x="478" y="144" width="9" height="11"/><rect x="502" y="144" width="9" height="11"/><rect x="478" y="172" width="9" height="11"/><rect x="502" y="172" width="9" height="11"/><rect x="478" y="200" width="9" height="11"/></g>
+    </g>
+    <g id="b5" class="bld" style="transition-delay:.18s">
+      <rect x="576" y="54" width="112" height="168" fill="#a89e86"/>
+      <g fill="#081d36" opacity=".5"><rect x="596" y="72" width="11" height="13"/><rect x="624" y="72" width="11" height="13"/><rect x="652" y="72" width="11" height="13"/><rect x="596" y="106" width="11" height="13"/><rect x="652" y="106" width="11" height="13"/><rect x="596" y="140" width="11" height="13"/><rect x="624" y="140" width="11" height="13"/><rect x="652" y="140" width="11" height="13"/><rect x="624" y="174" width="11" height="13"/></g>
+    </g>
+  </svg>
+  <div class="grid g3">
+    <div class="card frag" data-build="b1">
+      <svg viewBox="0 0 24 24"><rect x="3" y="5" width="8" height="6" rx="1"/><rect x="13" y="5" width="8" height="6" rx="1"/><rect x="3" y="14" width="8" height="6" rx="1"/><rect x="13" y="14" width="8" height="6" rx="1"/></svg>
+      <h3>Múltiplas cotas</h3>
+      <p>Você monta várias cotas em andamento, dimensionadas para caber no seu orçamento.</p>
+    </div>
+    <div class="card frag" data-build="b2,b3">
+      <svg viewBox="0 0 24 24"><path d="M7 3v4M5 5h4"/><path d="M4 12l8-7 8 7"/><path d="M6 11v9h12v-9"/></svg>
+      <h3>Cada contemplação, um imóvel</h3>
+      <p>A cada contemplação, mais um imóvel entra na carteira gerando renda de aluguel.</p>
+    </div>
+    <div class="card frag" data-build="b4,b5">
+      <svg viewBox="0 0 24 24"><ellipse cx="12" cy="6" rx="7" ry="3"/><path d="M5 6v6c0 1.7 3.1 3 7 3s7-1.3 7-3V6"/><path d="M5 12v6c0 1.7 3.1 3 7 3s7-1.3 7-3v-6"/></svg>
+      <h3>Aposentadoria imobiliária</h3>
+      <p>No longo prazo, uma carteira de aluguéis no lugar de depender só do INSS.</p>
+    </div>
+  </div>
+  <p class="legal">Simulação ilustrativa. Contemplação por sorteio ou lance, sem prazo garantido. Resultado depende de taxa de administração, prazo e vacância.</p>
+</section>
+
+<!-- 8 · ESTRATÉGIA 3: PJ -->
+<section class="slide light has-panel">
+  <div class="panel"><img src="https://images.unsplash.com/photo-1616432043562-3671ea2e5242?auto=format&fit=crop&w=1800&q=80" alt="" loading="lazy" onerror="var s=this.closest('.slide');if(s){s.classList.remove('has-panel');}this.parentElement.remove()"><div class="tint"></div></div>
+  <div class="kicker">Estratégia 3 · Empresas</div>
+  <h2 class="wr">Crescer sem descapitalizar o caixa</h2>
+  <div class="list">
+    <div class="card frag">
+      <svg viewBox="0 0 24 24"><path d="M3 16V8h11v8"/><path d="M14 10h4l3 4v2h-3"/><circle cx="7" cy="17.5" r="1.8"/><circle cx="16.5" cy="17.5" r="1.8"/><path d="M3 16h1.5M9 17.5h5"/></svg>
+      <div>
+        <h3>Frota e maquinário</h3>
+        <p>A empresa renova veículos e equipamentos com a carta de crédito, sem juros.</p>
+      </div>
+    </div>
+    <div class="card frag">
+      <svg viewBox="0 0 24 24"><rect x="4" y="8" width="16" height="12" rx="2"/><path d="M8 8V6a4 4 0 018 0v2"/><circle cx="12" cy="14" r="2"/></svg>
+      <div>
+        <h3>Caixa preservado</h3>
+        <p>O capital de giro continua na operação, trabalhando pelo negócio.</p>
+      </div>
+    </div>
+    <div class="card frag">
+      <svg viewBox="0 0 24 24"><path d="M4 20V10M10 20V4M16 20v-8M22 20H2"/></svg>
+      <div>
+        <h3>Expansão planejada</h3>
+        <p>Crescimento em ritmo previsível, com parcelas que cabem no fluxo de caixa.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 9 · INTELIGÊNCIA DE LANCES -->
+<section class="slide">
+  <div class="kicker">Inteligência Osher</div>
+  <h2 class="wr">Lance calculado, sem tiro no escuro</h2>
+  <div class="grid g3">
+    <div class="card frag">
+      <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3.5 2"/></svg>
+      <h3>Histórico do grupo</h3>
+      <p>Analisamos os lances vencedores e o comportamento das assembleias do grupo.</p>
+    </div>
+    <div class="card frag">
+      <svg viewBox="0 0 24 24"><path d="M12 3l7 3v6c0 4.4-3 7.6-7 9-4-1.4-7-4.6-7-9V6z"/><path d="M9 12l2.2 2.2L15.5 9.8"/></svg>
+      <h3>Saúde da administradora</h3>
+      <p>Só indicamos grupos de administradoras sólidas, com histórico verificado.</p>
+    </div>
+    <div class="card frag">
+      <svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 9h18M8 3v4M16 3v4"/><path d="M8 14h3M13 14h3M8 17h3"/></svg>
+      <h3>Sazonalidade</h3>
+      <p>Há meses em que o mesmo lance vale mais. Escolhemos o momento com dados.</p>
+    </div>
+  </div>
+  <p class="note">Contemplação por sorteio ou lance, sem prazo garantido. A estratégia existe para melhorar as suas chances.</p>
+</section>
+
+<!-- 10 · GARANTIAS -->
+<section class="slide light">
+  <div class="kicker">Suas garantias</div>
+  <h2 class="wr">Não é confiança. É lei.</h2>
+  <div class="grid g4">
+    <div class="card frag">
+      <svg viewBox="0 0 24 24"><path d="M12 4v16M8 20h8"/><path d="M6 7l-3 6h6zM18 7l-3 6h6z"/><path d="M4 7h16"/></svg>
+      <h3>Lei 11.795/2008</h3>
+      <p>O consórcio é um sistema criado por lei, com regras claras para todos.</p>
+    </div>
+    <div class="card frag">
+      <svg viewBox="0 0 24 24"><path d="M3 10l9-6 9 6"/><path d="M5 10v8M10 10v8M14 10v8M19 10v8"/><path d="M3 18h18M3 21h18"/></svg>
+      <h3>Fiscalização do Banco Central</h3>
+      <p>O BACEN normatiza, fiscaliza e pode intervir para proteger o grupo.</p>
+    </div>
+    <div class="card frag">
+      <svg viewBox="0 0 24 24"><rect x="4" y="10" width="16" height="10" rx="2"/><path d="M8 10V7a4 4 0 018 0v3"/></svg>
+      <h3>Patrimônio segregado</h3>
+      <p>O dinheiro do grupo é separado do caixa da administradora. Ela é só a gestora.</p>
+    </div>
+    <div class="card frag">
+      <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M8 12.5l3 3 5.5-6.5"/></svg>
+      <h3>Contemplação garantida</h3>
+      <p>Todo cotista em dia recebe a carta de crédito até o encerramento do grupo.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 11 · POR QUE COM A OSHER -->
+<section class="slide">
+  <div class="kicker">Por que com a Osher</div>
+  <h2 class="wr">Um estrategista do seu lado</h2>
+  <div class="grid g3">
+    <div class="card frag">
+      <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="6"/><path d="M15.5 15.5L21 21"/></svg>
+      <h3>Curadoria independente</h3>
+      <p>Comparamos grupos de várias administradoras e escolhemos pelo seu interesse.</p>
+    </div>
+    <div class="card frag">
+      <svg viewBox="0 0 24 24"><path d="M4 19h16"/><path d="M6 16l4-5 3 3 5-7"/><circle cx="18" cy="7" r="1.6"/></svg>
+      <h3>Estratégia sob medida</h3>
+      <p>Desenhamos crédito, prazo e lance a partir do seu objetivo de patrimônio.</p>
+    </div>
+    <div class="card frag">
+      <svg viewBox="0 0 24 24"><path d="M12 21s-7-4.6-7-10a7 7 0 0114 0c0 5.4-7 10-7 10z"/><circle cx="12" cy="10.5" r="2.5"/></svg>
+      <h3>Pós-venda ativo</h3>
+      <p>Acompanhamos assembleias e oportunidades de lance até a sua contemplação.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 12 · PRÓXIMO PASSO -->
+<section class="slide">
+  <div class="bg"><img src="https://images.unsplash.com/photo-1605788419622-b181ec99494f?auto=format&fit=crop&w=1800&q=80" alt="" loading="lazy" onerror="this.parentElement.remove()"><div class="shade"></div></div>
+  <div class="kicker">Próximo passo</div>
+  <h2 class="wr">Vamos desenhar a sua estratégia</h2>
+  <p class="lead">Uma simulação completa, com taxa de administração, prazo e cenários de lance na mesa. Números reais, sem promessa.</p>
+  <div class="contact">
+    <div class="c frag">
+      <svg viewBox="0 0 24 24"><path d="M6 3h4l1.5 5-2.5 2c1 2.6 2.6 4.2 5 5.2l2-2.5 5 1.5v4c0 1-1 1.8-2 1.8C10.5 20 4 13.5 4 5c0-1 1-2 2-2z"/></svg>
+      <span>(61) 98228-6044</span>
+    </div>
+    <div class="c frag">
+      <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c2.5 2.4 4 5.6 4 9s-1.5 6.6-4 9c-2.5-2.4-4-5.6-4-9s1.5-6.6 4-9z"/></svg>
+      <span>oshersolucoes.com.br</span>
+    </div>
+  </div>
+  <p class="legal">Simulação ilustrativa. Contemplação por sorteio ou lance, sem prazo garantido. Resultado depende de taxa de administração, prazo e vacância.</p>
+</section>
+
+<!-- 13 · ENCERRAMENTO -->
+<section class="slide">
+  <div class="dust" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+  <div class="wordmark big"><span class="wm1">OSHER</span> <span class="wm2">CAPITAL</span></div>
+  <div class="rule"></div>
+  <p class="slogan">Investir com segurança, conquistar com muita inteligência.</p>
+  <p class="credits">Fotos: Unsplash</p>
+</section>
+
+<footer class="hud">
+  <div class="hm"><b>OSHER</b> <span>CAPITAL</span></div>
+  <div id="counter">1 / 13</div>
+</footer>
+<div class="bar"><div id="barfill"></div></div>
+
+<div class="help" id="help">
+  <div class="help-box">
+    <h3>Navegação</h3>
+    <ul>
+      <li><b>Seta direita / Espaço</b> avança</li>
+      <li><b>Seta esquerda</b> volta</li>
+      <li><b>Clique à direita</b> avança</li>
+      <li><b>Clique à esquerda</b> volta</li>
+      <li><b>Home / End</b> primeiro e último slide</li>
+      <li><b>ESC</b> mostra ou oculta esta ajuda</li>
+    </ul>
+  </div>
+</div>
+
+<script>
+(function () {
+  var slides = document.querySelectorAll('.slide');
+  var total = slides.length;
+  var current = 0;
+  var counter = document.getElementById('counter');
+  var barfill = document.getElementById('barfill');
+  var help = document.getElementById('help');
+  var reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var cuFrames = [];
+
+  function esc(s) {
+    return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+  }
+
+  /* Reveal palavra a palavra: quebra os titulos em spans com stagger de 60ms */
+  var wrs = document.querySelectorAll('.wr');
+  for (var w = 0; w < wrs.length; w++) {
+    var words = wrs[w].textContent.split(/\s+/);
+    var out = '';
+    var wi = 0;
+    for (var x = 0; x < words.length; x++) {
+      if (words[x] === '') { continue; }
+      out += '<span class="w" style="--wi:' + wi + '">' + esc(words[x]) + '</span> ';
+      wi++;
+    }
+    wrs[w].innerHTML = out.replace(/\s+$/, '');
+  }
+  requestAnimationFrame(function () {
+    requestAnimationFrame(function () {
+      for (var g = 0; g < wrs.length; g++) { wrs[g].classList.add('go'); }
+    });
+  });
+
+  /* Fragmentos: blocos entram um por clique */
+  var fragsBySlide = [];
+  var fragCount = [];
+  for (var s = 0; s < total; s++) {
+    fragsBySlide.push(slides[s].querySelectorAll('.frag'));
+    fragCount.push(0);
+  }
+
+  function hook(el, on) {
+    var t = el.getAttribute('data-fade-target');
+    if (t) {
+      var tg = document.querySelector(t);
+      if (tg) { if (on) { tg.classList.add('faded'); } else { tg.classList.remove('faded'); } }
+    }
+    var b = el.getAttribute('data-build');
+    if (b) {
+      var ids = b.split(',');
+      for (var q = 0; q < ids.length; q++) {
+        var bd = document.getElementById(ids[q]);
+        if (bd) { if (on) { bd.classList.add('up'); } else { bd.classList.remove('up'); } }
+      }
+    }
+    var ex = el.getAttribute('data-expand');
+    if (ex) {
+      var host = document.querySelector(ex);
+      if (host) { if (on) { host.classList.add('grown'); } else { host.classList.remove('grown'); } }
+    }
+  }
+
+  /* Count-up dos numeros-chave */
+  function cancelCounts() {
+    for (var j = 0; j < cuFrames.length; j++) { cancelAnimationFrame(cuFrames[j]); }
+    cuFrames = [];
+  }
+  function setFinal(el) {
+    if (!el.getAttribute('data-final')) { el.setAttribute('data-final', el.textContent); }
+    el.textContent = el.getAttribute('data-final');
+  }
+  function countUpEl(el) {
+    if (!el.getAttribute('data-final')) { el.setAttribute('data-final', el.textContent); }
+    var fin = el.getAttribute('data-final');
+    var m = fin.match(/\d+(?:,\d+)?/);
+    if (!m || reduceMotion) { el.textContent = fin; return; }
+    var numStr = m[0];
+    var target = parseFloat(numStr.replace(',', '.'));
+    var dec = (numStr.split(',')[1] || '').length;
+    var pre = fin.slice(0, m.index);
+    var post = fin.slice(m.index + numStr.length);
+    var t0 = null;
+    var dur = 1100;
+    function stepFrame(ts) {
+      if (t0 === null) { t0 = ts; }
+      var p = Math.min((ts - t0) / dur, 1);
+      var e = 1 - Math.pow(1 - p, 3);
+      if (p < 1) {
+        el.textContent = pre + (target * e).toFixed(dec).replace('.', ',') + post;
+        cuFrames.push(requestAnimationFrame(stepFrame));
+      } else {
+        el.textContent = fin;
+      }
+    }
+    cuFrames.push(requestAnimationFrame(stepFrame));
+  }
+
+  function applyFrags(idx) {
+    var fr = fragsBySlide[idx];
+    for (var k = 0; k < fr.length; k++) {
+      var on = reduceMotion || k < fragCount[idx];
+      var was = fr[k].classList.contains('on');
+      if (on) { fr[k].classList.add('on'); } else { fr[k].classList.remove('on'); }
+      hook(fr[k], on);
+      var nums = fr[k].querySelectorAll('.n, .meganum');
+      for (var y = 0; y < nums.length; y++) {
+        if (on && !was) { countUpEl(nums[y]); }
+        else if (!on) { setFinal(nums[y]); }
+      }
+    }
+  }
+
+  function countUpLoose(slide) {
+    var nums = slide.querySelectorAll('.n, .meganum');
+    for (var i = 0; i < nums.length; i++) {
+      if (!nums[i].closest('.frag')) { countUpEl(nums[i]); }
+    }
+  }
+
+  function render() {
+    cancelCounts();
+    for (var k = 0; k < total; k++) {
+      if (k === current) { slides[k].classList.add('active'); }
+      else { slides[k].classList.remove('active'); }
+    }
+    if (slides[current].classList.contains('light')) { document.body.classList.add('on-light'); }
+    else { document.body.classList.remove('on-light'); }
+    counter.textContent = (current + 1) + ' / ' + total;
+    barfill.style.width = (((current + 1) / total) * 100) + '%';
+    applyFrags(current);
+    countUpLoose(slides[current]);
+  }
+
+  function go(n) {
+    if (n < 0) { n = 0; }
+    if (n > total - 1) { n = total - 1; }
+    if (n === current) { return; }
+    var forward = n > current;
+    current = n;
+    fragCount[current] = forward ? 0 : fragsBySlide[current].length;
+    render();
+  }
+
+  function next() {
+    if (!reduceMotion && fragCount[current] < fragsBySlide[current].length) {
+      fragCount[current]++;
+      applyFrags(current);
+      return;
+    }
+    go(current + 1);
+  }
+
+  function prev() {
+    if (!reduceMotion && fragCount[current] > 0) {
+      fragCount[current]--;
+      applyFrags(current);
+      return;
+    }
+    go(current - 1);
+  }
+
+  document.addEventListener('keydown', function (e) {
+    if (e.key === 'ArrowRight' || e.key === ' ' || e.key === 'PageDown') {
+      e.preventDefault(); next();
+    } else if (e.key === 'ArrowLeft' || e.key === 'PageUp') {
+      e.preventDefault(); prev();
+    } else if (e.key === 'Escape') {
+      help.classList.toggle('open');
+    } else if (e.key === 'Home') {
+      e.preventDefault(); go(0);
+    } else if (e.key === 'End') {
+      e.preventDefault(); go(total - 1);
+    }
+  });
+
+  document.addEventListener('click', function (e) {
+    if (help.classList.contains('open')) {
+      help.classList.remove('open');
+      return;
+    }
+    if (e.clientX > window.innerWidth / 2) { next(); }
+    else { prev(); }
+  });
+
+  render();
+})();
+</script>
+</body>
+</html>
