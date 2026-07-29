@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>OSHER CAPITAL — CRM Comercial</title><!-- v-pb2 -->
-<!-- crm v20 · Fila de Leads passa a listar também o diretor-que-vende (Pedro) para pausar/retomar pela interface (cloudPullRouting + fallback = interno OU diretor), alinhado ao rodízio da função lead-intake · 2026-07-29 -->
+<!-- crm v21 · nova aba "Transferir": transferência em lote de leads de TRÁFEGO entre vendedores (origem→destino, marcar todos), admin/diretor · Fila já lista o diretor-que-vende (Pedro) para pausar/retomar · 2026-07-29 -->
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300..800&display=swap" rel="stylesheet">
 <style>
@@ -185,6 +185,7 @@ label.fl{display:flex;flex-direction:column;gap:5px;font-size:12px;color:var(--m
     <button data-v="tarefas">Tarefas</button>
     <button data-v="leads">Leads &amp; Clientes</button>
     <button data-v="fila">Fila de Leads</button>
+    <button data-v="transfer" data-see="1">Transferir</button>
     <button data-v="clientes">Clientes</button>
     <button data-v="fincalc">Simulador</button>
     <button data-v="playbook">Playbook</button>
@@ -304,6 +305,23 @@ label.fl{display:flex;flex-direction:column;gap:5px;font-size:12px;color:var(--m
       <th class="l">Cliente</th><th class="l">Recebido por</th><th class="l">Origem / Campanha</th><th class="l">Chegou</th><th class="l">Etapa</th><th class="l">Ação</th>
     </tr></thead><tbody></tbody></table>
     <div class="empty" id="filaEmpty" style="display:none">Nenhum lead de tráfego recebido ainda. Conecte a Meta (ou envie pelo formulário) para começar.</div>
+  </div>
+</section>
+
+<!-- TRANSFERÊNCIA DE LEADS DE TRÁFEGO (admin/diretor) -->
+<section class="view" id="v-transfer">
+  <div class="filters">
+    <label style="font-size:13px">De:&nbsp;<select id="trDe" onchange="renderTransfer()" data-see="1"></select></label>
+    <label style="font-size:13px">Para:&nbsp;<select id="trPara" data-see="1"></select></label>
+    <span class="pill" id="trStat"></span>
+    <button class="btn sm" onclick="doTransferLeads()">Transferir selecionados</button>
+  </div>
+  <div class="card" style="padding:8px 8px 0">
+    <table id="tTransfer"><thead><tr>
+      <th class="l" style="width:34px"><input type="checkbox" id="trAll" onclick="trToggleAll(this.checked)" title="Marcar todos"></th>
+      <th class="l">Cliente</th><th class="l">Telefone</th><th class="l">Origem / Campanha</th><th class="l">Etapa</th><th class="l">Chegou</th>
+    </tr></thead><tbody></tbody></table>
+    <div class="empty" id="trEmpty" style="display:none">Selecione um vendedor de origem para ver os leads de tráfego dele.</div>
   </div>
 </section>
 
@@ -1067,6 +1085,41 @@ function renderTarefas(){
 /* ===== FILA DE LEADS (inbound / tráfego) ===== */
 function isInbound(d){return d.inbound===true||/tr[aá]fego/i.test(d.origem||'');}
 function reatribuirLead(id,v){if(!v||!canSeeAll())return;var d=DB.deals.find(function(x){return x.id===id;});if(!d)return;d.vendedor=v;d.atualizadoEm=nowISO();save();renderAll();}
+/* ===== TRANSFERÊNCIA EM LOTE DE LEADS DE TRÁFEGO (admin/diretor) ===== */
+function renderTransfer(){
+  if(!el('tTransfer')||!canSeeAll())return;
+  var opts=sellers().map(function(p){return p.nome;});
+  var de=el('trDe'),para=el('trPara');
+  if(de&&de.options.length<=1)de.innerHTML='<option value="">Selecione a origem...</option>'+opts.map(function(v){return '<option>'+esc(v)+'</option>';}).join('');
+  if(para&&para.options.length<=1)para.innerHTML='<option value="">Selecione o destino...</option>'+opts.map(function(v){return '<option>'+esc(v)+'</option>';}).join('');
+  var dv=de?de.value:'';var tb=el('tTransfer').querySelector('tbody');tb.innerHTML='';if(el('trAll'))el('trAll').checked=false;
+  if(!dv){el('trEmpty').style.display='';el('trEmpty').textContent='Selecione um vendedor de origem para ver os leads de tráfego dele.';el('trStat').textContent='';return;}
+  var rows=(DB.deals||[]).filter(function(d){return d&&d.vendedor===dv&&isInbound(d);});
+  rows.sort(function(a,b){return String(b.recebidoEm||b.criadoEm||'').localeCompare(String(a.recebidoEm||a.criadoEm||''));});
+  if(!rows.length){el('trEmpty').style.display='';el('trEmpty').textContent='Este vendedor não tem leads de tráfego.';el('trStat').textContent='0 leads de tráfego';return;}
+  el('trEmpty').style.display='none';el('trStat').textContent=rows.length+' leads de tráfego';
+  tb.innerHTML=rows.map(function(d){var when=String(d.recebidoEm||d.criadoEm||'').slice(0,10);return '<tr>'+
+    '<td><input type="checkbox" class="trChk" value="'+sid(d.id)+'"></td>'+
+    '<td class="l">'+esc(d.cliente||'(sem nome)')+'</td>'+
+    '<td class="l">'+esc(d.telefone||'')+'</td>'+
+    '<td class="l">'+esc((d.origem||'')+(d.campanha?(' · '+d.campanha):''))+'</td>'+
+    '<td class="l">'+esc(d.estagio||'')+'</td>'+
+    '<td class="l">'+esc(when)+'</td></tr>';}).join('');
+}
+function trToggleAll(on){[].forEach.call(document.querySelectorAll('#tTransfer .trChk'),function(c){c.checked=on;});}
+function doTransferLeads(){
+  if(!canSeeAll())return;
+  var de=el('trDe').value,para=el('trPara').value;
+  if(!de){alert('Selecione o vendedor de origem.');return;}
+  if(!para){alert('Selecione o vendedor de destino.');return;}
+  if(de===para){alert('Origem e destino são o mesmo vendedor.');return;}
+  var ids=[].map.call(document.querySelectorAll('#tTransfer .trChk:checked'),function(c){return c.value;});
+  if(!ids.length){alert('Marque ao menos um lead para transferir.');return;}
+  if(!confirm('Transferir '+ids.length+' lead(s) de tráfego de '+de+' para '+para+'?'))return;
+  var now=nowISO(),n=0;
+  ids.forEach(function(sv){var d=(DB.deals||[]).find(function(x){return sid(x.id)===sv&&x.vendedor===de&&isInbound(x);});if(d){d.vendedor=para;d.atualizadoEm=now;n++;}});
+  save();renderAll();alert(n+' lead(s) de tráfego transferido(s) para '+para+'.');
+}
 function renderFila(){
  if(!el('tFila'))return;
  renderDistPanel();
@@ -1461,7 +1514,7 @@ function rotinaVendedor(){var r=weekRange(0);var av=weekActivity(ME.nome,r[0],r[
 function rotinaDiretor(){var r=weekRange(0);var names=sellers().map(function(s){return s.nome;});var today=todayStr();var huddle=names.map(function(n){var nv=DB.deals.filter(function(d){return d.vendedor===n&&dDate(d.criadoEm)===today;}).length;var rh=0;DB.deals.forEach(function(d){if(d.vendedor!==n)return;(d.reunioes||[]).forEach(function(x){if(x.data===today)rh++;});});var lh=(DB.atividades||[]).filter(function(a){return a.v===n&&dDate(a.em)===today&&a.tipo==='ligacao';}).length;var atr=DB.deals.filter(function(d){return d.vendedor===n&&overdue(d);}).length;if(!(nv||rh||lh||atr))return null;return '<tr><td class="l">'+esc(n)+'</td><td>'+lh+'</td><td>'+nv+'</td><td>'+rh+'</td><td>'+(atr?'<span class="badge b-bad">'+atr+'</span>':'0')+'</td></tr>';}).filter(Boolean).join('')||'<tr><td class="l" colspan="5"><div class="empty">Sem atividade hoje ainda.</div></td></tr>';var um=names.map(function(n){var av=weekActivity(n,r[0],r[1]);var pipe=DB.deals.filter(function(d){return d.vendedor===n&&isOpen(d);});if(!(pipe.length||av.novos||av.fechados))return null;var pv=pipe.reduce(function(a,d){return a+(d.valor||0)},0);var neg=pipe.filter(function(d){return d.estagio==='Negociação'}).length;var par=pipe.filter(function(d){return daysSince(d.stageSince)>14}).length;var m=memberByName(n)||{};var pm=(m.metaWkNovos||0)?Math.round(av.novos/(m.metaWkNovos)*100):null;return '<tr><td class="l">'+esc(n)+'</td><td>'+BRLk(pv)+'</td><td>'+neg+'</td><td>'+(par?'<span class="badge b-bad">'+par+'</span>':'0')+'</td><td>'+av.novos+'</td><td>'+av.reunioes+'</td><td>'+av.propostas+'</td><td>'+(pm==null?'—':'<span class="badge '+(pm>=100?'b-ok':pm>=60?'b-warn':'b-bad')+'">'+pm+'%</span>')+'</td></tr>';}).filter(Boolean).join('')||'<tr><td class="l" colspan="8"><div class="empty">Sem pipeline ativo.</div></td></tr>';var tot={lig:0,reun:0,prop:0,novos:0,qual:0,fech:0};names.forEach(function(n){var a=weekActivity(n,r[0],r[1]);tot.lig+=a.ligacoes;tot.reun+=a.reunioes;tot.prop+=a.propostas;tot.novos+=a.novos;tot.qual+=a.qualif;tot.fech+=a.fechados;});var convT=tot.novos?Math.round(tot.qual/tot.novos*100):0;var valT=names.reduce(function(s,n){return s+DB.deals.filter(function(d){return d.vendedor===n&&isWon(d)&&inRange(d.ganhoEm,r[0],r[1]);}).reduce(function(a,d){return a+(d.valor||0)},0);},0);var pir='<div class="card"><h3><span class="dot" style="background:var(--vio)"></span>Atividades → Objetivos → Resultados</h3><div class="h3sub">Foque no que é gerenciável (semana)</div><div style="display:flex;flex-direction:column;gap:8px"><div style="background:var(--card2);border-radius:10px;padding:10px 12px;font-size:13px"><b>Atividades</b> · '+tot.lig+' ligações · '+tot.reun+' reuniões · '+tot.prop+' propostas</div><div style="background:var(--card2);border-radius:10px;padding:10px 12px;font-size:13px;margin-left:18px"><b>Objetivos</b> · '+tot.novos+' novos · '+tot.qual+' qualificados · '+convT+'% qualif.</div><div style="background:var(--card2);border-radius:10px;padding:10px 12px;font-size:13px;margin-left:36px"><b>Resultados</b> · '+tot.fech+' fechados · '+BRLk(valT)+'</div></div></div>';return '<div style="font-size:21px;font-weight:800;margin-bottom:4px">Rotina da Equipe</div><div style="font-size:13px;color:var(--mut);margin-bottom:16px">Cadência: Daily Huddle, 1:1 semanal e foco em atividade</div><div class="grid cards2"><div class="card" style="padding:8px 10px 0"><h3><span class="dot"></span>Pauta do Daily Huddle (hoje)</h3><div class="h3sub">Métricas do dia · onde destravar</div><table><thead><tr><th class="l">Vendedor</th><th>Ligações</th><th>Novos</th><th>Reuniões</th><th>Atrasados</th></tr></thead><tbody>'+huddle+'</tbody></table></div>'+pir+'</div><div class="card" style="padding:8px 10px 0;margin-top:14px"><h3><span class="dot" style="background:var(--ac2)"></span>Pauta do 1:1 semanal</h3><div class="h3sub">Pipeline + atividade vs. meta — pronto para a reunião</div><table><thead><tr><th class="l">Vendedor</th><th>Pipeline</th><th>Negoc.</th><th>Parados</th><th>Novos(sem)</th><th>Reuniões</th><th>Propostas</th><th>Pace novos</th></tr></thead><tbody>'+um+'</tbody></table></div>';}
 function renderRotina(){var b=el('rotinaBody');if(!b||!ME)return;b.innerHTML=canSeeAll()?rotinaDiretor():rotinaVendedor();}
 
-function renderAll(){if(!ME)return;renderInicio();renderDash();renderConvView();renderFunil();renderClientes();renderFila();renderTarefas();renderBoard();renderPos();renderLeads();renderVend();renderAtiv();renderTracao();renderReport();renderRotina();if(el('v-sim').classList.contains('on'))runSim();else fillSimDealSelect();fillFinDealSelect();el('foot').innerHTML='OSHER CAPITAL · CRM Comercial — dados salvos localmente neste navegador. '+DB.deals.length+' negócios · meta '+BRLk(CFG().meta)+'. '+(canSeeAll()?'<b>Exportar</b> para backup/compartilhar. ':'')+'Funciona offline.';}
+function renderAll(){if(!ME)return;renderInicio();renderDash();renderConvView();renderFunil();renderClientes();renderFila();renderTransfer();renderTarefas();renderBoard();renderPos();renderLeads();renderVend();renderAtiv();renderTracao();renderReport();renderRotina();if(el('v-sim').classList.contains('on'))runSim();else fillSimDealSelect();fillFinDealSelect();el('foot').innerHTML='OSHER CAPITAL · CRM Comercial — dados salvos localmente neste navegador. '+DB.deals.length+' negócios · meta '+BRLk(CFG().meta)+'. '+(canSeeAll()?'<b>Exportar</b> para backup/compartilhar. ':'')+'Funciona offline.';}
 
 /* ===================== TEMA (claro/escuro) ===================== */
 function _themeIcon(dark){return dark
