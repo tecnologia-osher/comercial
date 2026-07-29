@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>OSHER CAPITAL — CRM Comercial</title><!-- v-pb2 -->
-<!-- crm v18 · alerta de novos leads no CRM: banner + verificação automática a cada 90s (vendedor vê só os leads de tráfego dele; admin/diretor vê todos os novos), "Ver no funil" filtra Tráfego · 2026-07-27 -->
+<!-- crm v19 · +3 vendedores (Gustavo Lacerda, Gabriel Caldas, Cezar Porto) na equipe; meta mensal de todos os vendedores + Pedro = R$700k (defaultTeam + migração única _metaMig700 p/ navegadores em cache) · 2026-07-27 -->
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300..800&display=swap" rel="stylesheet">
 <style>
@@ -752,11 +752,14 @@ function defaultTeam(){
   {nome:'Tecnologia (você)',email:'tecnologia@oshersolucoes.com.br',papel:'admin',meta:0},
   {nome:'FELIPE LACERDA',email:'felipe.lacerda@oshersolucoes.com.br',papel:'admin',vende:false,meta:0},
   {nome:'MILTON SANTOS',email:'milton.santos@oshersolucoes.com.br',papel:'admin',vende:false,meta:0},
-  {nome:'Pedro Ferreira',email:'pedro.ferreira@oshersolucoes.com.br',papel:'diretor',vende:true,meta:300000},
-  {nome:'ANDRE RODRIGUES',email:'andre.rodrigues@oshersolucoes.com.br',papel:'interno',meta:300000},
-  {nome:'JEFFERSON ARAUJO',email:'jefferson.araujo@oshersolucoes.com.br',papel:'interno',meta:300000},
-  {nome:'LUIZ SPAGNA',email:'luiz.spagna@oshersolucoes.com.br',papel:'interno',meta:300000},
-  {nome:'WALNER AMARAL',email:'walner.amaral@oshersolucoes.com.br',papel:'interno',meta:300000}
+  {nome:'Pedro Ferreira',email:'pedro.ferreira@oshersolucoes.com.br',papel:'diretor',vende:true,meta:700000},
+  {nome:'ANDRE RODRIGUES',email:'andre.rodrigues@oshersolucoes.com.br',papel:'interno',meta:700000},
+  {nome:'JEFFERSON ARAUJO',email:'jefferson.araujo@oshersolucoes.com.br',papel:'interno',meta:700000},
+  {nome:'LUIZ SPAGNA',email:'luiz.spagna@oshersolucoes.com.br',papel:'interno',meta:700000},
+  {nome:'WALNER AMARAL',email:'walner.amaral@oshersolucoes.com.br',papel:'interno',meta:700000},
+  {nome:'GUSTAVO LACERDA',email:'gustavo.lacerda@oshersolucoes.com.br',papel:'interno',meta:700000},
+  {nome:'GABRIEL CALDAS',email:'gabriel.caldas@oshersolucoes.com.br',papel:'interno',meta:700000},
+  {nome:'CEZAR PORTO',email:'cezar.porto@oshersolucoes.com.br',papel:'interno',meta:700000}
  ];
 }
 var DEFAULT_CFG={meta:5000000,adm:[{nome:'Porto',tadm:17,fr:2},{nome:'Embracon',tadm:22,fr:0},{nome:'Servopa',tadm:18,fr:1},{nome:'Rodobens',tadm:19,fr:2},{nome:'Itaú',tadm:16,fr:0},{nome:'Genérica',tadm:20,fr:1}],comm:{'Consórcio':1.5,'Financiamento':1.0,'Home Equity':2.0,'Seguros':10.0},team:[]};
@@ -764,7 +767,7 @@ var DEFAULT_CFG={meta:5000000,adm:[{nome:'Porto',tadm:17,fr:2},{nome:'Embracon',
 /* ===================== PERSISTÊNCIA ===================== */
 var KEY='osher_crm_v7',MEKEY='osher_crm_me_v7';
 var DB={deals:[],seq:1,cfg:null};var ME=null;
-function ensureCfg(){if(!DB.cfg)DB.cfg=clone(DEFAULT_CFG);if(!DB.cfg.team||!DB.cfg.team.length){DB.cfg.team=defaultTeam();}else{defaultTeam().forEach(function(dp){var de=(dp.email||'').trim().toLowerCase();var m=DB.cfg.team.find(function(p){var pe=(p.email||'').trim().toLowerCase();return (de&&pe&&pe===de)||p.nome===dp.nome;});if(!m){DB.cfg.team.push(dp);}else{m.papel=dp.papel;m.nome=dp.nome;if(dp.email)m.email=dp.email;if('vende' in dp)m.vende=dp.vende;}});}if(!DB.cfg.adm)DB.cfg.adm=clone(DEFAULT_CFG.adm);if(!DB.cfg.comm)DB.cfg.comm=clone(DEFAULT_CFG.comm);if(DB.cfg.meta==null)DB.cfg.meta=DEFAULT_CFG.meta;DB.cfg.team.forEach(function(p){var vende=(p.papel==='interno'||p.vende);if(p.meta==null)p.meta=0;if(p.metaWkNovos==null)p.metaWkNovos=vende?10:0;if(p.metaWkQual==null)p.metaWkQual=vende?5:0;if(p.metaWkProp==null)p.metaWkProp=vende?5:0;if(p.metaWkInd==null)p.metaWkInd=vende?25:0;if(p.metaWkFech==null)p.metaWkFech=vende?1:0;});if(!DB.cfg.atv)DB.cfg.atv={lig:100,reun:8,prop:10,ind:5};if(!DB.atividades)DB.atividades=[];if(!DB.rotina)DB.rotina={};if(DB.deals)DB.deals.forEach(function(d){if(d.estagio==='Primeiro contato')d.estagio='Ligação';if(d.proximoPasso==='Primeiro contato')d.proximoPasso='Ligação';});}
+function ensureCfg(){if(!DB.cfg)DB.cfg=clone(DEFAULT_CFG);if(!DB.cfg.team||!DB.cfg.team.length){DB.cfg.team=defaultTeam();}else{defaultTeam().forEach(function(dp){var de=(dp.email||'').trim().toLowerCase();var m=DB.cfg.team.find(function(p){var pe=(p.email||'').trim().toLowerCase();return (de&&pe&&pe===de)||p.nome===dp.nome;});if(!m){DB.cfg.team.push(dp);}else{m.papel=dp.papel;m.nome=dp.nome;if(dp.email)m.email=dp.email;if('vende' in dp)m.vende=dp.vende;}});}if(!DB.cfg.adm)DB.cfg.adm=clone(DEFAULT_CFG.adm);if(!DB.cfg.comm)DB.cfg.comm=clone(DEFAULT_CFG.comm);if(DB.cfg.meta==null)DB.cfg.meta=DEFAULT_CFG.meta;DB.cfg.team.forEach(function(p){var vende=(p.papel==='interno'||p.vende);if(p.meta==null)p.meta=0;if(p.metaWkNovos==null)p.metaWkNovos=vende?10:0;if(p.metaWkQual==null)p.metaWkQual=vende?5:0;if(p.metaWkProp==null)p.metaWkProp=vende?5:0;if(p.metaWkInd==null)p.metaWkInd=vende?25:0;if(p.metaWkFech==null)p.metaWkFech=vende?1:0;});if(!DB.cfg._metaMig700){DB.cfg.team.forEach(function(p){if(p.papel==='interno'||(p.papel==='diretor'&&p.vende))p.meta=700000;});DB.cfg._metaMig700=true;}if(!DB.cfg.atv)DB.cfg.atv={lig:100,reun:8,prop:10,ind:5};if(!DB.atividades)DB.atividades=[];if(!DB.rotina)DB.rotina={};if(DB.deals)DB.deals.forEach(function(d){if(d.estagio==='Primeiro contato')d.estagio='Ligação';if(d.proximoPasso==='Primeiro contato')d.proximoPasso='Ligação';});}
 function load(){try{var s=localStorage.getItem(KEY);if(s){DB=JSON.parse(s);ensureCfg();return true;}}catch(e){}return false;}
 function save(){try{localStorage.setItem(KEY,JSON.stringify(DB));}catch(e){alert('Não foi possível salvar localmente.');}cloudPush();}
 /* ===== AUTENTICAÇÃO: token do Supabase com refresh automático ===== */
