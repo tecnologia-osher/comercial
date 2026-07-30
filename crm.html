@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>OSHER CAPITAL — CRM Comercial</title><!-- v-pb2 -->
-<!-- crm v25 · Meu Plano: imóvel fixo em adesão 1% à vista (seletor de adesão removido); comissão por BEM (imóvel/automóvel) e faixa de taxa (tabela oficial) × 50%; 10 parcelas NÃO lineares; rampa de recebimento mês a mês pela distribuição real; taxa de passagem = histórico real de cada vendedor; ticket/taxa como premissa global · 2026-07-30 -->
+<!-- crm v26 · Meu Plano: ticket da venda vira campo selecionável pelo vendedor (padrão R$400 mil = menor ticket de imóvel); quadros de conversão rotulados como taxa de passagem real do vendedor vs premissa do mercado; imóvel fixo em adesão 1% à vista; comissão por BEM e faixa de taxa (tabela oficial) × 50%; 10 parcelas NÃO lineares · 2026-07-30 -->
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300..800&display=swap" rel="stylesheet">
 <style>
@@ -316,6 +316,7 @@ label.fl{display:flex;flex-direction:column;gap:5px;font-size:12px;color:var(--m
     <label style="font-size:13px" data-see="1">Vendedor: <select id="planoVend" onchange="renderPlano()"></select></label>
     <label style="font-size:13px">Bem: <select id="planoBem" onchange="renderPlano()"><option>Imóvel</option><option>Automóvel</option></select></label>
     <label style="font-size:13px">Taxa adm (%): <input id="planoTaxa" type="number" min="10" max="25" step="0.5" value="17.5" oninput="renderPlano()" style="width:70px;padding:6px 8px"></label>
+    <label style="font-size:13px">Ticket da venda (R$): <input id="planoTicket" type="number" min="0" step="50000" value="400000" oninput="renderPlano()" style="width:120px;padding:6px 8px"></label>
     <span class="pill" id="planoStat"></span>
   </div>
   <div id="planoBox"></div>
@@ -1134,7 +1135,7 @@ function doTransferLeads(){
   save();renderAll();alert(n+' lead(s) de tráfego transferido(s) para '+para+'.');
 }
 /* ===== MEU PLANO: plano de negócio por vendedor a partir da meta de ganho mensal ===== */
-var PLANO_TICKET=150000;      /* ticket médio de crédito (premissa global) */
+var PLANO_TICKET=400000;      /* ticket médio de crédito (premissa global) */
 var PLANO_TAXA=17.5;          /* taxa de administração usada na estimativa de comissão */
 var PLANO_PARCELAS=10;        /* consórcio: a comissão do vendedor é paga em 10 parcelas mensais */
 var PLANO_CONV_DEF={lq:0.40,qp:0.50,pv:0.25}; /* metas de passagem da empresa: Lead→Qualif, Qualif→Proposta, Proposta→Venda */
@@ -1176,14 +1177,15 @@ function renderPlano(){
   if(canSeeAll()&&sel){if(sel.options.length<=1){var opts=sellers().map(function(p){return p.nome;});sel.innerHTML=opts.map(function(v){return '<option'+(v===ME.nome?' selected':'')+'>'+esc(v)+'</option>';}).join('');}vend=sel.value||ME.nome;}
   var bem=(el('planoBem')&&el('planoBem').value)||'Imóvel';
   var taxa=+((el('planoTaxa')&&el('planoTaxa').value)||PLANO_TAXA)||PLANO_TAXA;
-  var fator=contraPct(bem,taxa)*0.5,comV=PLANO_TICKET*fator; /* comissão do vendedor = tabela por BEM (imóvel/móvel) e faixa de taxa × 50% */
+  var ticket=+((el('planoTicket')&&el('planoTicket').value)||PLANO_TICKET)||PLANO_TICKET; /* ticket selecionável pelo vendedor; padrão = menor ticket de imóvel (R$400 mil) */
+  var fator=contraPct(bem,taxa)*0.5,comV=ticket*fator; /* comissão do vendedor = tabela por BEM (imóvel/móvel) e faixa de taxa × 50% */
   var mIn=el('planoMeta'),meta=+((mIn&&mIn.value)||0);
   if(!meta){var m=memberByName(vend)||{};meta=Math.round((+m.meta||0)*fator);if(!meta)meta=10000;if(mIn)mIn.value=meta;}
-  var vendas=Math.max(1,Math.ceil(meta/comV)),credito=vendas*PLANO_TICKET,real=planoRatesReal(vend);
+  var vendas=Math.max(1,Math.ceil(meta/comV)),credito=vendas*ticket,real=planoRatesReal(vend);
   var gReg=vendas*comV;
   var adesao='avista1'; /* imóvel sempre com adesão de 1% à vista (decisão comercial) */
   var dist=(bem==='Imóvel')?PLANO_DIST.imovel.avista1:PLANO_DIST.movel;
-  if(el('planoStat'))el('planoStat').textContent='Ticket '+BRLk(PLANO_TICKET)+' · '+bem+' · taxa '+taxa+'% → comissão '+(fator*100).toFixed(2).replace('.',',')+'% do crédito ('+BRL(comV)+' por venda)';
+  if(el('planoStat'))el('planoStat').textContent='Ticket '+BRLk(ticket)+' · '+bem+' · taxa '+taxa+'% → comissão '+(fator*100).toFixed(2).replace('.',',')+'% do crédito ('+BRL(comV)+' por venda)';
   var head='<div class="card" style="margin-bottom:12px;padding:14px 16px">'
     +'<div style="font-size:15px"><b>'+esc(vend)+'</b> — para receber ~<b>'+BRL(meta)+'</b>/mês em regime (a partir do 10º mês):</div>'
     +'<div style="margin-top:6px">Manter <b>'+vendas+' venda(s)/mês</b> ('+BRL(credito)+' em crédito) — isso gera <b>'+BRL(gReg)+'</b>/mês no regime.</div></div>';
@@ -1191,7 +1193,7 @@ function renderPlano(){
   var ramp='',acc=0;for(var _k=0;_k<10;_k++){acc+=dist[_k];ramp+='<td style="text-align:center;padding:3px 6px"><div style="color:var(--mut);font-size:11px">Mês '+(_k+1)+'</div><div style="font-weight:700;font-size:12px">'+BRLk(gReg*acc)+'</div></td>';}
   var pag='<div class="card" style="margin-bottom:12px;padding:14px 16px">'
     +'<h3 style="margin:0 0 6px">Recebimento — comissão paga em 10 parcelas não lineares</h3>'
-    +'<div style="font-size:13px">Uma venda de '+BRLk(PLANO_TICKET)+' ('+bem+(bem==='Imóvel'?', '+_planoAdesaoLabel(adesao):'')+') rende <b>'+BRL(comV)+'</b> de comissão, dividida por parcela assim:</div>'
+    +'<div style="font-size:13px">Uma venda de '+BRLk(ticket)+' ('+bem+(bem==='Imóvel'?', '+_planoAdesaoLabel(adesao):'')+') rende <b>'+BRL(comV)+'</b> de comissão, dividida por parcela assim:</div>'
     +'<div style="overflow-x:auto"><table style="margin-top:6px;border-collapse:collapse"><tbody><tr>'+brk+'</tr></tbody></table></div>'
     +'<div style="font-size:13px;margin-top:10px">Vendendo <b>'+vendas+'/mês</b> de forma constante, o recebimento mensal sobe (não linear) até o regime de <b>'+BRL(gReg)+'/mês</b>:</div>'
     +'<div style="overflow-x:auto"><table style="margin-top:6px;border-collapse:collapse"><tbody><tr>'+ramp+'</tr></tbody></table></div>'
@@ -1199,10 +1201,10 @@ function renderPlano(){
   el('planoBox').innerHTML=head+pag
     +'<div style="font-size:13px;font-weight:600;margin:4px 0 6px">Esforço mensal para vender '+vendas+'/mês:</div>'
     +'<div class="grid" style="grid-template-columns:1fr 1fr;gap:12px">'
-    +_planoCard('Com a SUA conversão atual',real,vendas,true)
-    +_planoCard('Com a meta de conversão da empresa',PLANO_CONV_DEF,vendas,false)
+    +_planoCard('Com a SUA taxa de passagem (histórico)',real,vendas,true)
+    +_planoCard('Com a premissa de passagem do mercado',PLANO_CONV_DEF,vendas,false)
     +'</div>'
-    +'<div class="note" style="margin-top:10px;color:var(--mut);font-size:12px">Taxas de passagem = histórico real de cada vendedor (* = etapa sem dados suficientes, usa a meta da empresa). Ticket médio e taxa de administração são premissas globais porque o valor dos negócios ainda não é preenchido na maioria dos leads; ao preencher o valor, o plano passa a usar o ticket real.</div>';
+    +'<div class="note" style="margin-top:10px;color:var(--mut);font-size:12px">Esquerda = taxa de passagem real do vendedor (* = etapa sem dados suficientes, cai na premissa de mercado). Direita = premissa de passagem do mercado. Ticket ajustável pelo vendedor (padrão = menor ticket de imóvel, R$400 mil); a taxa de administração é premissa.</div>';
 }
 function renderFila(){
  if(!el('tFila'))return;
