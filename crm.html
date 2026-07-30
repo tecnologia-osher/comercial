@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>OSHER CAPITAL — CRM Comercial</title><!-- v-pb2 -->
-<!-- crm v27 · Meu Plano: painel "Plano do mês" lido da tabela planos_mes do Supabase (RLS: vendedor vê só o dele, admin/diretor todos); mostra meta, realizado do mês, balanço (cumpriu/avançar/melhorar) e foco; alimentado pela rotina mensal do 1:1. Mantém: ticket selecionável, conversão real vs mercado, comissão por bem/taxa × 50%, 10 parcelas não lineares · 2026-07-30 -->
+<!-- crm v28 · Meu Plano: mostra a APRESENTAÇÃO do 1:1 (deck) embutida, lida de planos_mes.deck_html (RLS: vendedor só o dele); deck guardado como gz:base64 e descomprimido no navegador (DecompressionStream); botão tela cheia (blob). Alimentado pela rotina mensal. Mantém: ticket selecionável, conversão real vs mercado, comissão por bem/taxa × 50%, 10 parcelas não lineares · 2026-07-30 -->
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300..800&display=swap" rel="stylesheet">
 <style>
@@ -852,8 +852,12 @@ async function cloudPullContratos(){try{var B=SB_URL+'/rest/v1/';if(!_getTok())r
 var PLANOMES=[],_planoLoading=false;
 async function cloudPullPlano(){try{if(!_getTok())return false;var r=await authFetch(SB_URL+'/rest/v1/planos_mes?select=*&order=mes.desc',{});if(!r.ok)return false;var pg=await r.json();if(!Array.isArray(pg))return false;PLANOMES=pg;return true;}catch(e){console.warn('planos_mes pull falhou',e);}return false;}
 function _mesLabel(m){var M=['','janeiro','fevereiro','março','abril','maio','junho','julho','agosto','setembro','outubro','novembro','dezembro'];try{var a=String(m).split('-');return (M[+a[1]]||'')+' de '+a[0];}catch(e){return m;}}
-function _pmKpi(v,l){return '<div class="kpi" style="padding:8px"><div class="val" style="font-size:20px">'+(v==null?'—':v)+'</div><div class="lbl">'+esc(l)+'</div></div>';}
-function _planoMesPanel(vend){if(!PLANOMES||!PLANOMES.length)return '';var rows=PLANOMES.filter(function(x){return x.vendedor===vend;});if(!rows.length)return '';rows.sort(function(a,b){return String(b.mes).localeCompare(String(a.mes));});var p=rows[0],rz=p.realizado||{};return '<div class="card" style="margin-bottom:12px;padding:14px 16px;border-color:var(--ac2)"><h3 style="margin:0 0 4px">Plano do mês — '+esc(_mesLabel(p.mes))+'</h3><div style="font-size:13px;margin-bottom:8px">Meta: '+esc(p.meta_txt||'')+'</div><div class="grid" style="grid-template-columns:repeat(4,1fr);gap:8px">'+_pmKpi(rz.g,'fechamentos no mês')+_pmKpi(rz.pr,'propostas no mês')+_pmKpi(rz.ql,'qualificações no mês')+_pmKpi(rz.fech3m,'vendas em 3 meses')+'</div><div class="note" style="margin-top:8px"><b>Balanço:</b> '+esc(p.veredito||'')+'</div>'+(p.foco?'<div class="note" style="margin-top:4px"><b>Foco do mês:</b> '+esc(p.foco)+'</div>':'')+'</div>';}
+var _deckCache={};
+function _planoDeckObj(vend){if(!PLANOMES||!PLANOMES.length)return null;var rows=PLANOMES.filter(function(x){return x.vendedor===vend;});if(!rows.length)return null;rows.sort(function(a,b){return String(b.mes).localeCompare(String(a.mes));});return rows[0];}
+async function _deckHtml(p){if(!p||!p.deck_html)return '';var key=p.vendedor+'|'+p.mes;if(_deckCache[key])return _deckCache[key];var h=p.deck_html;if(h.slice(0,3)==='gz:'){try{var bin=atob(h.slice(3));var arr=new Uint8Array(bin.length);for(var i=0;i<bin.length;i++)arr[i]=bin.charCodeAt(i);var ds=new DecompressionStream('gzip');var st=new Blob([arr]).stream().pipeThrough(ds);h=await new Response(st).text();}catch(e){console.warn('deck ungz falhou',e);return '';}}_deckCache[key]=h;return h;}
+async function abrirPlanoDeck(){var vend=(el('planoVend')&&el('planoVend').value)||(ME&&ME.nome);var p=_planoDeckObj(vend);var h=await _deckHtml(p);if(!h){alert('Apresentação ainda não disponível para este mês.');return;}var b=new Blob([h],{type:'text/html'});window.open(URL.createObjectURL(b),'_blank');}
+function _planoDeckSection(vend){var p=_planoDeckObj(vend);if(!p)return '';if(!p.deck_html)return '<div class="card" style="margin-bottom:12px;padding:14px 16px"><h3 style="margin:0 0 4px">Apresentação do 1:1 — '+esc(_mesLabel(p.mes))+'</h3><div class="note">Sua apresentação será publicada no fechamento do mês.</div></div>';return '<div class="card" style="margin-bottom:12px;padding:12px 14px"><div style="display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:8px"><h3 style="margin:0">Sua apresentação do 1:1 — '+esc(_mesLabel(p.mes))+'</h3><button class="btn sm" onclick="abrirPlanoDeck()">Abrir em tela cheia</button></div><iframe id="planoDeckFrame" title="Apresentação do plano" style="width:100%;height:72vh;border:1px solid var(--bd);border-radius:10px;background:#081d36"></iframe></div>';}
+function _fillPlanoDeck(vend){var p=_planoDeckObj(vend);if(!p||!p.deck_html)return;_deckHtml(p).then(function(h){var f=el('planoDeckFrame');if(f&&h)f.srcdoc=h;});}
 /* ===== DISTRIBUIÇÃO DE LEADS: quem está ativo/pausado no rodízio ===== */
 var LEAD_PAUSADOS=[];var LEAD_SELLERS=[];
 async function cloudPullRouting(){try{if(!canSeeAll()||!_getTok())return false;var r=await authFetch(SB_URL+'/rest/v1/lead_routing?id=eq.1&select=pausados',{});if(r.ok){var j=await r.json();if(Array.isArray(j)&&j[0]&&Array.isArray(j[0].pausados))LEAD_PAUSADOS=j[0].pausados;}var rs=await authFetch(SB_URL+'/rest/v1/profiles?papel=in.(interno,diretor)&select=nome&order=nome.asc',{});if(rs.ok){var js=await rs.json();if(Array.isArray(js))LEAD_SELLERS=js.map(function(x){return x.nome;}).filter(Boolean);}return true;}catch(e){console.warn('routing pull falhou',e);}return false;}
@@ -1205,13 +1209,14 @@ function renderPlano(){
     +'<div style="font-size:13px;margin-top:10px">Vendendo <b>'+vendas+'/mês</b> de forma constante, o recebimento mensal sobe (não linear) até o regime de <b>'+BRL(gReg)+'/mês</b>:</div>'
     +'<div style="overflow-x:auto"><table style="margin-top:6px;border-collapse:collapse"><tbody><tr>'+ramp+'</tr></tbody></table></div>'
     +'<div class="note" style="margin-top:8px;color:var(--mut);font-size:11px">Percentuais da tabela oficial de comissão (bem × taxa × adesão). A 1ª parcela cai no mês seguinte à venda; o quadro começa no 1º recebimento.</div></div>';
-  el('planoBox').innerHTML=_planoMesPanel(vend)+head+pag
+  el('planoBox').innerHTML=_planoDeckSection(vend)+head+pag
     +'<div style="font-size:13px;font-weight:600;margin:4px 0 6px">Esforço mensal para vender '+vendas+'/mês:</div>'
     +'<div class="grid" style="grid-template-columns:1fr 1fr;gap:12px">'
     +_planoCard('Com a SUA taxa de passagem (histórico)',real,vendas,true)
     +_planoCard('Com a premissa de passagem do mercado',PLANO_CONV_DEF,vendas,false)
     +'</div>'
     +'<div class="note" style="margin-top:10px;color:var(--mut);font-size:12px">Esquerda = taxa de passagem real do vendedor (* = etapa sem dados suficientes, cai na premissa de mercado). Direita = premissa de passagem do mercado. Ticket ajustável pelo vendedor (padrão = menor ticket de imóvel, R$400 mil); a taxa de administração é premissa.</div>';
+  _fillPlanoDeck(vend);
 }
 function renderFila(){
  if(!el('tFila'))return;
