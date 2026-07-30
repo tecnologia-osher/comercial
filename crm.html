@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>OSHER CAPITAL — CRM Comercial</title><!-- v-pb2 -->
-<!-- crm v21 · nova aba "Transferir": transferência em lote de leads de TRÁFEGO entre vendedores (origem→destino, marcar todos), admin/diretor · Fila já lista o diretor-que-vende (Pedro) para pausar/retomar · 2026-07-29 -->
+<!-- crm v22 · nova aba "Meu Plano": plano de negócio por vendedor a partir da meta de ganho mensal (vendas, crédito e funil reverso) com taxa REAL do vendedor e meta da empresa lado a lado; premissas globais ticket R$150k / taxa 17,5% / conv 40-50-25 · 2026-07-30 -->
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300..800&display=swap" rel="stylesheet">
 <style>
@@ -177,6 +177,7 @@ label.fl{display:flex;flex-direction:column;gap:5px;font-size:12px;color:var(--m
   <div class="brand"><div class="lock"><span class="lgo">osher</span><span class="lgc">Capital</span></div><div class="b2">CRM Comercial</div></div>
   <nav id="nav">
     <button data-v="inicio" class="on">Início</button>
+    <button data-v="plano">Meu Plano</button>
     <button data-v="dash">Dashboard</button>
     <button data-v="conv" data-see="1">Taxa de conversão</button>
     <button data-v="funil">Funil</button>
@@ -306,6 +307,16 @@ label.fl{display:flex;flex-direction:column;gap:5px;font-size:12px;color:var(--m
     </tr></thead><tbody></tbody></table>
     <div class="empty" id="filaEmpty" style="display:none">Nenhum lead de tráfego recebido ainda. Conecte a Meta (ou envie pelo formulário) para começar.</div>
   </div>
+</section>
+
+<!-- MEU PLANO (plano de negócio a partir da meta de ganho) -->
+<section class="view" id="v-plano">
+  <div class="filters">
+    <label style="font-size:13px">Meta de ganho no mês (R$): <input id="planoMeta" type="number" min="0" step="500" oninput="renderPlano()" style="width:150px;padding:6px 8px"></label>
+    <label style="font-size:13px" data-see="1">Vendedor: <select id="planoVend" onchange="renderPlano()"></select></label>
+    <span class="pill" id="planoStat"></span>
+  </div>
+  <div id="planoBox"></div>
 </section>
 
 <!-- TRANSFERÊNCIA DE LEADS DE TRÁFEGO (admin/diretor) -->
@@ -1120,6 +1131,50 @@ function doTransferLeads(){
   ids.forEach(function(sv){var d=(DB.deals||[]).find(function(x){return sid(x.id)===sv&&x.vendedor===de&&isInbound(x);});if(d){d.vendedor=para;d.atualizadoEm=now;n++;}});
   save();renderAll();alert(n+' lead(s) de tráfego transferido(s) para '+para+'.');
 }
+/* ===== MEU PLANO: plano de negócio por vendedor a partir da meta de ganho mensal ===== */
+var PLANO_TICKET=150000;      /* ticket médio de crédito (premissa global) */
+var PLANO_TAXA=17.5;          /* taxa de administração usada na estimativa de comissão */
+var PLANO_CONV_DEF={lq:0.40,qp:0.50,pv:0.25}; /* metas de passagem da empresa: Lead→Qualif, Qualif→Proposta, Proposta→Venda */
+function _planoFator(){return contraPct('Imóvel',PLANO_TAXA)*0.5;} /* fração do crédito que vira comissão do vendedor */
+function _planoComPorVenda(){return PLANO_TICKET*_planoFator();}
+function _planoPassou(vend,st){var n=0;(DB.deals||[]).forEach(function(d){if(d.vendedor!==vend)return;var hit=(d.hist||[]).some(function(x){return x.st===st;});if(!hit&&d.estagio===st)hit=true;if(hit)n++;});return n;}
+function _planoGanhos(vend){return (DB.deals||[]).filter(function(d){return d.vendedor===vend&&stageType(d.linha,d.estagio)==='won';}).length;}
+function planoRatesReal(vend){var MIN=4;var pros=_planoPassou(vend,'Prospecção'),qual=_planoPassou(vend,'Qualificação'),prop=_planoPassou(vend,'Proposta'),gan=_planoGanhos(vend);
+  function r(num,den,def){return (den>=MIN&&num<=den&&num>0)?(num/den):def;}
+  return {lq:r(qual,pros,PLANO_CONV_DEF.lq),lqOk:(pros>=MIN&&qual>0),qp:r(prop,qual,PLANO_CONV_DEF.qp),qpOk:(qual>=MIN&&prop>0),pv:r(gan,prop,PLANO_CONV_DEF.pv),pvOk:(prop>=MIN&&gan>0)};
+}
+function _planoCard(titulo,rates,vendas,marca){
+  var pct=function(x){return Math.round(x*100)+'%';},up=function(x){return Math.max(0,Math.ceil(x));},sem=function(x){return up(x/4.33);};
+  var prop=up(vendas/(rates.pv||PLANO_CONV_DEF.pv)),qual=up(prop/(rates.qp||PLANO_CONV_DEF.qp)),leads=up(qual/(rates.lq||PLANO_CONV_DEF.lq));
+  function star(ok){return (marca&&!ok)?' <span title="sem histórico suficiente; usando a meta da empresa" style="color:var(--mut)">*</span>':'';}
+  function lin(rot,val){return '<tr><td class="l">'+rot+'</td><td class="l" style="text-align:right"><b>'+val+'</b>/mês · '+sem(val)+'/sem</td></tr>';}
+  function set(rot,p,ok){return '<tr><td class="l" style="color:var(--mut);font-size:12px">'+rot+' '+pct(p)+star(ok)+'</td><td></td></tr>';}
+  return '<div class="card" style="padding:14px 16px"><h3 style="margin:0 0 8px">'+esc(titulo)+'</h3>'
+    +'<table style="width:100%;font-size:13px"><tbody>'
+    +lin('Leads (Prospecção)',leads)+set('&#8595; Qualificação',rates.lq,rates.lqOk)
+    +lin('Qualificados',qual)+set('&#8595; Proposta',rates.qp,rates.qpOk)
+    +lin('Propostas',prop)+set('&#8595; Fechamento',rates.pv,rates.pvOk)
+    +lin('Vendas',vendas)
+    +'</tbody></table></div>';
+}
+function renderPlano(){
+  if(!el('planoBox')||!ME)return;
+  var vend=ME.nome,sel=el('planoVend');
+  if(canSeeAll()&&sel){if(sel.options.length<=1){var opts=sellers().map(function(p){return p.nome;});sel.innerHTML=opts.map(function(v){return '<option'+(v===ME.nome?' selected':'')+'>'+esc(v)+'</option>';}).join('');}vend=sel.value||ME.nome;}
+  var comV=_planoComPorVenda(),mIn=el('planoMeta'),meta=+((mIn&&mIn.value)||0);
+  if(!meta){var m=memberByName(vend)||{};meta=Math.round((+m.meta||0)*_planoFator());if(!meta)meta=10000;if(mIn)mIn.value=meta;}
+  var vendas=Math.max(1,Math.ceil(meta/comV)),credito=vendas*PLANO_TICKET,real=planoRatesReal(vend);
+  if(el('planoStat'))el('planoStat').textContent='Ticket médio '+BRLk(PLANO_TICKET)+' · taxa '+PLANO_TAXA+'% · '+BRL(comV)+' por venda ('+(_planoFator()*100).toFixed(2).replace('.',',')+'% do crédito)';
+  var head='<div class="card" style="margin-bottom:12px;padding:14px 16px">'
+    +'<div style="font-size:15px"><b>'+esc(vend)+'</b> — para ganhar <b>'+BRL(meta)+'</b> no mês:</div>'
+    +'<div style="margin-top:6px">Fechar <b>'+vendas+' venda(s)</b> = <b>'+BRL(credito)+'</b> em crédito · comissão de '+BRL(comV)+' por venda.</div></div>';
+  el('planoBox').innerHTML=head
+    +'<div class="grid" style="grid-template-columns:1fr 1fr;gap:12px">'
+    +_planoCard('Com a SUA conversão atual',real,vendas,true)
+    +_planoCard('Com a meta de conversão da empresa',PLANO_CONV_DEF,vendas,false)
+    +'</div>'
+    +'<div class="note" style="margin-top:10px;color:var(--mut);font-size:12px">Ticket médio, taxa de administração e metas de conversão são premissas globais. O asterisco (*) marca etapa sem histórico suficiente do vendedor, que passa a usar a meta da empresa.</div>';
+}
 function renderFila(){
  if(!el('tFila'))return;
  renderDistPanel();
@@ -1514,7 +1569,7 @@ function rotinaVendedor(){var r=weekRange(0);var av=weekActivity(ME.nome,r[0],r[
 function rotinaDiretor(){var r=weekRange(0);var names=sellers().map(function(s){return s.nome;});var today=todayStr();var huddle=names.map(function(n){var nv=DB.deals.filter(function(d){return d.vendedor===n&&dDate(d.criadoEm)===today;}).length;var rh=0;DB.deals.forEach(function(d){if(d.vendedor!==n)return;(d.reunioes||[]).forEach(function(x){if(x.data===today)rh++;});});var lh=(DB.atividades||[]).filter(function(a){return a.v===n&&dDate(a.em)===today&&a.tipo==='ligacao';}).length;var atr=DB.deals.filter(function(d){return d.vendedor===n&&overdue(d);}).length;if(!(nv||rh||lh||atr))return null;return '<tr><td class="l">'+esc(n)+'</td><td>'+lh+'</td><td>'+nv+'</td><td>'+rh+'</td><td>'+(atr?'<span class="badge b-bad">'+atr+'</span>':'0')+'</td></tr>';}).filter(Boolean).join('')||'<tr><td class="l" colspan="5"><div class="empty">Sem atividade hoje ainda.</div></td></tr>';var um=names.map(function(n){var av=weekActivity(n,r[0],r[1]);var pipe=DB.deals.filter(function(d){return d.vendedor===n&&isOpen(d);});if(!(pipe.length||av.novos||av.fechados))return null;var pv=pipe.reduce(function(a,d){return a+(d.valor||0)},0);var neg=pipe.filter(function(d){return d.estagio==='Negociação'}).length;var par=pipe.filter(function(d){return daysSince(d.stageSince)>14}).length;var m=memberByName(n)||{};var pm=(m.metaWkNovos||0)?Math.round(av.novos/(m.metaWkNovos)*100):null;return '<tr><td class="l">'+esc(n)+'</td><td>'+BRLk(pv)+'</td><td>'+neg+'</td><td>'+(par?'<span class="badge b-bad">'+par+'</span>':'0')+'</td><td>'+av.novos+'</td><td>'+av.reunioes+'</td><td>'+av.propostas+'</td><td>'+(pm==null?'—':'<span class="badge '+(pm>=100?'b-ok':pm>=60?'b-warn':'b-bad')+'">'+pm+'%</span>')+'</td></tr>';}).filter(Boolean).join('')||'<tr><td class="l" colspan="8"><div class="empty">Sem pipeline ativo.</div></td></tr>';var tot={lig:0,reun:0,prop:0,novos:0,qual:0,fech:0};names.forEach(function(n){var a=weekActivity(n,r[0],r[1]);tot.lig+=a.ligacoes;tot.reun+=a.reunioes;tot.prop+=a.propostas;tot.novos+=a.novos;tot.qual+=a.qualif;tot.fech+=a.fechados;});var convT=tot.novos?Math.round(tot.qual/tot.novos*100):0;var valT=names.reduce(function(s,n){return s+DB.deals.filter(function(d){return d.vendedor===n&&isWon(d)&&inRange(d.ganhoEm,r[0],r[1]);}).reduce(function(a,d){return a+(d.valor||0)},0);},0);var pir='<div class="card"><h3><span class="dot" style="background:var(--vio)"></span>Atividades → Objetivos → Resultados</h3><div class="h3sub">Foque no que é gerenciável (semana)</div><div style="display:flex;flex-direction:column;gap:8px"><div style="background:var(--card2);border-radius:10px;padding:10px 12px;font-size:13px"><b>Atividades</b> · '+tot.lig+' ligações · '+tot.reun+' reuniões · '+tot.prop+' propostas</div><div style="background:var(--card2);border-radius:10px;padding:10px 12px;font-size:13px;margin-left:18px"><b>Objetivos</b> · '+tot.novos+' novos · '+tot.qual+' qualificados · '+convT+'% qualif.</div><div style="background:var(--card2);border-radius:10px;padding:10px 12px;font-size:13px;margin-left:36px"><b>Resultados</b> · '+tot.fech+' fechados · '+BRLk(valT)+'</div></div></div>';return '<div style="font-size:21px;font-weight:800;margin-bottom:4px">Rotina da Equipe</div><div style="font-size:13px;color:var(--mut);margin-bottom:16px">Cadência: Daily Huddle, 1:1 semanal e foco em atividade</div><div class="grid cards2"><div class="card" style="padding:8px 10px 0"><h3><span class="dot"></span>Pauta do Daily Huddle (hoje)</h3><div class="h3sub">Métricas do dia · onde destravar</div><table><thead><tr><th class="l">Vendedor</th><th>Ligações</th><th>Novos</th><th>Reuniões</th><th>Atrasados</th></tr></thead><tbody>'+huddle+'</tbody></table></div>'+pir+'</div><div class="card" style="padding:8px 10px 0;margin-top:14px"><h3><span class="dot" style="background:var(--ac2)"></span>Pauta do 1:1 semanal</h3><div class="h3sub">Pipeline + atividade vs. meta — pronto para a reunião</div><table><thead><tr><th class="l">Vendedor</th><th>Pipeline</th><th>Negoc.</th><th>Parados</th><th>Novos(sem)</th><th>Reuniões</th><th>Propostas</th><th>Pace novos</th></tr></thead><tbody>'+um+'</tbody></table></div>';}
 function renderRotina(){var b=el('rotinaBody');if(!b||!ME)return;b.innerHTML=canSeeAll()?rotinaDiretor():rotinaVendedor();}
 
-function renderAll(){if(!ME)return;renderInicio();renderDash();renderConvView();renderFunil();renderClientes();renderFila();renderTransfer();renderTarefas();renderBoard();renderPos();renderLeads();renderVend();renderAtiv();renderTracao();renderReport();renderRotina();if(el('v-sim').classList.contains('on'))runSim();else fillSimDealSelect();fillFinDealSelect();el('foot').innerHTML='OSHER CAPITAL · CRM Comercial — dados salvos localmente neste navegador. '+DB.deals.length+' negócios · meta '+BRLk(CFG().meta)+'. '+(canSeeAll()?'<b>Exportar</b> para backup/compartilhar. ':'')+'Funciona offline.';}
+function renderAll(){if(!ME)return;renderInicio();renderDash();renderConvView();renderFunil();renderClientes();renderFila();renderTransfer();renderPlano();renderTarefas();renderBoard();renderPos();renderLeads();renderVend();renderAtiv();renderTracao();renderReport();renderRotina();if(el('v-sim').classList.contains('on'))runSim();else fillSimDealSelect();fillFinDealSelect();el('foot').innerHTML='OSHER CAPITAL · CRM Comercial — dados salvos localmente neste navegador. '+DB.deals.length+' negócios · meta '+BRLk(CFG().meta)+'. '+(canSeeAll()?'<b>Exportar</b> para backup/compartilhar. ':'')+'Funciona offline.';}
 
 /* ===================== TEMA (claro/escuro) ===================== */
 function _themeIcon(dark){return dark
