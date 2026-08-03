@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>OSHER CAPITAL — CRM Comercial</title><!-- v-pb2 -->
-<!-- crm v29 · Meu Plano: aba mostra SOMENTE a apresentação do 1:1 (deck) da planos_mes.deck_html (RLS; gz+DecompressionStream; botão tela cheia). Removida a calculadora interativa antiga (meta/bem/taxa/ticket/funil/recebimento) para não poluir. Diretor/admin escolhem o vendedor no seletor. Alimentado pela rotina mensal · 2026-07-30 -->
+<!-- crm v30 · FIX fuso: dDate() agora converte timestamps para a data LOCAL (BRT) em vez de cortar a data em UTC. Corrige contagem de leads/atividades lançados à noite (após 21h BRT) que caíam no dia/semana seguinte — sintoma: "imputei leads no domingo e os números não mudaram". Fila "chegaram hoje" e data exibida também usam dDate. Mantém v29 (Meu Plano = apresentação do 1:1) · 2026-08-03 -->
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300..800&display=swap" rel="stylesheet">
 <style>
@@ -1117,7 +1117,7 @@ function renderTransfer(){
   rows.sort(function(a,b){return String(b.recebidoEm||b.criadoEm||'').localeCompare(String(a.recebidoEm||a.criadoEm||''));});
   if(!rows.length){el('trEmpty').style.display='';el('trEmpty').textContent='Este vendedor não tem leads de tráfego.';el('trStat').textContent='0 leads de tráfego';return;}
   el('trEmpty').style.display='none';el('trStat').textContent=rows.length+' leads de tráfego';
-  tb.innerHTML=rows.map(function(d){var when=String(d.recebidoEm||d.criadoEm||'').slice(0,10);return '<tr>'+
+  tb.innerHTML=rows.map(function(d){var when=dDate(d.recebidoEm||d.criadoEm);return '<tr>'+
     '<td><input type="checkbox" class="trChk" value="'+sid(d.id)+'"></td>'+
     '<td class="l">'+esc(d.cliente||'(sem nome)')+'</td>'+
     '<td class="l">'+esc(d.telefone||'')+'</td>'+
@@ -1191,7 +1191,7 @@ function renderFila(){
  var base=scope(DB.deals).filter(isInbound);
  var rows=base.filter(function(d){if(fv&&d.vendedor!==fv)return false;var when=d.recebidoEm||d.criadoEm||'';if(fm&&String(when).slice(0,7)!==fm)return false;if(fs){var hay=((d.cliente||'')+' '+(d.telefone||'')+' '+(d.campanha||'')+' '+(d.origem||'')).toLowerCase();if(hay.indexOf(fs)<0)return false;}return true;});
  rows.sort(function(a,b){return String(b.recebidoEm||b.criadoEm||'').localeCompare(String(a.recebidoEm||a.criadoEm||''));});
- var hoje=rows.filter(function(d){return String(d.recebidoEm||d.criadoEm||'').slice(0,10)===todayStr();}).length;
+ var hoje=rows.filter(function(d){return dDate(d.recebidoEm||d.criadoEm)===todayStr();}).length;
  var semContato=rows.filter(function(d){return isOpen(d)&&!d.primeiroContatoEm&&d.estagio==='Prospecção';}).length;
  if(el('filaKpis'))el('filaKpis').innerHTML='<div class="kpi"><div class="lbl">Leads de tráfego</div><div class="val">'+rows.length+'</div></div><div class="kpi"><div class="lbl">Chegaram hoje</div><div class="val">'+hoje+'</div></div><div class="kpi"><div class="lbl">Sem 1º contato</div><div class="val" style="color:'+(semContato?'var(--warn)':'var(--txt)')+'">'+semContato+'</div><div class="sub">ligue rápido</div></div>';
  if(el('filaStat'))el('filaStat').textContent=rows.length+' leads';
@@ -1516,7 +1516,7 @@ var alhtml=al.map(function(x){return '<div style="display:flex;justify-content:s
 var byV={};won.forEach(function(d){if((d.ganhoEm||'').slice(0,7)!==ym)return;byV[d.vendedor]=(byV[d.vendedor]||0)+(d.valor||0)});var vs=Object.keys(byV).sort(function(a,b){return byV[b]-byV[a]}).slice(0,5);var maxv=Math.max.apply(null,vs.map(function(v){return byV[v]}).concat([1]));var vh=vs.length?vs.map(function(v){var w=Math.round(byV[v]/maxv*100);return '<div class="hbar"><div class="hname" title="'+esc(v)+'">'+esc(v)+'</div><div class="htrack"><div class="hfill" style="width:'+w+'%"></div></div><div class="hval">'+BRLk(byV[v])+'</div></div>'}).join(''):'<div class="empty">Sem fechamentos no mês ainda.</div>';
 return kp+'<div class="grid cards2"><div class="card"><h3><span class="dot" style="background:var(--red)"></span>Alertas operacionais</h3><div class="h3sub">O que pede ação agora</div>'+alhtml+'</div><div class="card"><h3><span class="dot" style="background:var(--ac2)"></span>Top vendedores no mês</h3><div class="h3sub">Valor fechado</div>'+vh+'</div></div>';}
 
-function dDate(iso){return (iso||'').slice(0,10);}
+function dDate(iso){if(!iso)return '';var s=String(iso);if(s.indexOf('T')<0)return s.slice(0,10);var d=new Date(s);if(isNaN(d.getTime()))return s.slice(0,10);return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');}/* data no fuso LOCAL (BRT): evita que lançamento à noite caia no dia/semana seguinte por causa do UTC */
 function inRange(iso,de,ate){var d=dDate(iso);if(!d)return false;if(de&&d<de)return false;if(ate&&d>ate)return false;return true;}
 function isQualified(d){if(isWon(d))return true;var ost=openStages(d.linha);var qi=ost.indexOf('Qualificação');var i=ost.indexOf(d.estagio);return qi>=0&&i>=qi;}
 function weekStart(iso){var d=new Date(dDate(iso)+'T00:00:00');var off=(d.getDay()+6)%7;d.setDate(d.getDate()-off);return d.toISOString().slice(0,10);}
