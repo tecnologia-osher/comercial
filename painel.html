@@ -4,7 +4,7 @@
 <meta charset="UTF-8"><meta http-equiv="Cache-Control" content="no-store">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Painel Comercial — Osher Capital</title>
-<!-- painel v15 · semana comercial SEGUNDA a DOMINGO (wkIdx offset +3, alinhado ao CRM) · 2026-07-13 · aba Conferência CRM × Planilha · 2026-07-11 · auditoria XSS/logout 2026-07-09 · TODO agrupamento por mês/período/semana = data da 1ª parcela paga (adesão) · 2026-07-06 -->
+<!-- painel v16 · aba Tráfego pago (custo × retorno; margem Osher = crédito×taxa×50%; investimento em midia_custos, RLS diretoria) · 2026-08-11 · semana comercial SEGUNDA a DOMINGO (wkIdx offset +3, alinhado ao CRM) · 2026-07-13 · aba Conferência CRM × Planilha · 2026-07-11 · auditoria XSS/logout 2026-07-09 · TODO agrupamento por mês/período/semana = data da 1ª parcela paga (adesão) · 2026-07-06 -->
 <!-- auditoria 2026-07-03 -->
 <base target="_top">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -188,6 +188,7 @@ th.l,td.l{text-align:left}tbody tr:hover{background:var(--card2)}
     <button data-t="um" onclick="showTab('um')">1:1 por vendedor</button>
     <button data-t="recon" onclick="showTab('recon')">Conferência CRM × Planilha</button>
     <button data-t="icp" onclick="showTab('icp')">ICP &amp; Perfil</button>
+    <button data-t="traf" onclick="showTab('traf')">Tráfego pago</button>
     <!-- aba "Novo contrato" oculta até o cadastro pelo painel funcionar (saveContract só exibe aviso) -->
     <button data-t="novo" onclick="showTab('novo')" style="display:none">Novo contrato</button>
   </div>
@@ -252,6 +253,7 @@ th.l,td.l{text-align:left}tbody tr:hover{background:var(--card2)}
 </div>
 
 <div class="panel" id="panel-icp"></div>
+<div class="panel" id="panel-traf"></div>
 
 <div class="panel" id="panel-novo">
   <div class="card full"><h2><span class="dot"></span>Cadastrar novo contrato</h2>
@@ -776,16 +778,16 @@ function closeClient(e){if(e&&e.type==='click'&&e.target&&e.target.id!=='cliModa
 function showLogin(){var l=el('loading');if(l)l.style.display='none';var o=el('ovLogin');if(o)o.style.display='flex';}
 /* doLogin legado (lista TEAM local) removido na auditoria 2026-07-03 — o login ativo (Supabase Auth) está no bloco abaixo */
 function logout(){CURRENT=null;__tok=null;ROWS=[];LEADS=[];location.reload();}
-function applyRole(){var full=CURRENT&&CURRENT.full;var hide=full?['novo']:['exec','novo','recon']; /* 'novo' oculto para todos; 'recon' (conferência) só admin/diretor */
+function applyRole(){var full=CURRENT&&CURRENT.full;var hide=full?['novo']:['exec','novo','recon','traf']; /* 'novo' oculto para todos; 'recon' e 'traf' (custos/diretoria) só admin/diretor */
  [].forEach.call(document.querySelectorAll('.tabs button'),function(b){b.style.display=(hide.indexOf(b.dataset.t)>=0)?'none':'';});
  var seg=el('segTipo');if(seg&&seg.parentNode)seg.parentNode.style.display=full?'':'none';
  var u=el('userChip');if(u)u.innerHTML=(CURRENT?('<b>'+esc(CURRENT.nome)+'</b> · '+esc(CURRENT.papel)+' &nbsp;'):'')+'<span class="clink" onclick="logout()">sair</span>';}
 /* ===================== NAV / BOOT ===================== */
-function showTab(t){['geral','exec','pipe','parcelas','um','recon','icp','novo'].forEach(function(x){el('panel-'+x).classList.toggle('on',x===t);});
+function showTab(t){['geral','exec','pipe','parcelas','um','recon','icp','traf','novo'].forEach(function(x){el('panel-'+x).classList.toggle('on',x===t);});
  [].forEach.call(document.querySelectorAll('.tabs button'),function(b){b.classList.toggle('on',b.dataset.t===t);});}
 function renderAll(){CUR={geral:buildGeral(F())};
  var R=F();el('subt').innerHTML=(winLabel()||'Geral')+' · '+(state.tipo==='all'?'todos os vendedores':state.tipo==='int'?'apenas internos':'apenas externos')+' · '+R.length+' contratos · '+BRLm(R.reduce(function(s,r){return s+r.valor;},0));
- renderGeral();renderExec();renderPipe();renderParcelas();renderOne();renderRecon();renderICP();}
+ renderGeral();renderExec();renderPipe();renderParcelas();renderOne();renderRecon();renderICP();renderTraf();}
 function onData(resp){el('loading').style.display='none';
  if(resp&&resp.error){el('subt').innerHTML='<span style="color:var(--red)">'+esc(resp.error)+'</span>';return;}
  ROWS=enrich((resp&&resp.rows)||[]);LEADS=(resp&&resp.leads)||[];INTERNAL={};(((resp&&resp.internal)||[])).forEach(function(n){INTERNAL[_nk(n)]=1;});
@@ -827,10 +829,78 @@ async function _loadData(){
   var dl=[],_o=0;while(true){var _pg=await fetch(SB_URL+'deals?select=*&order=id&limit=1000&offset='+_o,{headers:H}).then(x=>x.json());if(!Array.isArray(_pg))break;dl=dl.concat(_pg);if(_pg.length<1000)break;_o+=1000;}
   if(Array.isArray(cr)){
    var rows=cr.map(function(c){return {data:c.data,contrato:c.contrato,grupo:c.grupo,cota:c.cota,cliente:c.cliente,cpf:c.cpf,origem:c.origem,genero:c.genero,nasc:c.nascimento,cidade:c.cidade,bairro:c.bairro,profissao:c.profissao,vendedor:c.vendedor,tipoVend:c.tipo_vendedor,diretor:c.diretor,tipo:c.tipo,valor:+c.valor||0,taxa:c.taxa,adesao:c.adesao,administradora:c.administradora,lance:c.lance,parc:_pj(c.parc),status:c.status};});
-   var leads=(Array.isArray(dl)?dl:[]).map(function(d){return {entrada:d.criado_em,vendedor:d.vendedor,atendente:d.vendedor,origem:d.origem,interesse:d.bem,cliente:d.cliente,expectativa:(d.payload&&d.payload.expectativa)||d.expectativa||'',valor:(+d.valor||0),ganhoEm:(d.payload&&d.payload.ganhoEm)||null,perdaCat:(d.payload&&d.payload.perdaCat)||'',dataProximoPasso:(d.payload&&d.payload.dataProximoPasso)||'',atualizadoEm:(d.payload&&d.payload.atualizadoEm)||'',statusAgend:(d.payload&&d.payload.statusAgend)||'',cpf:(d.payload&&d.payload.cpf)||'',contrato:(d.payload&&d.payload.contrato)||'',administradora:(d.payload&&d.payload.administradora)||'',taxaAdm:(d.payload&&+d.payload.taxaAdm)||0,bem:d.bem,estagio:d.estagio,prob:d.prob,status:d.estagio};});
+   var leads=(Array.isArray(dl)?dl:[]).map(function(d){return {entrada:d.criado_em,vendedor:d.vendedor,atendente:d.vendedor,origem:d.origem,interesse:d.bem,cliente:d.cliente,expectativa:(d.payload&&d.payload.expectativa)||d.expectativa||'',valor:(+d.valor||0),ganhoEm:(d.payload&&d.payload.ganhoEm)||null,perdaCat:(d.payload&&d.payload.perdaCat)||'',dataProximoPasso:(d.payload&&d.payload.dataProximoPasso)||'',atualizadoEm:(d.payload&&d.payload.atualizadoEm)||'',statusAgend:(d.payload&&d.payload.statusAgend)||'',cpf:(d.payload&&d.payload.cpf)||'',contrato:(d.payload&&d.payload.contrato)||'',administradora:(d.payload&&d.payload.administradora)||'',taxaAdm:(d.payload&&+d.payload.taxaAdm)||0,bem:d.bem,estagio:d.estagio,prob:d.prob,status:d.estagio,inbound:((d.payload&&d.payload.inbound)===true)||/tr[aá]fego/i.test(String((d.payload&&d.payload.origem)||d.origem||''))||(((d.payload&&d.payload.origem)||d.origem)==='Meta Lead Ads')};});
+   if(CURRENT&&CURRENT.full){try{var mc=await fetch(SB_URL+'midia_custos?select=*',{headers:H}).then(x=>x.json());MCUSTOS={};if(Array.isArray(mc))mc.forEach(function(r){MCUSTOS[r.mes]=MCUSTOS[r.mes]||{investimento:0,leads_manual:null,canal:r.canal};MCUSTOS[r.mes].investimento+=(+r.investimento||0);if(r.leads_manual!=null)MCUSTOS[r.mes].leads_manual=+r.leads_manual;});}catch(_e){}}
    onData({rows:rows,leads:leads,internal:EMBED.internal});return;
   }
  }catch(e){_bootErr(e);}
+}
+/* ===== TRÁFEGO PAGO — custos vs retorno (diretoria) ===== */
+var MCUSTOS={};
+var TRAF_CONTRA_IMOVEL={14.5:0.032,15.5:0.033,16.5:0.034,17.5:0.035,18.5:0.036,19.5:0.037,20.5:0.039,21.5:0.039,22.5:0.040};
+var TRAF_CONTRA_MOVEL={14.5:0.032,15.5:0.033,16.5:0.034,17.5:0.035,18.5:0.036,19.5:0.040};
+function _trafBemImovel(b){return String(b||'').toUpperCase().indexOf('IM')===0;}
+function _trafContraPct(bem,taxa){var t=+taxa;if(!t)t=_trafBemImovel(bem)?17.5:17.5;var tbl=_trafBemImovel(bem)?TRAF_CONTRA_IMOVEL:TRAF_CONTRA_MOVEL;var ks=Object.keys(tbl).map(Number),best=ks[0];for(var i=1;i<ks.length;i++){if(Math.abs(ks[i]-t)<Math.abs(best-t))best=ks[i];}return tbl[best];}
+function _trafMargem(l){/* margem da Osher por venda = crédito × contra × 0.5 (Osher fica com metade do fundo de comissão) */var v=+l.valor||0;if(!v)v=(_trafBemImovel(l.bem||l.interesse)?400000:120000);return v*_trafContraPct(l.bem||l.interesse,l.taxaAdm)*0.5;}
+function _isTraf(l){return l&&l.inbound===true;}
+function saveCusto(mes,val){if(!CURRENT||!CURRENT.full||!__tok)return;var body=[{mes:mes,canal:'Meta',investimento:+val||0,atualizado_em:new Date().toISOString()}];fetch(SB_URL+'midia_custos?on_conflict=mes,canal',{method:'POST',headers:{apikey:SB_KEY,Authorization:'Bearer '+__tok,'Content-Type':'application/json',Prefer:'resolution=merge-duplicates,return=minimal'},body:JSON.stringify(body)}).then(function(r){if(r.ok){MCUSTOS[mes]=MCUSTOS[mes]||{investimento:0,leads_manual:null};MCUSTOS[mes].investimento=+val||0;renderTraf();}else{var e=el('traf_msg');if(e)e.innerHTML='<span style="color:var(--red)">Não foi possível salvar o investimento (só diretoria pode editar).</span>';}}).catch(function(){});}
+function _trafCusto(mes){return (MCUSTOS[mes]&&+MCUSTOS[mes].investimento)||0;}
+function renderTraf(){var box=el('panel-traf');if(!box)return;
+ if(!CURRENT||!CURRENT.full){box.innerHTML='<div class="empty">Seção de custos disponível apenas para diretoria/sócios.</div>';return;}
+ var TL=(LEADS||[]).filter(_isTraf);
+ if(!TL.length){box.innerHTML='<div class="empty"><b>Tráfego pago</b> — nenhum lead marcado como tráfego (inbound) no CRM ainda. Assim que os leads de Meta/Google entrarem e forem marcados como "Ganho", o custo × retorno aparece aqui automaticamente.</div>';return;}
+ var wins=TL.filter(function(l){return l.status==='Ganho';});
+ /* agrupa por mês: leads pelo mês de entrada, vendas pelo mês do ganho */
+ var M={};function mo(l){return M[l]=M[l]||{leads:0,vendas:0,credito:0,margem:0};}
+ TL.forEach(function(l){var m=String(l.entrada||'').slice(0,7);if(/^\d{4}-\d{2}$/.test(m))mo(m).leads++;});
+ wins.forEach(function(l){var m=String(l.ganhoEm||l.entrada||'').slice(0,7);if(/^\d{4}-\d{2}$/.test(m)){var o=mo(m);o.vendas++;o.credito+=(+l.valor||0);o.margem+=_trafMargem(l);}});
+ var meses=Object.keys(M).sort();
+ var tLeads=0,tVendas=0,tCred=0,tMarg=0,tInv=0;
+ meses.forEach(function(m){tLeads+=M[m].leads;tVendas+=M[m].vendas;tCred+=M[m].credito;tMarg+=M[m].margem;tInv+=_trafCusto(m);});
+ var cpl=tLeads?tInv/tLeads:0, conv=tLeads?tVendas/tLeads:0, cac=tVendas?tInv/tVendas:0;
+ var margVenda=tVendas?tMarg/tVendas:0, roas=tInv?tMarg/tInv:0, result=tMarg-tInv;
+ var beConv=margVenda?cpl/margVenda:0; /* conversão de equilíbrio */
+ var pay1=tMarg*0.343; /* 1ª parcela (adesão à vista imóvel) ≈ 34,3% da margem cai no mês da venda */
+ function kpi(cls,lbl,val,sub){return '<div class="kpi '+cls+'"><div class="lbl">'+lbl+'</div><div class="val">'+val+'</div><div class="sub">'+sub+'</div></div>';}
+ var resCls=result>=0?'ok':'bad';
+ var rows=meses.map(function(m){var inv=_trafCusto(m),o=M[m],cplm=o.leads?inv/o.leads:0,cacm=o.vendas?inv/o.vendas:0,resm=o.margem-inv;var pp=m.split('-');var mlbl=pp[1]+'/'+pp[0];
+   return '<tr><td class="l">'+mlbl+'</td>'
+   +'<td><input class="cinp" type="number" min="0" step="100" value="'+(inv||'')+'" placeholder="0" onchange="saveCusto(\''+m+'\',this.value)" style="width:120px;text-align:right"></td>'
+   +'<td>'+o.leads+'</td><td>'+o.vendas+'</td>'
+   +'<td>'+(o.leads?(Math.round(o.vendas/o.leads*1000)/10)+'%':'—')+'</td>'
+   +'<td>'+(cplm?BRL(cplm):'—')+'</td>'
+   +'<td>'+(cacm?BRL(cacm):'—')+'</td>'
+   +'<td>'+(o.credito?BRLm2(o.credito):'—')+'</td>'
+   +'<td>'+BRL(o.margem)+'</td>'
+   +'<td style="color:'+(resm>=0?'var(--ac2)':'var(--red)')+';font-weight:700">'+BRL(resm)+'</td></tr>';}).join('');
+ box.innerHTML=
+  '<div id="traf_msg" style="margin-bottom:8px"></div>'+
+  '<div class="kpis kpis4">'+
+   kpi('','Investido em mídia',BRL(tInv),tInv?'lançado pela diretoria':'lance o investimento abaixo')+
+   kpi('','Leads de tráfego',tLeads,'CPL '+(cpl?BRL(cpl):'—'))+
+   kpi('ok','Vendas de tráfego',tVendas,pctf(tVendas,tLeads)+'% de conversão')+
+   kpi(resCls,'Resultado (margem − mídia)',BRL(result),roas?('ROAS '+(Math.round(roas*100)/100)+'x'):'defina o investimento')+
+  '</div>'+
+  '<div class="kpis kpis4" style="margin-top:14px">'+
+   kpi('','Margem Osher gerada',BRL(tMarg),'crédito × taxa × 50%')+
+   kpi('','CAC (custo por venda)',cac?BRL(cac):'—','mídia ÷ vendas')+
+   kpi('warn','Conversão de equilíbrio',beConv?((Math.round(beConv*1000)/10)+'%'):'—','CPL ÷ margem/venda')+
+   kpi('','Caixa no 1º mês (adesão)',BRL(pay1),'≈34% da margem entra à vista')+
+  '</div>'+
+  '<div class="card full" style="margin-top:18px"><h2><span class="dot" style="background:var(--vio)"></span>Custo × retorno por mês</h2>'+
+   '<div class="h2sub">Digite o investimento de mídia do mês (Meta/Google). Leads e vendas vêm do CRM automaticamente (leads = entrada; vendas = mês do "Ganho"). Só a diretoria edita.</div>'+
+   '<div style="overflow-x:auto"><table><thead><tr><th class="l">Mês</th><th>Invest. mídia</th><th>Leads</th><th>Vendas</th><th>Conv.</th><th>CPL</th><th>CAC</th><th>Crédito vendido</th><th>Margem Osher</th><th>Resultado</th></tr></thead>'+
+   '<tbody>'+rows+'</tbody>'+
+   '<tfoot><tr style="font-weight:700;border-top:2px solid var(--bd)"><td class="l">Total</td><td>'+BRL(tInv)+'</td><td>'+tLeads+'</td><td>'+tVendas+'</td><td>'+pctf(tVendas,tLeads)+'%</td><td>'+(cpl?BRL(cpl):'—')+'</td><td>'+(cac?BRL(cac):'—')+'</td><td>'+BRLm2(tCred)+'</td><td>'+BRL(tMarg)+'</td><td style="color:'+(result>=0?'var(--ac2)':'var(--red)')+'">'+BRL(result)+'</td></tr></tfoot></table></div>'+
+   '<div class="note">Margem Osher por venda = crédito × taxa de contribuição × 50% (a Osher fica com metade do fundo de comissão; a outra metade é do vendedor). Onde a taxa/valor não estão preenchidos no CRM, assume-se imóvel R$400 mil a 17,5%. O consórcio paga a comissão ao longo de 10 parcelas não lineares: a 1ª (adesão à vista) já traz ≈34% da margem no mês da venda, o que encurta o payback da mídia.</div>'+
+  '</div>'+
+  '<div class="card full" style="margin-top:18px"><h2><span class="dot" style="background:var(--ac2)"></span>Como ler para a diretoria</h2>'+
+   '<div class="note" style="font-size:13px;line-height:1.6">'+
+   '<b>ROAS</b> = margem Osher ÷ investimento. Acima de 1x, a mídia se paga; abaixo, dá prejuízo no acumulado.<br>'+
+   '<b>CAC</b> = quanto custa cada venda vinda de tráfego. Compare com a margem por venda ('+BRL(margVenda)+'): enquanto CAC &lt; margem/venda, cada venda gera lucro.<br>'+
+   '<b>Conversão de equilíbrio</b> = a taxa lead→venda mínima para empatar ao CPL atual. Hoje precisamos converter ≥ '+(beConv?((Math.round(beConv*1000)/10)+'%'):'—')+'; estamos em '+pctf(tVendas,tLeads)+'%.<br>'+
+   '<b>Payback</b>: como ≈34% da margem entra já no 1º mês (adesão à vista), o caixa recupera parte da mídia rápido, mesmo com o restante diluído em 10 parcelas.'+
+   '</div></div>';
 }
 function reload(){_loadData();}
 /* ===== TEMA (claro/escuro) ===== */
