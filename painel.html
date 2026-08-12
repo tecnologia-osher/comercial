@@ -4,7 +4,7 @@
 <meta charset="UTF-8"><meta http-equiv="Cache-Control" content="no-store">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Painel Comercial — Osher Capital</title>
-<!-- painel v19 · Tráfego pago: aba reage ao Recorte do topo (Mês→Semana 1,2,3… do calendário; Trimestre/Semestre/Ano→mês a mês); visual enxuto (KPIs + 1 bloco) · 2026-08-12 · v18 Fechamento mensal (tabela trafego_mensal + robô fechamento-trafego-mensal dia 1º 08h; MoM ▲▼) + deck HTML Osher · investido puxado do Meta via Supermetrics (conta act_542319472086083) · 2026-08-12 · v17 Relatório semanal automático (tabela trafego_semanal + robô relatorio-trafego-semanal seg 08h; foto semana + mês acumulado, ▲▼) · 2026-08-12 · v16 aba Tráfego pago (custo × retorno; margem Osher = crédito×taxa×50%; investimento em midia_custos, RLS diretoria) · 2026-08-11 · semana comercial SEGUNDA a DOMINGO (wkIdx offset +3, alinhado ao CRM) · 2026-07-13 · aba Conferência CRM × Planilha · 2026-07-11 · auditoria XSS/logout 2026-07-09 · TODO agrupamento por mês/período/semana = data da 1ª parcela paga (adesão) · 2026-07-06 -->
+<!-- painel v20 · Tráfego pago: todo mês com tráfego/investimento vira período selecionável (buildWindows inclui leads inbound + midia_custos) + rodapé curto de leitura (CAC/ROAS/margem/conversão de equilíbrio) · 2026-08-12 · v19 aba reage ao Recorte do topo (Mês→Semana 1,2,3…; Trimestre/Semestre/Ano→mês a mês); visual enxuto · 2026-08-12 · v18 Fechamento mensal (tabela trafego_mensal + robô fechamento-trafego-mensal dia 1º 08h; MoM ▲▼) + deck HTML Osher · investido puxado do Meta via Supermetrics (conta act_542319472086083) · 2026-08-12 · v17 Relatório semanal automático (tabela trafego_semanal + robô relatorio-trafego-semanal seg 08h; foto semana + mês acumulado, ▲▼) · 2026-08-12 · v16 aba Tráfego pago (custo × retorno; margem Osher = crédito×taxa×50%; investimento em midia_custos, RLS diretoria) · 2026-08-11 · semana comercial SEGUNDA a DOMINGO (wkIdx offset +3, alinhado ao CRM) · 2026-07-13 · aba Conferência CRM × Planilha · 2026-07-11 · auditoria XSS/logout 2026-07-09 · TODO agrupamento por mês/período/semana = data da 1ª parcela paga (adesão) · 2026-07-06 -->
 <!-- auditoria 2026-07-03 -->
 <base target="_top">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -330,7 +330,11 @@ function rollup(arr,g){if(g==='M')return arr;var gr={},ord=[];
 
 function buildWindows(){
   var ys={},qs={},ss={},ms={};
-  ROWS.forEach(function(r){var p=payMonthYMD(r);if(!p)return;ys[p.y]=1;qs[p.y+'|'+(Math.floor((p.mo-1)/3)+1)]=1;ss[p.y+'|'+(p.mo<=6?1:2)]=1;ms[p.y+'|'+p.mo]=1;});
+  function addYM(y,mo){ys[y]=1;qs[y+'|'+(Math.floor((mo-1)/3)+1)]=1;ss[y+'|'+(mo<=6?1:2)]=1;ms[y+'|'+mo]=1;}
+  ROWS.forEach(function(r){var p=payMonthYMD(r);if(!p)return;addYM(p.y,p.mo);});
+  /* garante que todo mês com tráfego pago (lead inbound ou investimento no Meta) seja selecionável, mesmo sem contrato no mês */
+  (window.LEADS||[]).forEach(function(l){if(l&&l.inbound===true){var m=String(l.entrada||'').slice(0,7);if(/^\d{4}-\d{2}$/.test(m))addYM(+m.slice(0,4),+m.slice(5,7));}});
+  try{Object.keys(MCUSTOS||{}).forEach(function(k){if(/^\d{4}-\d{2}$/.test(k))addYM(+k.slice(0,4),+k.slice(5,7));});}catch(_e){}
   var W=[{key:'',kind:'ALL',label:'Geral'}];
   Object.keys(ys).sort().forEach(function(y){W.push({key:'Y'+y,kind:'Y',year:+y,label:y});});
   Object.keys(qs).sort().forEach(function(k){var a=k.split('|');W.push({key:'Q'+k,kind:'Q',year:+a[0],q:+a[1],label:'T'+a[1]+'/'+a[0].slice(2)});});
@@ -940,7 +944,11 @@ function renderTraf(){var box=el('panel-traf');if(!box)return;
      '<div class="h2sub">Cada mês do recorte. Selecione <b>Mês</b> no topo e um período para abrir as semanas.</div>'+
      '<div style="overflow-x:auto"><table><thead><tr><th class="l">Mês</th><th>Investido</th><th>Leads</th><th>Vendas</th><th>Conv.</th><th>CPL</th><th>ROAS</th><th>Resultado</th></tr></thead><tbody>'+rows+'</tbody></table></div></div>';
  }
- box.innerHTML=intro+head+body;
+ var aCac=aVend?aInv/aVend:0, mVenda=aVend?aMarg/aVend:0, beConv=mVenda?aCpl/mVenda:0;
+ var foot='<div class="note" style="margin-top:14px;line-height:1.6">'+
+   '<b>CAC</b> '+(aCac?BRL(aCac):'—')+' &middot; <b>ROAS</b> '+(aRoas!=null?(Math.round(aRoas*100)/100)+'x':'—')+' &middot; <b>margem por venda</b> '+(mVenda?BRL(mVenda):'—')+' &middot; <b>conversão de equilíbrio</b> '+(beConv?((Math.round(beConv*1000)/10)+'%'):'—')+' (mínimo lead&rarr;venda para a mídia se pagar; estamos em '+pctf(aVend,aLeads)+'%). '+
+   'Margem Osher = crédito &times; taxa &times; 50%. Cerca de 34% dela entra já no 1º mês (adesão à vista), o que encurta o payback.</div>';
+ box.innerHTML=intro+head+body+foot;
 }
 function reload(){_loadData();}
 /* ===== TEMA (claro/escuro) ===== */
