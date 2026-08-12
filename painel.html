@@ -4,7 +4,7 @@
 <meta charset="UTF-8"><meta http-equiv="Cache-Control" content="no-store">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Painel Comercial — Osher Capital</title>
-<!-- painel v18 · Tráfego pago: Fechamento mensal (tabela trafego_mensal + robô fechamento-trafego-mensal dia 1º 08h; MoM ▲▼) + deck HTML Osher · investido puxado do Meta via Supermetrics (conta act_542319472086083) · 2026-08-12 · v17 Relatório semanal automático (tabela trafego_semanal + robô relatorio-trafego-semanal seg 08h; foto semana + mês acumulado, ▲▼) · 2026-08-12 · v16 aba Tráfego pago (custo × retorno; margem Osher = crédito×taxa×50%; investimento em midia_custos, RLS diretoria) · 2026-08-11 · semana comercial SEGUNDA a DOMINGO (wkIdx offset +3, alinhado ao CRM) · 2026-07-13 · aba Conferência CRM × Planilha · 2026-07-11 · auditoria XSS/logout 2026-07-09 · TODO agrupamento por mês/período/semana = data da 1ª parcela paga (adesão) · 2026-07-06 -->
+<!-- painel v19 · Tráfego pago: aba reage ao Recorte do topo (Mês→Semana 1,2,3… do calendário; Trimestre/Semestre/Ano→mês a mês); visual enxuto (KPIs + 1 bloco) · 2026-08-12 · v18 Fechamento mensal (tabela trafego_mensal + robô fechamento-trafego-mensal dia 1º 08h; MoM ▲▼) + deck HTML Osher · investido puxado do Meta via Supermetrics (conta act_542319472086083) · 2026-08-12 · v17 Relatório semanal automático (tabela trafego_semanal + robô relatorio-trafego-semanal seg 08h; foto semana + mês acumulado, ▲▼) · 2026-08-12 · v16 aba Tráfego pago (custo × retorno; margem Osher = crédito×taxa×50%; investimento em midia_custos, RLS diretoria) · 2026-08-11 · semana comercial SEGUNDA a DOMINGO (wkIdx offset +3, alinhado ao CRM) · 2026-07-13 · aba Conferência CRM × Planilha · 2026-07-11 · auditoria XSS/logout 2026-07-09 · TODO agrupamento por mês/período/semana = data da 1ª parcela paga (adesão) · 2026-07-06 -->
 <!-- auditoria 2026-07-03 -->
 <base target="_top">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -893,64 +893,54 @@ function _trafMargem(l){/* margem da Osher por venda = crédito × contra × 0.5
 function _isTraf(l){return l&&l.inbound===true;}
 function saveCusto(mes,val){if(!CURRENT||!CURRENT.full||!__tok)return;var body=[{mes:mes,canal:'Meta',investimento:+val||0,atualizado_em:new Date().toISOString()}];fetch(SB_URL+'midia_custos?on_conflict=mes,canal',{method:'POST',headers:{apikey:SB_KEY,Authorization:'Bearer '+__tok,'Content-Type':'application/json',Prefer:'resolution=merge-duplicates,return=minimal'},body:JSON.stringify(body)}).then(function(r){if(r.ok){MCUSTOS[mes]=MCUSTOS[mes]||{investimento:0,leads_manual:null};MCUSTOS[mes].investimento=+val||0;renderTraf();}else{var e=el('traf_msg');if(e)e.innerHTML='<span style="color:var(--red)">Não foi possível salvar o investimento (só diretoria pode editar).</span>';}}).catch(function(){});}
 function _trafCusto(mes){return (MCUSTOS[mes]&&+MCUSTOS[mes].investimento)||0;}
+function _mesNome(m){var p=String(m).split('-');var nm=['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];return (nm[(+p[1]||1)-1]||p[1])+'/'+String(p[0]).slice(2);}
+function _wkOfMonth(dstr){var p=String(dstr).slice(0,10).split('-');var day=+p[2]||1;return Math.min(5,Math.ceil(day/7));}
+function _mesInWin(m,w){var p=String(m).split('-');var y=+p[0],mo=+p[1];if(!w||w.kind==='ALL')return true;if(w.kind==='Y')return y===w.year;if(w.kind==='M')return y===w.year&&mo===w.mo;if(w.kind==='Q')return y===w.year&&(Math.floor((mo-1)/3)+1)===w.q;if(w.kind==='S')return y===w.year&&((mo<=6?1:2)===w.s);return true;}
 function renderTraf(){var box=el('panel-traf');if(!box)return;
  if(!CURRENT||!CURRENT.full){box.innerHTML='<div class="empty">Seção de custos disponível apenas para diretoria/sócios.</div>';return;}
  var TL=(LEADS||[]).filter(_isTraf);
- if(!TL.length){box.innerHTML=_trafReport()+_trafMensal()+'<div class="empty"><b>Tráfego pago</b> — nenhum lead marcado como tráfego (inbound) no CRM ainda. Assim que os leads de Meta/Google entrarem e forem marcados como "Ganho", o custo × retorno aparece aqui automaticamente.</div>';return;}
- var wins=TL.filter(function(l){return l.status==='Ganho';});
- /* agrupa por mês: leads pelo mês de entrada, vendas pelo mês do ganho */
- var M={};function mo(l){return M[l]=M[l]||{leads:0,vendas:0,credito:0,margem:0};}
+ var W=(typeof winOf==='function')?winOf(state.spec):null;
+ var lbl=(typeof winLabel==='function')?winLabel():'Geral';
+ /* agrega por mês (leads pela entrada, vendas pelo ganho) */
+ var M={};function mo(m){return M[m]||(M[m]={mes:m,leads:0,vendas:0,credito:0,margem:0});}
  TL.forEach(function(l){var m=String(l.entrada||'').slice(0,7);if(/^\d{4}-\d{2}$/.test(m))mo(m).leads++;});
- wins.forEach(function(l){var m=String(l.ganhoEm||l.entrada||'').slice(0,7);if(/^\d{4}-\d{2}$/.test(m)){var o=mo(m);o.vendas++;o.credito+=(+l.valor||0);o.margem+=_trafMargem(l);}});
- var meses=Object.keys(M).sort();
- var tLeads=0,tVendas=0,tCred=0,tMarg=0,tInv=0;
- meses.forEach(function(m){tLeads+=M[m].leads;tVendas+=M[m].vendas;tCred+=M[m].credito;tMarg+=M[m].margem;tInv+=_trafCusto(m);});
- var cpl=tLeads?tInv/tLeads:0, conv=tLeads?tVendas/tLeads:0, cac=tVendas?tInv/tVendas:0;
- var margVenda=tVendas?tMarg/tVendas:0, roas=tInv?tMarg/tInv:0, result=tMarg-tInv;
- var beConv=margVenda?cpl/margVenda:0; /* conversão de equilíbrio */
- var pay1=tMarg*0.343; /* 1ª parcela (adesão à vista imóvel) ≈ 34,3% da margem cai no mês da venda */
- function kpi(cls,lbl,val,sub){return '<div class="kpi '+cls+'"><div class="lbl">'+lbl+'</div><div class="val">'+val+'</div><div class="sub">'+sub+'</div></div>';}
- var resCls=result>=0?'ok':'bad';
- var rows=meses.map(function(m){var inv=_trafCusto(m),o=M[m],cplm=o.leads?inv/o.leads:0,cacm=o.vendas?inv/o.vendas:0,resm=o.margem-inv;var pp=m.split('-');var mlbl=pp[1]+'/'+pp[0];
-   return '<tr><td class="l">'+mlbl+'</td>'
-   +'<td><input class="cinp" type="number" min="0" step="100" value="'+(inv||'')+'" placeholder="0" onchange="saveCusto(\''+m+'\',this.value)" style="width:120px;text-align:right"></td>'
-   +'<td>'+o.leads+'</td><td>'+o.vendas+'</td>'
-   +'<td>'+(o.leads?(Math.round(o.vendas/o.leads*1000)/10)+'%':'—')+'</td>'
-   +'<td>'+(cplm?BRL(cplm):'—')+'</td>'
-   +'<td>'+(cacm?BRL(cacm):'—')+'</td>'
-   +'<td>'+(o.credito?BRLm2(o.credito):'—')+'</td>'
-   +'<td>'+BRL(o.margem)+'</td>'
-   +'<td style="color:'+(resm>=0?'var(--ac2)':'var(--red)')+';font-weight:700">'+BRL(resm)+'</td></tr>';}).join('');
- box.innerHTML=
-  '<div id="traf_msg" style="margin-bottom:8px"></div>'+
-  _trafReport()+
-  _trafMensal()+
-  '<div class="kpis kpis4">'+
-   kpi('','Investido em mídia',BRL(tInv),tInv?'lançado pela diretoria':'lance o investimento abaixo')+
-   kpi('','Leads de tráfego',tLeads,'CPL '+(cpl?BRL(cpl):'—'))+
-   kpi('ok','Vendas de tráfego',tVendas,pctf(tVendas,tLeads)+'% de conversão')+
-   kpi(resCls,'Resultado (margem − mídia)',BRL(result),roas?('ROAS '+(Math.round(roas*100)/100)+'x'):'defina o investimento')+
-  '</div>'+
-  '<div class="kpis kpis4" style="margin-top:14px">'+
-   kpi('','Margem Osher gerada',BRL(tMarg),'crédito × taxa × 50%')+
-   kpi('','CAC (custo por venda)',cac?BRL(cac):'—','mídia ÷ vendas')+
-   kpi('warn','Conversão de equilíbrio',beConv?((Math.round(beConv*1000)/10)+'%'):'—','CPL ÷ margem/venda')+
-   kpi('','Caixa no 1º mês (adesão)',BRL(pay1),'≈34% da margem entra à vista')+
-  '</div>'+
-  '<div class="card full" style="margin-top:18px"><h2><span class="dot" style="background:var(--vio)"></span>Custo × retorno por mês</h2>'+
-   '<div class="h2sub">Digite o investimento de mídia do mês (Meta/Google). Leads e vendas vêm do CRM automaticamente (leads = entrada; vendas = mês do "Ganho"). Só a diretoria edita.</div>'+
-   '<div style="overflow-x:auto"><table><thead><tr><th class="l">Mês</th><th>Invest. mídia</th><th>Leads</th><th>Vendas</th><th>Conv.</th><th>CPL</th><th>CAC</th><th>Crédito vendido</th><th>Margem Osher</th><th>Resultado</th></tr></thead>'+
-   '<tbody>'+rows+'</tbody>'+
-   '<tfoot><tr style="font-weight:700;border-top:2px solid var(--bd)"><td class="l">Total</td><td>'+BRL(tInv)+'</td><td>'+tLeads+'</td><td>'+tVendas+'</td><td>'+pctf(tVendas,tLeads)+'%</td><td>'+(cpl?BRL(cpl):'—')+'</td><td>'+(cac?BRL(cac):'—')+'</td><td>'+BRLm2(tCred)+'</td><td>'+BRL(tMarg)+'</td><td style="color:'+(result>=0?'var(--ac2)':'var(--red)')+'">'+BRL(result)+'</td></tr></tfoot></table></div>'+
-   '<div class="note">Margem Osher por venda = crédito × taxa de contribuição × 50% (a Osher fica com metade do fundo de comissão; a outra metade é do vendedor). Onde a taxa/valor não estão preenchidos no CRM, assume-se imóvel R$400 mil a 17,5%. O consórcio paga a comissão ao longo de 10 parcelas não lineares: a 1ª (adesão à vista) já traz ≈34% da margem no mês da venda, o que encurta o payback da mídia.</div>'+
-  '</div>'+
-  '<div class="card full" style="margin-top:18px"><h2><span class="dot" style="background:var(--ac2)"></span>Como ler para a diretoria</h2>'+
-   '<div class="note" style="font-size:13px;line-height:1.6">'+
-   '<b>ROAS</b> = margem Osher ÷ investimento. Acima de 1x, a mídia se paga; abaixo, dá prejuízo no acumulado.<br>'+
-   '<b>CAC</b> = quanto custa cada venda vinda de tráfego. Compare com a margem por venda ('+BRL(margVenda)+'): enquanto CAC &lt; margem/venda, cada venda gera lucro.<br>'+
-   '<b>Conversão de equilíbrio</b> = a taxa lead→venda mínima para empatar ao CPL atual. Hoje precisamos converter ≥ '+(beConv?((Math.round(beConv*1000)/10)+'%'):'—')+'; estamos em '+pctf(tVendas,tLeads)+'%.<br>'+
-   '<b>Payback</b>: como ≈34% da margem entra já no 1º mês (adesão à vista), o caixa recupera parte da mídia rápido, mesmo com o restante diluído em 10 parcelas.'+
-   '</div></div>';
+ TL.filter(function(l){return l.status==='Ganho';}).forEach(function(l){var m=String(l.ganhoEm||l.entrada||'').slice(0,7);if(/^\d{4}-\d{2}$/.test(m)){var o=mo(m);o.vendas++;o.credito+=(+l.valor||0);o.margem+=_trafMargem(l);}});
+ Object.keys(MCUSTOS||{}).forEach(function(m){if(/^\d{4}-\d{2}$/.test(m))mo(m);});
+ Object.keys(M).forEach(function(m){var o=M[m];o.inv=_trafCusto(m);o.cpl=o.leads?o.inv/o.leads:0;o.cac=o.vendas?o.inv/o.vendas:0;o.roas=o.inv?o.margem/o.inv:null;o.result=o.margem-o.inv;});
+ var meses=Object.keys(M).filter(function(m){return _mesInWin(m,W);}).sort();
+ var intro='<div id="traf_msg" style="margin-bottom:8px"></div>'+
+   '<div style="font-size:12px;color:var(--mut);margin-bottom:12px">Investido puxado do Meta (Supermetrics) &middot; leads e vendas do CRM &middot; use o <b>Recorte</b> no topo (Mês / Trimestre / Semestre / Ano) e o período para trocar a visão.</div>';
+ if(!meses.length){box.innerHTML=intro+'<div class="empty"><b>Tráfego pago</b> — sem dados de tráfego no recorte selecionado ('+esc(lbl)+').</div>';return;}
+ var aInv=0,aLeads=0,aVend=0,aCred=0,aMarg=0;meses.forEach(function(m){var o=M[m];aInv+=o.inv;aLeads+=o.leads;aVend+=o.vendas;aCred+=o.credito;aMarg+=o.margem;});
+ var aRoas=aInv?aMarg/aInv:null,aRes=aMarg-aInv,aCpl=aLeads?aInv/aLeads:0;
+ function kpi(cls,l2,v,s){return '<div class="kpi '+cls+'"><div class="lbl">'+l2+'</div><div class="val">'+v+'</div><div class="sub">'+(s||'')+'</div></div>';}
+ var head='<div class="kpis kpis4">'+
+   kpi('','Investido (Meta)',BRL(aInv),aInv?('recorte: '+esc(lbl)):'sem investimento')+
+   kpi('','Leads',aLeads,'CPL '+(aCpl?BRL(aCpl):'—'))+
+   kpi('ok','Vendas',aVend,pctf(aVend,aLeads)+'% de conversão')+
+   kpi(aRes>=0?'ok':'bad','Resultado',BRL(aRes),aRoas!=null?('ROAS '+(Math.round(aRoas*100)/100)+'x'):'—')+
+  '</div>';
+ var body;
+ if(W&&W.kind==='M'&&meses.length===1){
+   var mes=meses[0];var wk={};
+   function wput(i,key){(wk[i]||(wk[i]={leads:0,vendas:0}))[key]++;}
+   TL.forEach(function(l){var ds=String(l.entrada||'').slice(0,10);if(/^\d{4}-\d{2}-\d{2}$/.test(ds)&&ds.slice(0,7)===mes)wput(_wkOfMonth(ds),'leads');});
+   TL.filter(function(l){return l.status==='Ganho';}).forEach(function(l){var ds=String(l.ganhoEm||l.entrada||'').slice(0,10);if(/^\d{4}-\d{2}-\d{2}$/.test(ds)&&ds.slice(0,7)===mes)wput(_wkOfMonth(ds),'vendas');});
+   var ld=new Date(+mes.slice(0,4),+mes.slice(5,7),0).getDate();
+   var nW=_wkOfMonth(mes+'-'+String(ld).padStart(2,'0'));if(nW<4)nW=4;if(nW>6)nW=6;
+   var cards='';for(var i=1;i<=nW;i++){var a=wk[i]||{leads:0,vendas:0};
+     cards+='<div class="kpi"><div class="lbl">Semana '+i+'</div><div class="val">'+a.leads+'</div><div class="sub">'+(a.leads===1?'lead':'leads')+(a.vendas?(' &middot; <span style="color:var(--ac2)">'+a.vendas+' venda'+(a.vendas>1?'s':'')+'</span>'):'')+'</div></div>';}
+   body='<div class="card full" style="margin-top:16px"><h2><span class="dot"></span>Por semana — '+_mesNome(mes)+'</h2>'+
+     '<div class="h2sub">Semanas do mês (calendário). Leads pela data de entrada; vendas pela data do fechamento.</div>'+
+     '<div class="kpis" style="margin-top:6px">'+cards+'</div></div>';
+ } else {
+   var rows=meses.slice().reverse().map(function(m){var o=M[m];var ro=o.roas==null?'—':(Math.round(o.roas*100)/100)+'x';
+     return '<tr><td class="l">'+_mesLbl(m)+'</td><td>'+BRL(o.inv)+'</td><td>'+o.leads+'</td><td>'+o.vendas+'</td><td>'+(o.leads?pctf(o.vendas,o.leads)+'%':'—')+'</td><td>'+(o.cpl?BRL(o.cpl):'—')+'</td><td>'+ro+'</td><td style="color:'+(o.result>=0?'var(--ac2)':'var(--red)')+';font-weight:600">'+BRL(o.result)+'</td></tr>';}).join('');
+   body='<div class="card full" style="margin-top:16px"><h2><span class="dot"></span>Mês a mês — '+esc(lbl)+'</h2>'+
+     '<div class="h2sub">Cada mês do recorte. Selecione <b>Mês</b> no topo e um período para abrir as semanas.</div>'+
+     '<div style="overflow-x:auto"><table><thead><tr><th class="l">Mês</th><th>Investido</th><th>Leads</th><th>Vendas</th><th>Conv.</th><th>CPL</th><th>ROAS</th><th>Resultado</th></tr></thead><tbody>'+rows+'</tbody></table></div></div>';
+ }
+ box.innerHTML=intro+head+body;
 }
 function reload(){_loadData();}
 /* ===== TEMA (claro/escuro) ===== */
