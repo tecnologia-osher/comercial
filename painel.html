@@ -4,7 +4,7 @@
 <meta charset="UTF-8"><meta http-equiv="Cache-Control" content="no-store">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Painel Comercial — Osher Capital</title>
-<!-- painel v20 · Tráfego pago: todo mês com tráfego/investimento vira período selecionável (buildWindows inclui leads inbound + midia_custos) + rodapé curto de leitura (CAC/ROAS/margem/conversão de equilíbrio) · 2026-08-12 · v19 aba reage ao Recorte do topo (Mês→Semana 1,2,3…; Trimestre/Semestre/Ano→mês a mês); visual enxuto · 2026-08-12 · v18 Fechamento mensal (tabela trafego_mensal + robô fechamento-trafego-mensal dia 1º 08h; MoM ▲▼) + deck HTML Osher · investido puxado do Meta via Supermetrics (conta act_542319472086083) · 2026-08-12 · v17 Relatório semanal automático (tabela trafego_semanal + robô relatorio-trafego-semanal seg 08h; foto semana + mês acumulado, ▲▼) · 2026-08-12 · v16 aba Tráfego pago (custo × retorno; margem Osher = crédito×taxa×50%; investimento em midia_custos, RLS diretoria) · 2026-08-11 · semana comercial SEGUNDA a DOMINGO (wkIdx offset +3, alinhado ao CRM) · 2026-07-13 · aba Conferência CRM × Planilha · 2026-07-11 · auditoria XSS/logout 2026-07-09 · TODO agrupamento por mês/período/semana = data da 1ª parcela paga (adesão) · 2026-07-06 -->
+<!-- painel v22 · Abre por padrão no Ano corrente + Mês atual (1ª carga; _applyDefaultSpec, não reseta no refresh) · 2026-08-12 · v21 Seletor de período em 2 níveis: escolhe o Ano (chips) e aparecem só os meses/trimestres/semestres daquele ano — menos poluído; agosto aparece (buildWindows já inclui meses de tráfego) · 2026-08-12 · v20 todo mês com tráfego/investimento vira período selecionável (buildWindows inclui leads inbound + midia_custos) + rodapé curto de leitura · 2026-08-12 · v19 aba reage ao Recorte do topo (Mês→Semana 1,2,3…; Trimestre/Semestre/Ano→mês a mês); visual enxuto · 2026-08-12 · v18 Fechamento mensal (tabela trafego_mensal + robô fechamento-trafego-mensal dia 1º 08h; MoM ▲▼) + deck HTML Osher · investido puxado do Meta via Supermetrics (conta act_542319472086083) · 2026-08-12 · v17 Relatório semanal automático (tabela trafego_semanal + robô relatorio-trafego-semanal seg 08h; foto semana + mês acumulado, ▲▼) · 2026-08-12 · v16 aba Tráfego pago (custo × retorno; margem Osher = crédito×taxa×50%; investimento em midia_custos, RLS diretoria) · 2026-08-11 · semana comercial SEGUNDA a DOMINGO (wkIdx offset +3, alinhado ao CRM) · 2026-07-13 · aba Conferência CRM × Planilha · 2026-07-11 · auditoria XSS/logout 2026-07-09 · TODO agrupamento por mês/período/semana = data da 1ª parcela paga (adesão) · 2026-07-06 -->
 <!-- auditoria 2026-07-03 -->
 <base target="_top">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -139,6 +139,13 @@ th.l,td.l{text-align:left}tbody tr:hover{background:var(--card2)}
 .tile.on{background:var(--ac);color:var(--on-ac);border-color:var(--ac);font-weight:600;box-shadow:var(--shadow)}
 .tile.macro{border-style:dashed;color:var(--mut);font-weight:600}
 .tile.macro.on{color:var(--on-ac);border-style:solid}
+.pcol{display:flex;flex-direction:column;gap:10px;flex:1}
+.yrow{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+.prow{display:flex;flex-wrap:wrap;gap:8px}
+.ylbl{font-size:10.5px;text-transform:uppercase;letter-spacing:.6px;color:var(--mut);font-weight:700;margin-right:4px}
+.ychip{background:transparent;border:1px solid var(--bd);border-radius:8px;padding:5px 12px;font-size:12.5px;cursor:pointer;color:var(--mut);transition:border-color .12s,color .12s,background .12s}
+.ychip:hover{border-color:var(--goldbd);color:var(--txt)}
+.ychip.on{background:var(--card2);border-color:var(--ac);color:var(--txt);font-weight:700}
 .form-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;max-width:820px}
 .fld{display:flex;flex-direction:column;gap:5px}.fld.full{grid-column:1/-1}
 .fld label{font-size:12px;color:var(--mut)}
@@ -273,7 +280,14 @@ th.l,td.l{text-align:left}tbody tr:hover{background:var(--card2)}
 /* ===================== ESTADO ===================== */
 var ROWS=[], LEADS=[], INTERNAL={}, WINDOWS=[], CUR=null, gMetric='n', eMetric='escr';
 var icpSel='';var CURRENT=null; /* login/papéis vêm do Supabase (profiles); TEAM local removido na auditoria 2026-07-03 */
-var state={gran:'M',spec:'',tipo:'all',sel:0};
+var state={gran:'M',spec:'',tipo:'all',sel:0,pyear:0};
+var _specInit=false;
+function _applyDefaultSpec(){ /* 1ª carga: abre em Mês, ano corrente e mês atual (fallback: mês mais recente do ano; senão Geral) */
+ if(_specInit)return;_specInit=true;var now=new Date();var y=now.getFullYear(),mo=now.getMonth()+1;var mk='M'+y+'|'+mo;
+ var has=WINDOWS.some(function(w){return w.key===mk;});
+ if(!has){var ms=WINDOWS.filter(function(w){return w.kind==='M'&&w.year===y;}).sort(function(a,b){return a.mo-b.mo;});if(ms.length){mk=ms[ms.length-1].key;has=true;y=ms[ms.length-1].year;}}
+ if(has){state.gran='M';state.spec=mk;state.pyear=y;var sg=el('segGran');if(sg)[].forEach.call(sg.querySelectorAll('button'),function(b){b.classList.toggle('on',b.dataset.v==='M');});}
+}
 var C={ac:'#5b8cff',ac2:'#34d399',warn:'#fbbf24',red:'#f87171',vio:'#a78bfa'};
 var MES=['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
 function el(id){return document.getElementById(id);}
@@ -356,12 +370,21 @@ function F(){return ROWS.filter(function(r){return rowInWin(r)&&tipoOk(r)&&userO
 function FL(){return (window.LEADS||[]).filter(function(l){return !CURRENT||CURRENT.full||_nk(l.atendente)===_nk(CURRENT.nome)||_nk(l.vendedor)===_nk(CURRENT.nome);});}
 function periodMonths(){var s={};F().forEach(function(r){var p=payMonthYMD(r);if(p)s[p.y*100+p.mo]=1;});return Math.max(1,Object.keys(s).length);}
 
-function populateSpec(){var kind={M:'M',T:'Q',S:'S',A:'Y'}[state.gran];
- var opts=WINDOWS.filter(function(w){return w.kind===kind;});
- el('periodTiles').innerHTML='<button class="tile macro'+(state.spec===''?' on':'')+'" onclick="setSpec(\'\')">Geral (tudo)</button>'+
-  opts.map(function(w){return '<button class="tile'+(state.spec===w.key?' on':'')+'" onclick="setSpec(\''+w.key+'\')">'+w.label+'</button>';}).join('');}
+function _pyears(){var ys={};WINDOWS.forEach(function(w){if(w.kind==='Y')ys[w.year]=1;});return Object.keys(ys).map(Number).sort(function(a,b){return a-b;});}
+function setPyear(y){state.pyear=y;populateSpec();}
+function populateSpec(){var host=el('periodTiles');if(!host)return;var kind={M:'M',T:'Q',S:'S',A:'Y'}[state.gran];
+ var years=_pyears();if(!years.length){host.innerHTML='<button class="tile macro on" onclick="setSpec(\'\')">Geral (tudo)</button>';return;}
+ if(!state.pyear||years.indexOf(state.pyear)<0)state.pyear=years[years.length-1];
+ var geral='<button class="tile macro'+(state.spec===''?' on':'')+'" onclick="setSpec(\'\')">Geral</button>';
+ if(kind==='Y'){ /* Ano: os próprios anos são os seletores */
+  host.innerHTML=geral+years.map(function(y){var key='Y'+y;return '<button class="tile'+(state.spec===key?' on':'')+'" onclick="setSpec(\''+key+'\')">'+y+'</button>';}).join('');return;}
+ var yr='<div class="yrow"><span class="ylbl">Ano</span>'+years.map(function(y){return '<button class="ychip'+(state.pyear===y?' on':'')+'" onclick="setPyear('+y+')">'+y+'</button>';}).join('')+'</div>';
+ var opts=WINDOWS.filter(function(w){return w.kind===kind&&w.year===state.pyear;});
+ var tiles=opts.map(function(w){var s=w.kind==='M'?MES[w.mo-1]:(w.kind==='Q'?'T'+w.q:'S'+w.s);return '<button class="tile'+(state.spec===w.key?' on':'')+'" onclick="setSpec(\''+w.key+'\')">'+s+'</button>';}).join('');
+ if(!tiles)tiles='<span class="ylbl" style="align-self:center">sem períodos em '+state.pyear+'</span>';
+ host.innerHTML='<div class="pcol">'+yr+'<div class="prow">'+geral+tiles+'</div></div>';}
 function setGran(g){state.gran=g;state.spec='';[].forEach.call(document.querySelectorAll('#segGran button'),function(b){b.classList.toggle('on',b.dataset.v===g);});populateSpec();renderAll();}
-function setSpec(v){state.spec=v;state.sel=0;populateSpec();renderAll();}
+function setSpec(v){state.spec=v;state.sel=0;if(v){var yr=+String(v).replace(/^[YQSM]/,'').split('|')[0];if(yr)state.pyear=yr;}populateSpec();renderAll();}
 function setTipo(t){state.tipo=t;state.sel=0;[].forEach.call(document.querySelectorAll('#segTipo button'),function(b){b.classList.toggle('on',b.dataset.v===t);});renderAll();}
 
 /* ===================== AGREGAÇÃO ===================== */
@@ -795,7 +818,7 @@ function renderAll(){CUR={geral:buildGeral(F())};
 function onData(resp){el('loading').style.display='none';
  if(resp&&resp.error){el('subt').innerHTML='<span style="color:var(--red)">'+esc(resp.error)+'</span>';return;}
  ROWS=enrich((resp&&resp.rows)||[]);LEADS=(resp&&resp.leads)||[];INTERNAL={};(((resp&&resp.internal)||[])).forEach(function(n){INTERNAL[_nk(n)]=1;});
- buildWindows();populateSpec();if(CURRENT){applyRole();showTab('geral');renderAll();}else{showLogin();}}
+ buildWindows();_applyDefaultSpec();populateSpec();if(CURRENT){applyRole();showTab('geral');renderAll();}else{showLogin();}}
 /* reload legado (Apps Script) removido na auditoria 2026-07-03 — a versão ativa (Supabase) está no bloco abaixo */
 [].forEach.call(document.querySelectorAll('#g_tgl button'),function(b){b.onclick=function(){[].forEach.call(document.querySelectorAll('#g_tgl button'),function(x){x.classList.remove('on');});b.classList.add('on');gMetric=b.dataset.m;if(CUR)drawGTempo();};});
 [].forEach.call(document.querySelectorAll('#g_tbl th'),function(th){th.onclick=function(){var k=th.dataset.k;if(gsk===k)gsd*=-1;else{gsk=k;gsd=k==='nome'?1:-1;}gTbl();};});
