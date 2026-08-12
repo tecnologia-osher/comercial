@@ -4,7 +4,7 @@
 <meta charset="UTF-8"><meta http-equiv="Cache-Control" content="no-store">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Painel Comercial — Osher Capital</title>
-<!-- painel v16 · aba Tráfego pago (custo × retorno; margem Osher = crédito×taxa×50%; investimento em midia_custos, RLS diretoria) · 2026-08-11 · semana comercial SEGUNDA a DOMINGO (wkIdx offset +3, alinhado ao CRM) · 2026-07-13 · aba Conferência CRM × Planilha · 2026-07-11 · auditoria XSS/logout 2026-07-09 · TODO agrupamento por mês/período/semana = data da 1ª parcela paga (adesão) · 2026-07-06 -->
+<!-- painel v18 · Tráfego pago: Fechamento mensal (tabela trafego_mensal + robô fechamento-trafego-mensal dia 1º 08h; MoM ▲▼) + deck HTML Osher · investido puxado do Meta via Supermetrics (conta act_542319472086083) · 2026-08-12 · v17 Relatório semanal automático (tabela trafego_semanal + robô relatorio-trafego-semanal seg 08h; foto semana + mês acumulado, ▲▼) · 2026-08-12 · v16 aba Tráfego pago (custo × retorno; margem Osher = crédito×taxa×50%; investimento em midia_custos, RLS diretoria) · 2026-08-11 · semana comercial SEGUNDA a DOMINGO (wkIdx offset +3, alinhado ao CRM) · 2026-07-13 · aba Conferência CRM × Planilha · 2026-07-11 · auditoria XSS/logout 2026-07-09 · TODO agrupamento por mês/período/semana = data da 1ª parcela paga (adesão) · 2026-07-06 -->
 <!-- auditoria 2026-07-03 -->
 <base target="_top">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -830,13 +830,61 @@ async function _loadData(){
   if(Array.isArray(cr)){
    var rows=cr.map(function(c){return {data:c.data,contrato:c.contrato,grupo:c.grupo,cota:c.cota,cliente:c.cliente,cpf:c.cpf,origem:c.origem,genero:c.genero,nasc:c.nascimento,cidade:c.cidade,bairro:c.bairro,profissao:c.profissao,vendedor:c.vendedor,tipoVend:c.tipo_vendedor,diretor:c.diretor,tipo:c.tipo,valor:+c.valor||0,taxa:c.taxa,adesao:c.adesao,administradora:c.administradora,lance:c.lance,parc:_pj(c.parc),status:c.status};});
    var leads=(Array.isArray(dl)?dl:[]).map(function(d){return {entrada:d.criado_em,vendedor:d.vendedor,atendente:d.vendedor,origem:d.origem,interesse:d.bem,cliente:d.cliente,expectativa:(d.payload&&d.payload.expectativa)||d.expectativa||'',valor:(+d.valor||0),ganhoEm:(d.payload&&d.payload.ganhoEm)||null,perdaCat:(d.payload&&d.payload.perdaCat)||'',dataProximoPasso:(d.payload&&d.payload.dataProximoPasso)||'',atualizadoEm:(d.payload&&d.payload.atualizadoEm)||'',statusAgend:(d.payload&&d.payload.statusAgend)||'',cpf:(d.payload&&d.payload.cpf)||'',contrato:(d.payload&&d.payload.contrato)||'',administradora:(d.payload&&d.payload.administradora)||'',taxaAdm:(d.payload&&+d.payload.taxaAdm)||0,bem:d.bem,estagio:d.estagio,prob:d.prob,status:d.estagio,inbound:((d.payload&&d.payload.inbound)===true)||/tr[aá]fego/i.test(String((d.payload&&d.payload.origem)||d.origem||''))||(((d.payload&&d.payload.origem)||d.origem)==='Meta Lead Ads')};});
-   if(CURRENT&&CURRENT.full){try{var mc=await fetch(SB_URL+'midia_custos?select=*',{headers:H}).then(x=>x.json());MCUSTOS={};if(Array.isArray(mc))mc.forEach(function(r){MCUSTOS[r.mes]=MCUSTOS[r.mes]||{investimento:0,leads_manual:null,canal:r.canal};MCUSTOS[r.mes].investimento+=(+r.investimento||0);if(r.leads_manual!=null)MCUSTOS[r.mes].leads_manual=+r.leads_manual;});}catch(_e){}}
+   if(CURRENT&&CURRENT.full){try{var mc=await fetch(SB_URL+'midia_custos?select=*',{headers:H}).then(x=>x.json());MCUSTOS={};if(Array.isArray(mc))mc.forEach(function(r){MCUSTOS[r.mes]=MCUSTOS[r.mes]||{investimento:0,leads_manual:null,canal:r.canal};MCUSTOS[r.mes].investimento+=(+r.investimento||0);if(r.leads_manual!=null)MCUSTOS[r.mes].leads_manual=+r.leads_manual;});}catch(_e){}
+     try{var ts=await fetch(SB_URL+'trafego_semanal?select=*&order=semana_ref.asc',{headers:H}).then(x=>x.json());TSNAP=Array.isArray(ts)?ts:[];}catch(_e2){TSNAP=[];}
+     try{var tm=await fetch(SB_URL+'trafego_mensal?select=*&order=mes.asc',{headers:H}).then(x=>x.json());TMES=Array.isArray(tm)?tm:[];}catch(_e3){TMES=[];}}
    onData({rows:rows,leads:leads,internal:EMBED.internal});return;
   }
  }catch(e){_bootErr(e);}
 }
 /* ===== TRÁFEGO PAGO — custos vs retorno (diretoria) ===== */
 var MCUSTOS={};
+var TSNAP=[]; /* snapshots semanais (tabela trafego_semanal), gerados pelo robô de segunda */
+var TMES=[];  /* fechamentos mensais (tabela trafego_mensal), gerados pelo robô do dia 1º */
+function _mesLbl(m){if(!m)return '—';var p=String(m).split('-');var nm=['jan','fev','mar','abr','mai','jun','jul','ago','set','out','nov','dez'];return (nm[(+p[1]||1)-1]||p[1])+'/'+String(p[0]).slice(2);}
+function _trafMensal(){
+ if(!TMES||!TMES.length){return '<div class="card full" style="margin:18px 0;border-left:3px solid var(--vio)"><h2><span class="dot" style="background:var(--vio)"></span>Fechamento mensal</h2><div class="h2sub">Gerado automaticamente todo dia 1º pelo robô fechamento-trafego-mensal</div><div class="note">Ainda não há mês fechado. O primeiro fechamento sai no dia 1º do próximo mês.</div></div>';}
+ var last=TMES[TMES.length-1], prev=TMES.length>1?TMES[TMES.length-2]:null;
+ function k(cls,lbl,val,arrow,sub){return '<div class="kpi '+cls+'"><div class="lbl">'+lbl+'</div><div class="val">'+val+arrow+'</div><div class="sub">'+(sub||'')+'</div></div>';}
+ var res=+last.resultado||0, roas=last.roas==null?null:+last.roas;
+ var kp='<div class="kpis kpis4">'+
+   k('','Investido ('+_mesLbl(last.mes)+')',BRL(+last.investimento||0),prev?_arrowN(last.investimento,prev.investimento,true):'',last.invest_informado?'Meta Ads':'não informado')+
+   k('','Leads',last.leads,prev?_arrowN(last.leads,prev.leads):'','CPL '+(last.cpl?BRL(last.cpl):'—'))+
+   k('ok','Vendas',last.vendas,prev?_arrowN(last.vendas,prev.vendas):'',last.leads?pctf(last.vendas,last.leads)+'% conv.':'—')+
+   k(res>=0?'ok':'bad','Resultado',BRL(res),prev?_arrowN(res,prev.resultado):'',roas!=null?('ROAS '+(Math.round(roas*100)/100)+'x'):'—')+
+ '</div>';
+ var rows=TMES.slice().reverse().map(function(m){var rr=+m.resultado||0;var ro=m.roas==null?'—':(Math.round(m.roas*100)/100)+'x';
+   return '<tr><td class="l">'+_mesLbl(m.mes)+'</td><td>'+BRL(+m.investimento||0)+'</td><td>'+m.leads+'</td><td>'+m.vendas+'</td><td>'+(m.leads?pctf(m.vendas,m.leads)+'%':'—')+'</td><td>'+(m.cpl?BRL(m.cpl):'—')+'</td><td>'+(m.cac?BRL(m.cac):'—')+'</td><td>'+BRL(+m.credito||0)+'</td><td>'+BRL(+m.margem||0)+'</td><td>'+ro+'</td><td style="color:'+(rr>=0?'var(--ac2)':'var(--red)')+';font-weight:600">'+BRL(rr)+'</td></tr>';}).join('');
+ return '<div class="card full" style="margin:18px 0;border-left:3px solid var(--vio)"><h2><span class="dot" style="background:var(--vio)"></span>Fechamento mensal</h2>'+
+   '<div class="h2sub">Fechamento com o gestor · atualizado '+_dm(last.atualizado_em)+' · último mês fechado: '+_mesLbl(last.mes)+' (▲▼ vs. mês anterior; em Investido, ▼ = gastou menos)</div>'+
+   kp+
+   '<div style="overflow-x:auto;margin-top:12px"><table><thead><tr><th class="l">Mês</th><th>Investido</th><th>Leads</th><th>Vendas</th><th>Conv.</th><th>CPL</th><th>CAC</th><th>Crédito</th><th>Margem Osher</th><th>ROAS</th><th>Resultado</th></tr></thead><tbody>'+rows+'</tbody></table></div>'+
+   '<div class="note">O deck de fechamento em HTML (padrão Osher) é gerado pelo mesmo robô todo dia 1º, para apresentar na reunião com o gestor da área.</div></div>';
+}
+function _dm(iso){if(!iso||String(iso).length<10)return '—';var p=String(iso).slice(0,10).split('-');return p[2]+'/'+p[1];}
+function _arrowN(a,b,inv){/* inv=true quando menor é melhor (CPL/CAC) */a=+a||0;b=+b||0;if(a===b)return '';var up=a>b;var good=inv?!up:up;var col=good?'var(--ac2)':'var(--red)';var sym=up?'▲':'▼';return ' <span style="color:'+col+';font-size:.6em;vertical-align:middle">'+sym+'</span>';}
+function _trafReport(){
+ if(!TSNAP||!TSNAP.length){return '<div class="card full" style="margin-bottom:18px;border-left:3px solid var(--ac)"><h2><span class="dot"></span>Relatório semanal (automático)</h2><div class="h2sub">Atualizado toda segunda às 08h pelo robô relatorio-trafego-semanal</div><div class="note">Ainda não há foto semanal gravada. O primeiro relatório é gerado na próxima segunda-feira (ou lançando o investimento e rodando o robô manualmente).</div></div>';}
+ var last=TSNAP[TSNAP.length-1], prev=TSNAP.length>1?TSNAP[TSNAP.length-2]:null;
+ var wkEnd=_dm(last.semana_ref)!=='—'?(function(){var d=new Date(last.semana_ref+'T12:00:00');d.setDate(d.getDate()+6);return String(d.getDate()).padStart(2,'0')+'/'+String(d.getMonth()+1).padStart(2,'0');})():'—';
+ var inv=+last.investimento_mes||0, roas=last.roas==null?null:+last.roas, res=+last.resultado_mes||0;
+ function k(cls,lbl,val,arrow,sub){return '<div class="kpi '+cls+'"><div class="lbl">'+lbl+'</div><div class="val">'+val+arrow+'</div><div class="sub">'+(sub||'')+'</div></div>';}
+ var kpis='<div class="kpis kpis4">'+
+   k('','Investido no mês',BRL(inv)+(last.invest_informado?'':' *'),'',last.invest_informado?('mês '+esc(last.mes)):'investimento não informado')+
+   k('','Leads no mês',last.leads_mes,prev?_arrowN(last.leads_mes,prev.leads_mes):'','CPL '+(last.cpl_mes?BRL(last.cpl_mes):'—'))+
+   k('ok','Vendas no mês',last.vendas_mes,prev?_arrowN(last.vendas_mes,prev.vendas_mes):'',(last.leads_mes?pctf(last.vendas_mes,last.leads_mes)+'% conv.':'—'))+
+   k(res>=0?'ok':'bad','Resultado no mês',BRL(res),prev?_arrowN(res,prev.resultado_mes):'',roas!=null?('ROAS '+(Math.round(roas*100)/100)+'x'):'defina o investimento')+
+ '</div>';
+ /* tendência: últimas 8 semanas */
+ var hist=TSNAP.slice(-8);
+ var trows=hist.map(function(s){var d=new Date(s.semana_ref+'T12:00:00');d.setDate(d.getDate()+6);var lbl=_dm(s.semana_ref)+'–'+String(d.getDate()).padStart(2,'0')+'/'+String(d.getMonth()+1).padStart(2,'0');var ro=s.roas==null?'—':(Math.round(s.roas*100)/100)+'x';var rr=+s.resultado_mes||0;
+   return '<tr><td class="l">'+lbl+'</td><td>'+BRL(+s.investimento_mes||0)+'</td><td>'+s.leads_sem+'</td><td>'+s.vendas_sem+'</td><td>'+s.leads_mes+'</td><td>'+s.vendas_mes+'</td><td>'+BRL(+s.margem_mes||0)+'</td><td>'+ro+'</td><td style="color:'+(rr>=0?'var(--ac2)':'var(--red)')+';font-weight:600">'+BRL(rr)+'</td></tr>';}).join('');
+ var trend='<div style="overflow-x:auto;margin-top:12px"><table><thead><tr><th class="l">Semana</th><th>Invest. mês</th><th>Leads sem</th><th>Vendas sem</th><th>Leads mês</th><th>Vendas mês</th><th>Margem mês</th><th>ROAS</th><th>Resultado mês</th></tr></thead><tbody>'+trows+'</tbody></table></div>';
+ return '<div class="card full" style="margin-bottom:18px;border-left:3px solid var(--ac)"><h2><span class="dot"></span>Relatório semanal (automático)</h2>'+
+   '<div class="h2sub">Semana fechada até '+wkEnd+' · atualizado '+_dm(last.atualizado_em)+' pelo robô de segunda 08h · números do mês acumulado, ▲▼ vs. semana anterior</div>'+
+   kpis+trend+
+   '<div class="note">Foto congelada a cada segunda para acompanhar a evolução. CAC/ROAS usam o mês acumulado (semana isolada fecha pouco no consórcio). "*" = investimento do mês ainda não lançado na tabela abaixo.</div></div>';
+}
 var TRAF_CONTRA_IMOVEL={14.5:0.032,15.5:0.033,16.5:0.034,17.5:0.035,18.5:0.036,19.5:0.037,20.5:0.039,21.5:0.039,22.5:0.040};
 var TRAF_CONTRA_MOVEL={14.5:0.032,15.5:0.033,16.5:0.034,17.5:0.035,18.5:0.036,19.5:0.040};
 function _trafBemImovel(b){return String(b||'').toUpperCase().indexOf('IM')===0;}
@@ -848,7 +896,7 @@ function _trafCusto(mes){return (MCUSTOS[mes]&&+MCUSTOS[mes].investimento)||0;}
 function renderTraf(){var box=el('panel-traf');if(!box)return;
  if(!CURRENT||!CURRENT.full){box.innerHTML='<div class="empty">Seção de custos disponível apenas para diretoria/sócios.</div>';return;}
  var TL=(LEADS||[]).filter(_isTraf);
- if(!TL.length){box.innerHTML='<div class="empty"><b>Tráfego pago</b> — nenhum lead marcado como tráfego (inbound) no CRM ainda. Assim que os leads de Meta/Google entrarem e forem marcados como "Ganho", o custo × retorno aparece aqui automaticamente.</div>';return;}
+ if(!TL.length){box.innerHTML=_trafReport()+_trafMensal()+'<div class="empty"><b>Tráfego pago</b> — nenhum lead marcado como tráfego (inbound) no CRM ainda. Assim que os leads de Meta/Google entrarem e forem marcados como "Ganho", o custo × retorno aparece aqui automaticamente.</div>';return;}
  var wins=TL.filter(function(l){return l.status==='Ganho';});
  /* agrupa por mês: leads pelo mês de entrada, vendas pelo mês do ganho */
  var M={};function mo(l){return M[l]=M[l]||{leads:0,vendas:0,credito:0,margem:0};}
@@ -875,6 +923,8 @@ function renderTraf(){var box=el('panel-traf');if(!box)return;
    +'<td style="color:'+(resm>=0?'var(--ac2)':'var(--red)')+';font-weight:700">'+BRL(resm)+'</td></tr>';}).join('');
  box.innerHTML=
   '<div id="traf_msg" style="margin-bottom:8px"></div>'+
+  _trafReport()+
+  _trafMensal()+
   '<div class="kpis kpis4">'+
    kpi('','Investido em mídia',BRL(tInv),tInv?'lançado pela diretoria':'lance o investimento abaixo')+
    kpi('','Leads de tráfego',tLeads,'CPL '+(cpl?BRL(cpl):'—'))+
