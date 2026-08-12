@@ -4,7 +4,7 @@
 <meta charset="UTF-8"><meta http-equiv="Cache-Control" content="no-store">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Painel Comercial — Osher Capital</title>
-<!-- painel v22 · Abre por padrão no Ano corrente + Mês atual (1ª carga; _applyDefaultSpec, não reseta no refresh) · 2026-08-12 · v21 Seletor de período em 2 níveis: escolhe o Ano (chips) e aparecem só os meses/trimestres/semestres daquele ano — menos poluído; agosto aparece (buildWindows já inclui meses de tráfego) · 2026-08-12 · v20 todo mês com tráfego/investimento vira período selecionável (buildWindows inclui leads inbound + midia_custos) + rodapé curto de leitura · 2026-08-12 · v19 aba reage ao Recorte do topo (Mês→Semana 1,2,3…; Trimestre/Semestre/Ano→mês a mês); visual enxuto · 2026-08-12 · v18 Fechamento mensal (tabela trafego_mensal + robô fechamento-trafego-mensal dia 1º 08h; MoM ▲▼) + deck HTML Osher · investido puxado do Meta via Supermetrics (conta act_542319472086083) · 2026-08-12 · v17 Relatório semanal automático (tabela trafego_semanal + robô relatorio-trafego-semanal seg 08h; foto semana + mês acumulado, ▲▼) · 2026-08-12 · v16 aba Tráfego pago (custo × retorno; margem Osher = crédito×taxa×50%; investimento em midia_custos, RLS diretoria) · 2026-08-11 · semana comercial SEGUNDA a DOMINGO (wkIdx offset +3, alinhado ao CRM) · 2026-07-13 · aba Conferência CRM × Planilha · 2026-07-11 · auditoria XSS/logout 2026-07-09 · TODO agrupamento por mês/período/semana = data da 1ª parcela paga (adesão) · 2026-07-06 -->
+<!-- painel v23 · Tráfego pago: bloco "Métricas de tráfego" (CPL, CAC, LTV, LTV/CAC, ticket, ROAS, conversão, payback 1º mês) no lugar do rodapé de texto · 2026-08-12 · v22 Abre por padrão no Ano corrente + Mês atual (1ª carga; _applyDefaultSpec, não reseta no refresh) · 2026-08-12 · v21 Seletor de período em 2 níveis: escolhe o Ano (chips) e aparecem só os meses/trimestres/semestres daquele ano — menos poluído; agosto aparece (buildWindows já inclui meses de tráfego) · 2026-08-12 · v20 todo mês com tráfego/investimento vira período selecionável (buildWindows inclui leads inbound + midia_custos) + rodapé curto de leitura · 2026-08-12 · v19 aba reage ao Recorte do topo (Mês→Semana 1,2,3…; Trimestre/Semestre/Ano→mês a mês); visual enxuto · 2026-08-12 · v18 Fechamento mensal (tabela trafego_mensal + robô fechamento-trafego-mensal dia 1º 08h; MoM ▲▼) + deck HTML Osher · investido puxado do Meta via Supermetrics (conta act_542319472086083) · 2026-08-12 · v17 Relatório semanal automático (tabela trafego_semanal + robô relatorio-trafego-semanal seg 08h; foto semana + mês acumulado, ▲▼) · 2026-08-12 · v16 aba Tráfego pago (custo × retorno; margem Osher = crédito×taxa×50%; investimento em midia_custos, RLS diretoria) · 2026-08-11 · semana comercial SEGUNDA a DOMINGO (wkIdx offset +3, alinhado ao CRM) · 2026-07-13 · aba Conferência CRM × Planilha · 2026-07-11 · auditoria XSS/logout 2026-07-09 · TODO agrupamento por mês/período/semana = data da 1ª parcela paga (adesão) · 2026-07-06 -->
 <!-- auditoria 2026-07-03 -->
 <base target="_top">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -967,11 +967,23 @@ function renderTraf(){var box=el('panel-traf');if(!box)return;
      '<div class="h2sub">Cada mês do recorte. Selecione <b>Mês</b> no topo e um período para abrir as semanas.</div>'+
      '<div style="overflow-x:auto"><table><thead><tr><th class="l">Mês</th><th>Investido</th><th>Leads</th><th>Vendas</th><th>Conv.</th><th>CPL</th><th>ROAS</th><th>Resultado</th></tr></thead><tbody>'+rows+'</tbody></table></div></div>';
  }
- var aCac=aVend?aInv/aVend:0, mVenda=aVend?aMarg/aVend:0, beConv=mVenda?aCpl/mVenda:0;
- var foot='<div class="note" style="margin-top:14px;line-height:1.6">'+
-   '<b>CAC</b> '+(aCac?BRL(aCac):'—')+' &middot; <b>ROAS</b> '+(aRoas!=null?(Math.round(aRoas*100)/100)+'x':'—')+' &middot; <b>margem por venda</b> '+(mVenda?BRL(mVenda):'—')+' &middot; <b>conversão de equilíbrio</b> '+(beConv?((Math.round(beConv*1000)/10)+'%'):'—')+' (mínimo lead&rarr;venda para a mídia se pagar; estamos em '+pctf(aVend,aLeads)+'%). '+
-   'Margem Osher = crédito &times; taxa &times; 50%. Cerca de 34% dela entra já no 1º mês (adesão à vista), o que encurta o payback.</div>';
- box.innerHTML=intro+head+body+foot;
+ var aCac=aVend?aInv/aVend:0, ltv=aVend?aMarg/aVend:0, ticket=aVend?aCred/aVend:0, ltvcac=aCac?ltv/aCac:0, ret1=aCac?(ltv*0.343)/aCac:0;
+ function mk(l2,v,s){return '<div class="kpi"><div class="lbl">'+l2+'</div><div class="val">'+v+'</div><div class="sub">'+(s||'')+'</div></div>';}
+ var lcCls=ltvcac>=3?'ok':(ltvcac?'warn':'');
+ var metrics='<div class="card full" style="margin-top:16px"><h2><span class="dot"></span>Métricas de tráfego</h2>'+
+   '<div class="h2sub">CPL, CAC, LTV e derivados do recorte selecionado. CAC, LTV, LTV/CAC e payback aparecem assim que houver a 1ª venda de tráfego.</div>'+
+   '<div class="kpis">'+
+     mk('CPL',aCpl?BRL(aCpl):'—','custo por lead')+
+     mk('CAC',aCac?BRL(aCac):'—','custo por venda (mídia ÷ vendas)')+
+     mk('LTV',ltv?BRL(ltv):'—','margem Osher por cliente')+
+     '<div class="kpi '+lcCls+'"><div class="lbl">LTV / CAC</div><div class="val">'+(ltvcac?((Math.round(ltvcac*10)/10)+'x'):'—')+'</div><div class="sub">saudável &#8805; 3x</div></div>'+
+     mk('Ticket médio',ticket?BRL(ticket):'—','crédito vendido')+
+     mk('ROAS',aRoas!=null?((Math.round(aRoas*100)/100)+'x'):'—','margem ÷ mídia')+
+     mk('Conversão',pctf(aVend,aLeads)+'%','lead &rarr; venda')+
+     mk('Retorno no 1º mês',ret1?(Math.round(ret1*100)+'% do CAC'):'—','adesão à vista ≈34% da margem')+
+   '</div>'+
+   '<div class="note">LTV = margem que a Osher ganha por cliente de tráfego (crédito &times; taxa &times; 50%, ao longo do consórcio). LTV/CAC acima de 3x indica aquisição saudável. Payback: a 1ª parcela (adesão à vista) traz ≈34% da margem já no mês da venda.</div></div>';
+ box.innerHTML=intro+head+body+metrics;
 }
 function reload(){_loadData();}
 /* ===== TEMA (claro/escuro) ===== */
