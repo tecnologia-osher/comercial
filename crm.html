@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>OSHER CAPITAL — CRM Comercial</title><!-- v-pb2 -->
-<!-- crm v33 · Aba "Minhas análises": cada vendedor vê as análises de atendimento das suas reuniões (lidas de payload->reunioes; nota/compliance/relatório do robô analise-atendimentos-comercial), com nota média e % conforme no topo; admin/diretor veem todas com filtro por vendedor. RLS garante que o vendedor só carrega os próprios leads · 2026-08-14 · Mantém v32 · FIX sync: _cloudPushNow deduplica deals por id e isola registros recusados (não trava o lote); mostra recusados + erro · 2026-08-05 -->
+<!-- crm v34 · Sync à prova de Safari/ITP: banner FIXO no topo "alterações NÃO sincronizadas — Reenviar agora" (vermelho) + "Sincronizando…" (azul) durante o push; save mostra estado na hora; flush automático ao voltar o foco/aba (visibilitychange+focus). Objetivo: nada fica preso no navegador sem o vendedor ver; fim dos exports manuais · 2026-08-14 · v33 · Aba "Minhas análises": cada vendedor vê as análises de atendimento das suas reuniões (lidas de payload->reunioes; nota/compliance/relatório do robô analise-atendimentos-comercial), com nota média e % conforme no topo; admin/diretor veem todas com filtro por vendedor. RLS garante que o vendedor só carrega os próprios leads · 2026-08-14 · Mantém v32 · FIX sync: _cloudPushNow deduplica deals por id e isola registros recusados (não trava o lote); mostra recusados + erro · 2026-08-05 -->
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300..800&display=swap" rel="stylesheet">
 <style>
@@ -805,7 +805,7 @@ var KEY='osher_crm_v8',MEKEY='osher_crm_me_v8';
 var DB={deals:[],seq:1,cfg:null};var ME=null;
 function ensureCfg(){if(!DB.cfg)DB.cfg=clone(DEFAULT_CFG);if(!DB.cfg.team||!DB.cfg.team.length){DB.cfg.team=defaultTeam();}else{defaultTeam().forEach(function(dp){var de=(dp.email||'').trim().toLowerCase();var m=DB.cfg.team.find(function(p){var pe=(p.email||'').trim().toLowerCase();return (de&&pe&&pe===de)||p.nome===dp.nome;});if(!m){DB.cfg.team.push(dp);}else{m.papel=dp.papel;m.nome=dp.nome;if(dp.email)m.email=dp.email;if('vende' in dp)m.vende=dp.vende;}});}if(!DB.cfg.adm)DB.cfg.adm=clone(DEFAULT_CFG.adm);if(!DB.cfg.comm)DB.cfg.comm=clone(DEFAULT_CFG.comm);if(DB.cfg.meta==null)DB.cfg.meta=DEFAULT_CFG.meta;DB.cfg.team.forEach(function(p){var vende=(p.papel==='interno'||p.vende);if(p.meta==null)p.meta=0;if(p.metaWkNovos==null)p.metaWkNovos=vende?10:0;if(p.metaWkQual==null)p.metaWkQual=vende?5:0;if(p.metaWkProp==null)p.metaWkProp=vende?5:0;if(p.metaWkInd==null)p.metaWkInd=vende?25:0;if(p.metaWkFech==null)p.metaWkFech=vende?1:0;});if(!DB.cfg._metaMig700){DB.cfg.team.forEach(function(p){if(p.papel==='interno'||(p.papel==='diretor'&&p.vende))p.meta=700000;});DB.cfg._metaMig700=true;}if(!DB.cfg.atv)DB.cfg.atv={lig:100,reun:8,prop:10,ind:5};if(!DB.atividades)DB.atividades=[];if(!DB.rotina)DB.rotina={};if(DB.deals)DB.deals.forEach(function(d){if(d.estagio==='Primeiro contato')d.estagio='Ligação';if(d.proximoPasso==='Primeiro contato')d.proximoPasso='Ligação';});}
 function load(){try{var s=localStorage.getItem(KEY);if(s){DB=JSON.parse(s);ensureCfg();return true;}}catch(e){}return false;}
-function save(){try{localStorage.setItem(KEY,JSON.stringify(DB));}catch(e){alert('Não foi possível salvar localmente.');}cloudPush();}
+function save(){try{localStorage.setItem(KEY,JSON.stringify(DB));}catch(e){alert('Não foi possível salvar localmente.');}cloudPush();try{_syncing=true;syncStatus();}catch(_e){}}
 /* ===== AUTENTICAÇÃO: token do Supabase com refresh automático ===== */
 var SB_URL='https://pidzzwlpsffjznbzukhj.supabase.co';var ANON='sb_publishable_P1IyQB54v9tdmUIKR5L44w_uTbs8yzJ';
 function _getTok(){return window.__crmtok||(function(){try{return localStorage.getItem('osher_crm_tok')}catch(e){return null}})();}
@@ -823,6 +823,7 @@ async function authFetch(url,opts){opts=opts||{};await ensureToken();var TOK=_ge
 function sessionExpiredUI(on){var b=document.getElementById('sessBanner');if(!b){if(!on)return;b=document.createElement('div');b.id='sessBanner';b.style.cssText='position:fixed;top:0;left:0;right:0;z-index:100000;background:#c0392b;color:#fff;padding:10px 14px;font-size:13px;text-align:center;box-shadow:0 2px 8px rgba(0,0,0,.3)';b.innerHTML='Sua sessão expirou. Seus dados estão salvos neste navegador e serão sincronizados assim que você entrar de novo. <button id="sessReloginBtn" style="margin-left:10px;background:#fff;color:#c0392b;border:0;border-radius:6px;padding:5px 12px;font-weight:700;cursor:pointer">Entrar novamente</button>';document.body.appendChild(b);document.getElementById('sessReloginBtn').onclick=function(){reopenLogin();};}b.style.display=on?'block':'none';}
 function reopenLogin(){try{if(ME&&ME.email&&el('liEmail'))el('liEmail').value=ME.email;}catch(e){}try{if(el('liErr'))el('liErr').style.display='none';}catch(e){}try{el('ovLogin').classList.add('on');}catch(e){}try{if(el('liPass'))el('liPass').focus();}catch(e){}}
 function flushPending(){if(_pushPending&&_getTok()&&!_sessionDead){cloudPush();}}
+try{document.addEventListener('visibilitychange',function(){if(!document.hidden)flushPending();});window.addEventListener('focus',function(){flushPending();});}catch(_e){}
 (function _sessInit(){try{
   window.addEventListener('storage',function(ev){if(ev&&ev.key==='osher_crm_tok'){if(_adoptFromStorage())flushPending();}});
   window.addEventListener('online',function(){ensureToken().then(flushPending);});
@@ -869,7 +870,14 @@ async function toggleFilaVend(nome){if(!canSeeAll())return;var set=LEAD_PAUSADOS
 function renderDistPanel(){var box=el('filaDist');if(!box)return;if(!canSeeAll()){box.style.display='none';return;}var internos=(LEAD_SELLERS&&LEAD_SELLERS.length)?LEAD_SELLERS.slice():team().filter(function(p){return p.papel==='interno'||p.papel==='diretor';}).map(function(p){return p.nome;});if(!internos.length){box.style.display='none';return;}box.style.display='';var ativos=internos.filter(function(n){return LEAD_PAUSADOS.indexOf(n)<0;}).length;var chips=internos.map(function(n){var pausado=LEAD_PAUSADOS.indexOf(n)>=0;var cor=pausado?'var(--mut)':'var(--ac2)';return '<button class="btn sm" onclick="toggleFilaVend(\''+esc(n.replace(/'/g,"\\'"))+'\')" title="'+(pausado?'Clique para voltar a receber leads':'Clique para pausar o recebimento de leads')+'" style="border-color:'+cor+';color:'+cor+'"><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:'+cor+';margin-right:6px;vertical-align:middle"></span>'+esc(n)+' · '+(pausado?'Pausado':'Recebendo')+'</button>';}).join(' ');box.innerHTML='<h3><span class="dot" style="background:var(--ac)"></span>Distribuição automática de leads ('+ativos+'/'+internos.length+' ativos)</h3><div class="h3sub">Leads de tráfego são distribuídos por rodízio entre os vendedores ativos. Toque para pausar ou retomar — não afeta leads já recebidos.</div><div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:10px">'+chips+'</div>'+(ativos===0?'<div class="note" style="color:var(--red);margin-top:10px">⚠ Todos pausados — novos leads de tráfego ficarão sem responsável até reativar alguém.</div>':'');}
 var _cpT=null;function cloudPush(){clearTimeout(_cpT);_cpT=setTimeout(_cloudPushNow,800);}
 function syncWarn(on,msg){var b=document.getElementById('syncWarn');if(!b){b=document.createElement('div');b.id='syncWarn';b.style.cssText='position:fixed;bottom:14px;left:50%;transform:translateX(-50%);z-index:9999;max-width:92vw;background:var(--card);color:var(--warn);border:1px solid var(--warn);border-radius:10px;padding:8px 14px;font-size:12px;box-shadow:var(--shadow);display:none';document.body.appendChild(b);}b.textContent=msg||'';b.style.display=on?'block':'none';}
-var _syncFailIds=[];
+var _syncFailIds=[];var _syncing=false;
+function pushNow(){clearTimeout(_cpT);_cloudPushNow();}
+function syncStatus(){var b=document.getElementById('syncStatus');
+ if(!b){b=document.createElement('div');b.id='syncStatus';b.style.cssText='position:fixed;top:0;left:0;right:0;z-index:10001;display:none;text-align:center;padding:9px 14px;font-size:13px;font-weight:700;box-shadow:0 2px 10px rgba(0,0,0,.18)';document.body.appendChild(b);}
+ if(_syncing){b.style.display='block';b.style.background='#0e2743';b.style.color='#cfe0f0';b.innerHTML='Sincronizando com o servidor…';return;}
+ if(_pushPending||(_syncFailIds&&_syncFailIds.length)){b.style.display='block';b.style.background='#c0392b';b.style.color='#fff';
+  b.innerHTML='⚠ Há alterações NÃO sincronizadas neste navegador — não feche a aba sem reenviar. <button onclick="pushNow()" style="margin-left:8px;background:#fff;color:#c0392b;border:none;border-radius:8px;padding:5px 12px;font-weight:700;cursor:pointer">Reenviar agora</button>';return;}
+ b.style.display='none';}
 async function _pushRows(BASE,H,rows){var authFail=false,failIds=[],err='';
   for(var i=0;i<rows.length&&!authFail;i+=200){var batch=rows.slice(i,i+200);
     var resp=await authFetch(BASE+'deals',{method:'POST',headers:H,body:JSON.stringify(batch)});
@@ -884,7 +892,8 @@ async function _pushRows(BASE,H,rows){var authFail=false,failIds=[],err='';
   }
   return {authFail:authFail,failIds:failIds,err:err};}
 async function _cloudPushNow(){
-  if(!_getTok()||_sessionDead){_pushPending=true;if(ME)sessionExpiredUI(true);return;}
+  if(!_getTok()||_sessionDead){_pushPending=true;_syncing=false;syncStatus();if(ME)sessionExpiredUI(true);return;}
+  _syncing=true;syncStatus();
   try{
     var BASE=SB_URL+'/rest/v1/';var H={'Content-Type':'application/json','Prefer':'resolution=merge-duplicates,return=minimal'};
     var canAll=(typeof canSeeAll==='function'&&canSeeAll());
@@ -892,11 +901,12 @@ async function _cloudPushNow(){
     var byId={};mine.forEach(function(d){byId[d.id]=d;});mine=Object.keys(byId).map(function(k){return byId[k];}); /* dedupe por id: evita conflito de upsert no mesmo lote (derrubava o lote inteiro) */
     var rows=mine.map(function(d){return {id:d.id,cliente:d.cliente||'',vendedor:d.vendedor||'',origem:d.origem||'',bem:d.bem||'',linha:d.linha||'',valor:+d.valor||0,estagio:d.estagio||'',prob:+d.prob||0,criado_em:d.criadoEm||d.primeiroContatoEm||'',payload:d,atualizado_em:new Date().toISOString()};});
     var res=await _pushRows(BASE,H,rows);
-    if(res.authFail){_pushPending=true;/* banner de sessão cuida do reenvio ao reautenticar */ return;}
+    if(res.authFail){_pushPending=true;_syncing=false;syncStatus();/* banner de sessão cuida do reenvio ao reautenticar */ return;}
     _syncFailIds=res.failIds||[];
     if(!_syncFailIds.length){_pushPending=false;syncWarn(false);}
     else{_pushPending=false;console.warn('Registros recusados pelo servidor (ficam salvos aqui):',_syncFailIds,res.err);syncWarn(true,_syncFailIds.length+' registro(s) o servidor recusou (o resto sincronizou). Erro: '+((res.err||'—').slice(0,110)));}
-  }catch(e){console.warn('cloudPush falhou',e);_pushPending=true;syncWarn(true,'Sem conexão — suas alterações estão salvas neste navegador e serão reenviadas quando a conexão voltar.');setTimeout(function(){if(_pushPending)flushPending();},15000);}
+    _syncing=false;syncStatus();
+  }catch(e){console.warn('cloudPush falhou',e);_pushPending=true;_syncing=false;syncStatus();syncWarn(true,'Sem conexão — suas alterações estão salvas neste navegador e serão reenviadas quando a conexão voltar.');setTimeout(function(){if(_pushPending)flushPending();},15000);}
 }
 function uid(){DB.seq++;return 'd'+Date.now().toString(36)+Math.random().toString(36).slice(2,7);}
 function nowISO(){return new Date().toISOString();}
