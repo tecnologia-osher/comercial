@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>OSHER CAPITAL — CRM Comercial</title><!-- v-pb2 -->
-<!-- crm v31 · Semana passada (fechada): scorecard e pace ganham toggle "Semana atual / Semana passada (fechada)"; na SEGUNDA abre já na semana que fechou (WKOFF=-1) para o 1:1 de segunda ver o fechamento direto. paceFrac=1 em semana fechada. Mantém v30 (fix fuso BRT no dDate) · 2026-08-03 -->
+<!-- crm v33 · Aba "Minhas análises": cada vendedor vê as análises de atendimento das suas reuniões (lidas de payload->reunioes; nota/compliance/relatório do robô analise-atendimentos-comercial), com nota média e % conforme no topo; admin/diretor veem todas com filtro por vendedor. RLS garante que o vendedor só carrega os próprios leads · 2026-08-14 · Mantém v32 · FIX sync: _cloudPushNow deduplica deals por id e isola registros recusados (não trava o lote); mostra recusados + erro · 2026-08-05 -->
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300..800&display=swap" rel="stylesheet">
 <style>
@@ -148,7 +148,7 @@ label.fl{display:flex;flex-direction:column;gap:5px;font-size:12px;color:var(--m
 .pgtitle{font-size:16px;font-weight:700}
 .topbar .actions{margin-left:auto}
 .content{padding:20px 24px 56px}
-@media(max-width:760px){#app.wrap{flex-direction:column}.sidebar{width:auto;flex:none;height:auto;position:static}#nav{flex-direction:row;flex-wrap:wrap}.side-foot{margin:8px 0 0;border:none;padding:0}.topbar{padding:12px 16px}.content{padding:16px}}
+@media(max-width:820px){#app.wrap{flex-direction:column}.sidebar{width:auto;flex:none;height:auto;position:sticky;top:0;z-index:20;flex-direction:row;flex-wrap:wrap;align-items:center;gap:8px;padding:10px 12px}.sidebar .brand{padding:0;margin-right:4px}.sidebar .brand .b2{display:none}#nav{flex-direction:row;flex-wrap:nowrap;overflow-x:auto;gap:4px;flex:1;-webkit-overflow-scrolling:touch}#nav button{white-space:nowrap;padding:7px 11px}.side-foot{margin:0;border:none;padding:0;flex-direction:row;align-items:center;gap:6px}.side-foot .btn.sm{margin-top:0!important;width:auto!important}.topbar{padding:11px 16px;position:static}.pgtitle{font-size:15px}.content{padding:16px}.cards2{grid-template-columns:1fr}.mgrid,.mgrid.three{grid-template-columns:1fr}.modal,.modal.wide{width:100%}.content table{display:block;overflow-x:auto;white-space:nowrap;-webkit-overflow-scrolling:touch}.kpis{grid-template-columns:repeat(auto-fit,minmax(140px,1fr))}}@media(max-width:480px){.kpis{grid-template-columns:1fr 1fr}.content{padding:12px}.col{min-width:210px;width:210px}.topbar .actions{gap:6px}.topbar .actions .btn{padding:7px 10px;font-size:12px}}
 .finres{position:absolute;left:0;right:0;top:calc(100% + 4px);z-index:60;background:var(--card);border:1px solid var(--bd);border-radius:10px;max-height:280px;overflow:auto;box-shadow:0 10px 30px rgba(0,0,0,.22)}
 .finres-i{padding:9px 12px;cursor:pointer;font-size:13px;border-bottom:1px solid var(--bd)}
 .finres-i:last-child{border-bottom:none}
@@ -178,6 +178,7 @@ label.fl{display:flex;flex-direction:column;gap:5px;font-size:12px;color:var(--m
   <nav id="nav">
     <button data-v="inicio" class="on">Início</button>
     <button data-v="plano">Meu Plano</button>
+    <button data-v="analises">Minhas análises</button>
     <button data-v="dash">Dashboard</button>
     <button data-v="conv" data-see="1">Taxa de conversão</button>
     <button data-v="funil">Funil</button>
@@ -315,6 +316,14 @@ label.fl{display:flex;flex-direction:column;gap:5px;font-size:12px;color:var(--m
     <label style="font-size:13px" data-see="1">Vendedor: <select id="planoVend" onchange="renderPlano()"></select></label>
   </div>
   <div id="planoBox"></div>
+</section>
+
+<!-- ANÁLISES DE ATENDIMENTO (cada vendedor vê as suas; admin/diretor veem todas) -->
+<section class="view" id="v-analises">
+  <div class="filters">
+    <label style="font-size:13px" data-see="1">Vendedor: <select id="anVend" onchange="renderAnalises()"></select></label>
+  </div>
+  <div id="analisesBody"></div>
 </section>
 
 <!-- TRANSFERÊNCIA DE LEADS DE TRÁFEGO (admin/diretor) -->
@@ -792,7 +801,7 @@ function defaultTeam(){
 var DEFAULT_CFG={meta:5000000,adm:[{nome:'Porto',tadm:17,fr:2},{nome:'Embracon',tadm:22,fr:0},{nome:'Servopa',tadm:18,fr:1},{nome:'Rodobens',tadm:19,fr:2},{nome:'Itaú',tadm:16,fr:0},{nome:'Genérica',tadm:20,fr:1}],comm:{'Consórcio':1.5,'Financiamento':1.0,'Home Equity':2.0,'Seguros':10.0},team:[]};
 
 /* ===================== PERSISTÊNCIA ===================== */
-var KEY='osher_crm_v7',MEKEY='osher_crm_me_v7';
+var KEY='osher_crm_v8',MEKEY='osher_crm_me_v8';
 var DB={deals:[],seq:1,cfg:null};var ME=null;
 function ensureCfg(){if(!DB.cfg)DB.cfg=clone(DEFAULT_CFG);if(!DB.cfg.team||!DB.cfg.team.length){DB.cfg.team=defaultTeam();}else{defaultTeam().forEach(function(dp){var de=(dp.email||'').trim().toLowerCase();var m=DB.cfg.team.find(function(p){var pe=(p.email||'').trim().toLowerCase();return (de&&pe&&pe===de)||p.nome===dp.nome;});if(!m){DB.cfg.team.push(dp);}else{m.papel=dp.papel;m.nome=dp.nome;if(dp.email)m.email=dp.email;if('vende' in dp)m.vende=dp.vende;}});}if(!DB.cfg.adm)DB.cfg.adm=clone(DEFAULT_CFG.adm);if(!DB.cfg.comm)DB.cfg.comm=clone(DEFAULT_CFG.comm);if(DB.cfg.meta==null)DB.cfg.meta=DEFAULT_CFG.meta;DB.cfg.team.forEach(function(p){var vende=(p.papel==='interno'||p.vende);if(p.meta==null)p.meta=0;if(p.metaWkNovos==null)p.metaWkNovos=vende?10:0;if(p.metaWkQual==null)p.metaWkQual=vende?5:0;if(p.metaWkProp==null)p.metaWkProp=vende?5:0;if(p.metaWkInd==null)p.metaWkInd=vende?25:0;if(p.metaWkFech==null)p.metaWkFech=vende?1:0;});if(!DB.cfg._metaMig700){DB.cfg.team.forEach(function(p){if(p.papel==='interno'||(p.papel==='diretor'&&p.vende))p.meta=700000;});DB.cfg._metaMig700=true;}if(!DB.cfg.atv)DB.cfg.atv={lig:100,reun:8,prop:10,ind:5};if(!DB.atividades)DB.atividades=[];if(!DB.rotina)DB.rotina={};if(DB.deals)DB.deals.forEach(function(d){if(d.estagio==='Primeiro contato')d.estagio='Ligação';if(d.proximoPasso==='Primeiro contato')d.proximoPasso='Ligação';});}
 function load(){try{var s=localStorage.getItem(KEY);if(s){DB=JSON.parse(s);ensureCfg();return true;}}catch(e){}return false;}
@@ -860,18 +869,33 @@ async function toggleFilaVend(nome){if(!canSeeAll())return;var set=LEAD_PAUSADOS
 function renderDistPanel(){var box=el('filaDist');if(!box)return;if(!canSeeAll()){box.style.display='none';return;}var internos=(LEAD_SELLERS&&LEAD_SELLERS.length)?LEAD_SELLERS.slice():team().filter(function(p){return p.papel==='interno'||p.papel==='diretor';}).map(function(p){return p.nome;});if(!internos.length){box.style.display='none';return;}box.style.display='';var ativos=internos.filter(function(n){return LEAD_PAUSADOS.indexOf(n)<0;}).length;var chips=internos.map(function(n){var pausado=LEAD_PAUSADOS.indexOf(n)>=0;var cor=pausado?'var(--mut)':'var(--ac2)';return '<button class="btn sm" onclick="toggleFilaVend(\''+esc(n.replace(/'/g,"\\'"))+'\')" title="'+(pausado?'Clique para voltar a receber leads':'Clique para pausar o recebimento de leads')+'" style="border-color:'+cor+';color:'+cor+'"><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:'+cor+';margin-right:6px;vertical-align:middle"></span>'+esc(n)+' · '+(pausado?'Pausado':'Recebendo')+'</button>';}).join(' ');box.innerHTML='<h3><span class="dot" style="background:var(--ac)"></span>Distribuição automática de leads ('+ativos+'/'+internos.length+' ativos)</h3><div class="h3sub">Leads de tráfego são distribuídos por rodízio entre os vendedores ativos. Toque para pausar ou retomar — não afeta leads já recebidos.</div><div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:10px">'+chips+'</div>'+(ativos===0?'<div class="note" style="color:var(--red);margin-top:10px">⚠ Todos pausados — novos leads de tráfego ficarão sem responsável até reativar alguém.</div>':'');}
 var _cpT=null;function cloudPush(){clearTimeout(_cpT);_cpT=setTimeout(_cloudPushNow,800);}
 function syncWarn(on,msg){var b=document.getElementById('syncWarn');if(!b){b=document.createElement('div');b.id='syncWarn';b.style.cssText='position:fixed;bottom:14px;left:50%;transform:translateX(-50%);z-index:9999;max-width:92vw;background:var(--card);color:var(--warn);border:1px solid var(--warn);border-radius:10px;padding:8px 14px;font-size:12px;box-shadow:var(--shadow);display:none';document.body.appendChild(b);}b.textContent=msg||'';b.style.display=on?'block':'none';}
+var _syncFailIds=[];
+async function _pushRows(BASE,H,rows){var authFail=false,failIds=[],err='';
+  for(var i=0;i<rows.length&&!authFail;i+=200){var batch=rows.slice(i,i+200);
+    var resp=await authFetch(BASE+'deals',{method:'POST',headers:H,body:JSON.stringify(batch)});
+    if(resp.ok)continue;
+    if(resp.status===401||_sessionDead){authFail=true;break;}
+    try{if(!err)err=(await resp.clone().text()).slice(0,200);}catch(e){}
+    for(var k=0;k<batch.length&&!authFail;k++){ /* lote recusado: isola registro a registro para não travar todos */
+      var r2=await authFetch(BASE+'deals',{method:'POST',headers:H,body:JSON.stringify([batch[k]])});
+      if(r2.ok)continue;
+      if(r2.status===401||_sessionDead){authFail=true;break;}
+      failIds.push(batch[k].id);try{if(!err)err=(await r2.clone().text()).slice(0,200);}catch(e){}}
+  }
+  return {authFail:authFail,failIds:failIds,err:err};}
 async function _cloudPushNow(){
   if(!_getTok()||_sessionDead){_pushPending=true;if(ME)sessionExpiredUI(true);return;}
   try{
     var BASE=SB_URL+'/rest/v1/';var H={'Content-Type':'application/json','Prefer':'resolution=merge-duplicates,return=minimal'};
     var canAll=(typeof canSeeAll==='function'&&canSeeAll());
-    var mine=(DB.deals||[]).filter(function(d){return d&&d.id&&(canAll||(ME&&d.vendedor===ME.nome));}); /* vendedor envia só os próprios — evita 403 por cache de outros */
+    var mine=(DB.deals||[]).filter(function(d){return d&&d.id&&(canAll||(ME&&d.vendedor===ME.nome));}); /* vendedor envia só os próprios */
+    var byId={};mine.forEach(function(d){byId[d.id]=d;});mine=Object.keys(byId).map(function(k){return byId[k];}); /* dedupe por id: evita conflito de upsert no mesmo lote (derrubava o lote inteiro) */
     var rows=mine.map(function(d){return {id:d.id,cliente:d.cliente||'',vendedor:d.vendedor||'',origem:d.origem||'',bem:d.bem||'',linha:d.linha||'',valor:+d.valor||0,estagio:d.estagio||'',prob:+d.prob||0,criado_em:d.criadoEm||d.primeiroContatoEm||'',payload:d,atualizado_em:new Date().toISOString()};});
-    var okAll=true,authFail=false;
-    for(var i=0;i<rows.length;i+=200){var resp=await authFetch(BASE+'deals',{method:'POST',headers:H,body:JSON.stringify(rows.slice(i,i+200))});if(!resp.ok){okAll=false;if(resp.status===401||_sessionDead)authFail=true;}if(_sessionDead)break;}
-    if(okAll){_pushPending=false;syncWarn(false);}
-    else if(authFail){_pushPending=true;/* banner de sessão já visível; reenvia sozinho ao reautenticar */}
-    else{_pushPending=true;syncWarn(true,'Sincronizando… suas alterações estão salvas neste navegador e serão reenviadas em instantes.');setTimeout(function(){if(_pushPending)flushPending();},15000);}
+    var res=await _pushRows(BASE,H,rows);
+    if(res.authFail){_pushPending=true;/* banner de sessão cuida do reenvio ao reautenticar */ return;}
+    _syncFailIds=res.failIds||[];
+    if(!_syncFailIds.length){_pushPending=false;syncWarn(false);}
+    else{_pushPending=false;console.warn('Registros recusados pelo servidor (ficam salvos aqui):',_syncFailIds,res.err);syncWarn(true,_syncFailIds.length+' registro(s) o servidor recusou (o resto sincronizou). Erro: '+((res.err||'—').slice(0,110)));}
   }catch(e){console.warn('cloudPush falhou',e);_pushPending=true;syncWarn(true,'Sem conexão — suas alterações estão salvas neste navegador e serão reenviadas quando a conexão voltar.');setTimeout(function(){if(_pushPending)flushPending();},15000);}
 }
 function uid(){DB.seq++;return 'd'+Date.now().toString(36)+Math.random().toString(36).slice(2,7);}
@@ -888,7 +912,6 @@ function scope(arr){return canSeeAll()?arr:arr.filter(function(d){return d.vende
 function isExternal(name){var m=memberByName(name);return m&&m.papel==='externo';}
 
 var SEED_DATA={"seq": 795, "cfg": null, "deals": []}; /* boot de 1ª vez: ensureCfg() aplica DEFAULT_CFG + defaultTeam() */
-/* ===================== HELPERS ===================== */
 function BRL(v){return 'R$ '+Math.round(v||0).toLocaleString('pt-BR');}
 function BRLk(v){if(Math.abs(v)>=1e6)return 'R$ '+(v/1e6).toLocaleString('pt-BR',{minimumFractionDigits:1,maximumFractionDigits:1})+' mi';return 'R$ '+Math.round(v/1e3).toLocaleString('pt-BR')+' mil';}
 function bemTag(b){var c=b==='Imóvel'?'imovel':b==='Automóvel'?'auto':'serv';return '<span class="tag '+c+'">'+(b||'—')+'</span>';}
@@ -1183,6 +1206,43 @@ function renderPlano(){
   if(canSeeAll()&&sel){if(sel.options.length<=1){var opts=sellers().map(function(p){return p.nome;});sel.innerHTML=opts.map(function(v){return '<option'+(v===ME.nome?' selected':'')+'>'+esc(v)+'</option>';}).join('');}vend=sel.value||ME.nome;}
   el('planoBox').innerHTML=_planoDeckSection(vend);
   _fillPlanoDeck(vend);
+}
+function renderAnalises(){
+  if(!el('analisesBody')||!ME)return;
+  var full=canSeeAll(),sel=el('anVend');
+  if(full&&sel&&sel.options.length<=1){var vs={};(DB.deals||[]).forEach(function(d){if(d.vendedor)vs[d.vendedor]=1;});sel.innerHTML='<option value="">Todos os vendedores</option>'+Object.keys(vs).sort().map(function(v){return '<option>'+esc(v)+'</option>';}).join('');}
+  var fv=(full&&sel)?sel.value:'';
+  var rows=[];
+  (DB.deals||[]).forEach(function(d){
+    if(full&&fv&&d.vendedor!==fv)return;
+    (d.reunioes||[]).forEach(function(r){
+      if(!r||!r.resumo)return;
+      rows.push({data:r.data||'',cliente:d.cliente||'—',vend:d.vendedor||'—',resumo:r.resumo,link:r.link||'',an:r.analise||null});
+    });
+  });
+  rows.sort(function(a,b){return String(b.data).localeCompare(String(a.data));});
+  var wn=rows.filter(function(x){return x.an&&x.an.nota!=null;});
+  var media=wn.length?Math.round(wn.reduce(function(s,x){return s+(+x.an.nota||0);},0)/wn.length):null;
+  var cc=rows.filter(function(x){return x.an&&x.an.compliance;});
+  var conf=cc.filter(function(x){return (x.an.compliance.status||'').toUpperCase().indexOf('NAO')<0&&(x.an.compliance.status||'').toUpperCase().indexOf('NÃO')<0;}).length;
+  var pctConf=cc.length?Math.round(100*conf/cc.length):null;
+  var head='<div style="display:flex;align-items:baseline;gap:12px;flex-wrap:wrap;margin-bottom:6px"><h2 style="margin:0">Análises de atendimento</h2><span style="font-size:12px;color:var(--mut)">'+(full?(fv?esc(fv):'todos os vendedores'):esc(ME.nome))+' · '+rows.length+' reuni'+(rows.length===1?'ão':'ões')+'</span></div>';
+  var kpis='<div class="kpis" style="display:grid;grid-template-columns:repeat(3,minmax(120px,1fr));gap:12px;margin:8px 0 14px">'
+    +'<div class="kpi"><div class="lbl">Nota média</div><div class="val">'+(media!=null?media+'<span style="font-size:13px;color:var(--mut)">/100</span>':'—')+'</div></div>'
+    +'<div class="kpi"><div class="lbl">Análises</div><div class="val">'+rows.length+'</div></div>'
+    +'<div class="kpi"><div class="lbl">% conforme</div><div class="val" style="color:'+(pctConf!=null&&pctConf<100?'var(--red)':'var(--ac2)')+'">'+(pctConf!=null?pctConf+'%':'—')+'</div></div></div>';
+  if(!rows.length){el('analisesBody').innerHTML=head+'<div class="card" style="color:var(--mut)">Ainda não há análises de atendimento. Elas aparecem aqui automaticamente após as reuniões do Meet com transcrição (robô diário).</div>';return;}
+  function badge(an){if(!an)return '';var out='';if(an.nota!=null){var c=an.nota>=75?'var(--ac2)':(an.nota>=60?'var(--warn)':'var(--red)');out+='<span style="font-weight:800;color:'+c+'">'+an.nota+'<span style="font-size:11px;color:var(--mut)">/100</span></span>';}
+    if(an.compliance&&an.compliance.status){var nc=/n[aã]o/i.test(an.compliance.status);out+=' <span style="font-size:11px;font-weight:700;padding:2px 8px;border-radius:12px;background:'+(nc?'var(--red)':'var(--ac2)')+';color:#fff">'+(nc?'NÃO CONFORME':'CONFORME')+(nc&&an.compliance.criticos?(' · '+an.compliance.criticos):'')+'</span>';}
+    return out;}
+  var list=rows.map(function(x){
+    var meet=x.link&&/^https?:/i.test(x.link)?' · <a class="mlnk" href="'+esc(x.link)+'" target="_blank" rel="noopener">Meet</a>':'';
+    var rel=(x.an&&x.an.relatorio)?' · <a class="mlnk" href="'+esc(x.an.relatorio)+'" target="_blank" rel="noopener">relatório</a>':'';
+    return '<div class="card" style="margin-bottom:10px"><div style="display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;align-items:baseline"><div style="font-weight:700">'+esc(x.cliente)+(full?' <span style="font-weight:400;color:var(--mut);font-size:12px">· '+esc(x.vend)+'</span>':'')+'</div><div style="font-size:12px;color:var(--mut)">'+(x.data?fmtFull(x.data):'')+meet+rel+'</div></div>'
+      +(badge(x.an)?'<div style="margin:6px 0">'+badge(x.an)+'</div>':'')
+      +'<div style="font-size:12.5px;color:var(--txt);line-height:1.5;margin-top:4px">'+esc(x.resumo)+'</div></div>';
+  }).join('');
+  el('analisesBody').innerHTML=head+kpis+list;
 }
 function renderFila(){
  if(!el('tFila'))return;
@@ -1581,7 +1641,7 @@ function rotinaVendedor(){var r=weekRange(0);var av=weekActivity(ME.nome,r[0],r[
 function rotinaDiretor(){var r=weekRange(0);var names=sellers().map(function(s){return s.nome;});var today=todayStr();var huddle=names.map(function(n){var nv=DB.deals.filter(function(d){return d.vendedor===n&&dDate(d.criadoEm)===today;}).length;var rh=0;DB.deals.forEach(function(d){if(d.vendedor!==n)return;(d.reunioes||[]).forEach(function(x){if(x.data===today)rh++;});});var lh=(DB.atividades||[]).filter(function(a){return a.v===n&&dDate(a.em)===today&&a.tipo==='ligacao';}).length;var atr=DB.deals.filter(function(d){return d.vendedor===n&&overdue(d);}).length;if(!(nv||rh||lh||atr))return null;return '<tr><td class="l">'+esc(n)+'</td><td>'+lh+'</td><td>'+nv+'</td><td>'+rh+'</td><td>'+(atr?'<span class="badge b-bad">'+atr+'</span>':'0')+'</td></tr>';}).filter(Boolean).join('')||'<tr><td class="l" colspan="5"><div class="empty">Sem atividade hoje ainda.</div></td></tr>';var um=names.map(function(n){var av=weekActivity(n,r[0],r[1]);var pipe=DB.deals.filter(function(d){return d.vendedor===n&&isOpen(d);});if(!(pipe.length||av.novos||av.fechados))return null;var pv=pipe.reduce(function(a,d){return a+(d.valor||0)},0);var neg=pipe.filter(function(d){return d.estagio==='Negociação'}).length;var par=pipe.filter(function(d){return daysSince(d.stageSince)>14}).length;var m=memberByName(n)||{};var pm=(m.metaWkNovos||0)?Math.round(av.novos/(m.metaWkNovos)*100):null;return '<tr><td class="l">'+esc(n)+'</td><td>'+BRLk(pv)+'</td><td>'+neg+'</td><td>'+(par?'<span class="badge b-bad">'+par+'</span>':'0')+'</td><td>'+av.novos+'</td><td>'+av.reunioes+'</td><td>'+av.propostas+'</td><td>'+(pm==null?'—':'<span class="badge '+(pm>=100?'b-ok':pm>=60?'b-warn':'b-bad')+'">'+pm+'%</span>')+'</td></tr>';}).filter(Boolean).join('')||'<tr><td class="l" colspan="8"><div class="empty">Sem pipeline ativo.</div></td></tr>';var tot={lig:0,reun:0,prop:0,novos:0,qual:0,fech:0};names.forEach(function(n){var a=weekActivity(n,r[0],r[1]);tot.lig+=a.ligacoes;tot.reun+=a.reunioes;tot.prop+=a.propostas;tot.novos+=a.novos;tot.qual+=a.qualif;tot.fech+=a.fechados;});var convT=tot.novos?Math.round(tot.qual/tot.novos*100):0;var valT=names.reduce(function(s,n){return s+DB.deals.filter(function(d){return d.vendedor===n&&isWon(d)&&inRange(d.ganhoEm,r[0],r[1]);}).reduce(function(a,d){return a+(d.valor||0)},0);},0);var pir='<div class="card"><h3><span class="dot" style="background:var(--vio)"></span>Atividades → Objetivos → Resultados</h3><div class="h3sub">Foque no que é gerenciável (semana)</div><div style="display:flex;flex-direction:column;gap:8px"><div style="background:var(--card2);border-radius:10px;padding:10px 12px;font-size:13px"><b>Atividades</b> · '+tot.lig+' ligações · '+tot.reun+' reuniões · '+tot.prop+' propostas</div><div style="background:var(--card2);border-radius:10px;padding:10px 12px;font-size:13px;margin-left:18px"><b>Objetivos</b> · '+tot.novos+' novos · '+tot.qual+' qualificados · '+convT+'% qualif.</div><div style="background:var(--card2);border-radius:10px;padding:10px 12px;font-size:13px;margin-left:36px"><b>Resultados</b> · '+tot.fech+' fechados · '+BRLk(valT)+'</div></div></div>';return '<div style="font-size:21px;font-weight:800;margin-bottom:4px">Rotina da Equipe</div><div style="font-size:13px;color:var(--mut);margin-bottom:16px">Cadência: Daily Huddle, 1:1 semanal e foco em atividade</div><div class="grid cards2"><div class="card" style="padding:8px 10px 0"><h3><span class="dot"></span>Pauta do Daily Huddle (hoje)</h3><div class="h3sub">Métricas do dia · onde destravar</div><table><thead><tr><th class="l">Vendedor</th><th>Ligações</th><th>Novos</th><th>Reuniões</th><th>Atrasados</th></tr></thead><tbody>'+huddle+'</tbody></table></div>'+pir+'</div><div class="card" style="padding:8px 10px 0;margin-top:14px"><h3><span class="dot" style="background:var(--ac2)"></span>Pauta do 1:1 semanal</h3><div class="h3sub">Pipeline + atividade vs. meta — pronto para a reunião</div><table><thead><tr><th class="l">Vendedor</th><th>Pipeline</th><th>Negoc.</th><th>Parados</th><th>Novos(sem)</th><th>Reuniões</th><th>Propostas</th><th>Pace novos</th></tr></thead><tbody>'+um+'</tbody></table></div>';}
 function renderRotina(){var b=el('rotinaBody');if(!b||!ME)return;b.innerHTML=canSeeAll()?rotinaDiretor():rotinaVendedor();}
 
-function renderAll(){if(!ME)return;renderInicio();renderDash();renderConvView();renderFunil();renderClientes();renderFila();renderTransfer();renderPlano();renderTarefas();renderBoard();renderPos();renderLeads();renderVend();renderAtiv();renderTracao();renderReport();renderRotina();if(el('v-sim').classList.contains('on'))runSim();else fillSimDealSelect();fillFinDealSelect();el('foot').innerHTML='OSHER CAPITAL · CRM Comercial — dados salvos localmente neste navegador. '+DB.deals.length+' negócios · meta '+BRLk(CFG().meta)+'. '+(canSeeAll()?'<b>Exportar</b> para backup/compartilhar. ':'')+'Funciona offline.';}
+function renderAll(){if(!ME)return;renderInicio();renderDash();renderConvView();renderFunil();renderClientes();renderFila();renderTransfer();renderPlano();renderAnalises();renderTarefas();renderBoard();renderPos();renderLeads();renderVend();renderAtiv();renderTracao();renderReport();renderRotina();if(el('v-sim').classList.contains('on'))runSim();else fillSimDealSelect();fillFinDealSelect();el('foot').innerHTML='OSHER CAPITAL · CRM Comercial — dados salvos localmente neste navegador. '+DB.deals.length+' negócios · meta '+BRLk(CFG().meta)+'. '+(canSeeAll()?'<b>Exportar</b> para backup/compartilhar. ':'')+'Funciona offline.';}
 
 /* ===================== TEMA (claro/escuro) ===================== */
 function _themeIcon(dark){return dark
