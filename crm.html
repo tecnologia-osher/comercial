@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>OSHER CAPITAL — CRM Comercial</title><!-- v-pb2 -->
-<!-- crm v34 · Sync à prova de Safari/ITP: banner FIXO no topo "alterações NÃO sincronizadas — Reenviar agora" (vermelho) + "Sincronizando…" (azul) durante o push; save mostra estado na hora; flush automático ao voltar o foco/aba (visibilitychange+focus). Objetivo: nada fica preso no navegador sem o vendedor ver; fim dos exports manuais · 2026-08-14 · v33 · Aba "Minhas análises": cada vendedor vê as análises de atendimento das suas reuniões (lidas de payload->reunioes; nota/compliance/relatório do robô analise-atendimentos-comercial), com nota média e % conforme no topo; admin/diretor veem todas com filtro por vendedor. RLS garante que o vendedor só carrega os próprios leads · 2026-08-14 · Mantém v32 · FIX sync: _cloudPushNow deduplica deals por id e isola registros recusados (não trava o lote); mostra recusados + erro · 2026-08-05 -->
+<!-- crm v35 · Pop-up de aniversariante do dia: ao logar, 1º pop-up mostra os clientes da carteira (contratos, RLS = só os do vendedor) que fazem aniversário HOJE, com a idade que estão fazendo + botão Parabenizar (WhatsApp com msg dos anos). Mostra 1x por dia por navegador (localStorage osher_aniv_seen) · 2026-08-14 · v34 · Sync à prova de Safari/ITP: banner FIXO no topo "alterações NÃO sincronizadas — Reenviar agora" (vermelho) + "Sincronizando…" (azul) durante o push; save mostra estado na hora; flush automático ao voltar o foco/aba (visibilitychange+focus). Objetivo: nada fica preso no navegador sem o vendedor ver; fim dos exports manuais · 2026-08-14 · v33 · Aba "Minhas análises": cada vendedor vê as análises de atendimento das suas reuniões (lidas de payload->reunioes; nota/compliance/relatório do robô analise-atendimentos-comercial), com nota média e % conforme no topo; admin/diretor veem todas com filtro por vendedor. RLS garante que o vendedor só carrega os próprios leads · 2026-08-14 · Mantém v32 · FIX sync: _cloudPushNow deduplica deals por id e isola registros recusados (não trava o lote); mostra recusados + erro · 2026-08-05 -->
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300..800&display=swap" rel="stylesheet">
 <style>
@@ -970,7 +970,7 @@ async function doLogin(){
   _saveTok(j);
  }catch(e){err.textContent='Erro ao entrar: '+e.message;err.style.display='block';return;}
  err.style.display='none';ME=m;try{localStorage.setItem(MEKEY,m.email);}catch(e){}
- el('ovLogin').classList.remove('on');el('app').classList.remove('hidden');applyRole();renderAll();await cloudPullDeals();save();renderAll();checkNewLeads();startLeadPoll();cloudPullContratos().then(function(ok){if(ok)renderInicio();});cloudPullRouting().then(function(ok){if(ok)renderFila();});
+ el('ovLogin').classList.remove('on');el('app').classList.remove('hidden');applyRole();renderAll();await cloudPullDeals();save();renderAll();checkNewLeads();startLeadPoll();cloudPullContratos().then(function(ok){if(ok){renderInicio();birthdayPopup();}});cloudPullRouting().then(function(ok){if(ok)renderFila();});
 }
 function logout(){ME=null;window.__crmtok=null;try{clearTimeout(_refT);}catch(e){}try{localStorage.removeItem(MEKEY);}catch(e){}try{localStorage.removeItem('osher_crm_tok');}catch(e){}try{localStorage.removeItem('osher_crm_rtok');}catch(e){}try{localStorage.removeItem('osher_crm_texp');}catch(e){}el('liPass').value='';el('app').classList.add('hidden');el('ovLogin').classList.add('on');}
 function resolveMe(){try{var e=localStorage.getItem(MEKEY);if(e){var m=memberByEmail(e);if(m&&m.papel!=='externo'){ME=m;return true;}}}catch(e){}return false;}
@@ -1554,6 +1554,28 @@ function aniversariantesWidget(){
   var rows=list.slice(0,80).map(function(c){var dia=c.nascimento.slice(8,10)+'/'+c.nascimento.slice(5,7);var hoje=c.nascimento.slice(5,10)===td;var tel=tm[_normNome(c.cliente)];var wl=tel?('https://wa.me/'+waNum(tel)+'?text='+encodeURIComponent('Feliz aniversário, '+((c.cliente||'').split(' ')[0])+'! 🎉 A Osher Capital deseja tudo de bom pra você.')):'';return '<div style="display:flex;align-items:center;gap:8px;padding:6px 0;border-bottom:1px solid var(--bd);font-size:13px"><span class="badge '+(hoje?'b-ok':'b-mut')+'">'+dia+(hoje?' 🎉 hoje':'')+'</span><span>'+esc(c.cliente||'')+'</span>'+(c.cidade?'<span style="color:var(--mut);font-size:11px">'+esc(c.cidade)+'</span>':'')+'<span style="margin-left:auto;color:var(--mut);font-size:11px">'+(canSeeAll()?esc(c.vendedor||''):'')+'</span>'+(wl?'<a class="wapp" href="'+wl+'" target="_blank">Parabenizar</a>':'')+'</div>';}).join('');
   return '<div class="card" style="margin-bottom:14px"><h3><span class="dot" style="background:var(--ac2)"></span>🎂 Aniversariantes de '+mtxt+' ('+list.length+')'+(hojeN?' · '+hojeN+' hoje':'')+'</h3><div class="h3sub">Da sua carteira de clientes — parabenize e fortaleça o relacionamento (gera indicação)</div>'+rows+(list.length>80?'<div class="note" style="margin-top:6px">+'+(list.length-80)+' outros neste mês</div>':'')+'</div>';
 }
+/* ===== POP-UP DE ANIVERSARIANTE DO DIA (1º pop-up ao logar; 1x por dia) ===== */
+function _idadeHoje(nasc){var y=+String(nasc).slice(0,4);if(!y)return null;return (new Date()).getFullYear()-y;}
+function birthdayPopup(){try{
+  if(!ME||!CONTR.length)return;
+  if(document.getElementById('ovAniv'))return;
+  if(localStorage.getItem('osher_aniv_seen')===todayStr())return;
+  var td=todayStr().slice(5,10),seen={};
+  var hoje=CONTR.filter(function(c){return c.nascimento&&/^\d{4}-\d{2}-\d{2}$/.test(c.nascimento)&&c.nascimento.slice(5,10)===td;})
+    .filter(function(c){var k=_normNome(c.cliente);if(!k||seen[k])return false;seen[k]=1;return true;});
+  if(!hoje.length)return;
+  try{localStorage.setItem('osher_aniv_seen',todayStr());}catch(e){}
+  var tm=telMap();
+  var rows=hoje.map(function(c){var nome=c.cliente||'';var first=(nome.split(' ')[0]||nome);var id=_idadeHoje(c.nascimento);var tel=tm[_normNome(nome)];
+    var msg='Feliz aniversário, '+first+'! 🎉 Parabéns pelos seus '+(id!=null?id+' anos':'anos')+'. A Osher Capital deseja muito sucesso e tudo de bom pra você!';
+    var wl=tel?('https://wa.me/'+waNum(tel)+'?text='+encodeURIComponent(msg)):'';
+    return '<div style="display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--bd)"><span style="font-size:22px">🎂</span><div style="flex:1"><div style="font-weight:700;font-size:14px">'+esc(nome)+'</div><div style="font-size:12px;color:var(--mut)">está fazendo <b>'+(id!=null?id+' anos':'aniversário')+'</b> hoje'+(c.cidade?' · '+esc(c.cidade):'')+(canSeeAll()&&c.vendedor?' · '+esc(c.vendedor):'')+'</div></div>'+(wl?'<a class="wapp" href="'+wl+'" target="_blank" rel="noopener">Parabenizar</a>':'')+'</div>';
+  }).join('');
+  var ov=document.createElement('div');ov.id='ovAniv';ov.style.cssText='position:fixed;inset:0;z-index:10050;background:rgba(8,29,54,.75);display:flex;align-items:center;justify-content:center;padding:16px';
+  ov.innerHTML='<div style="background:var(--card);border:1px solid var(--bd);border-radius:16px;max-width:540px;width:100%;padding:22px;box-shadow:var(--shadow)"><div style="font-size:20px;font-weight:800">🎂 Aniversariante'+(hoje.length>1?'s':'')+' de hoje</div><div style="font-size:13px;color:var(--mut);margin:4px 0 12px">Da sua carteira de clientes — mande os parabéns pelos anos que ela está fazendo. Relacionamento gera indicação.</div><div style="max-height:52vh;overflow:auto">'+rows+'</div><div style="text-align:right;margin-top:16px"><button class="btn primary" onclick="var e=document.getElementById(\'ovAniv\');if(e)e.remove();">Fechar</button></div></div>';
+  ov.addEventListener('click',function(ev){if(ev.target===ov)ov.remove();});
+  document.body.appendChild(ov);
+}catch(e){console.warn('birthdayPopup',e);}}
 /* ===== TEMPO MÉDIO DE ATENDIMENTO (regra dos 5 min p/ leads de tráfego) ===== */
 function arrivalISO(d){return d.recebidoEm||d.criadoEm;}
 function respMin(d){var a=arrivalISO(d);if(!a||!d.primeiroContatoEm)return null;return Math.max(0,Math.round((new Date(d.primeiroContatoEm)-new Date(a))/60000));}
@@ -1668,7 +1690,7 @@ ensureCfg();
 fillSelects();
 initMasks();
 initTheme();
-if(resolveMe()){el('ovLogin').classList.remove('on');el('app').classList.remove('hidden');applyRole();renderAll();try{_scheduleRefresh(+localStorage.getItem('osher_crm_texp')||0);}catch(e){}cloudPullDeals().then(function(ok){if(ok){save();renderAll();}checkNewLeads();startLeadPoll();});cloudPullContratos().then(function(ok){if(ok)renderInicio();});cloudPullRouting().then(function(ok){if(ok)renderFila();});}
+if(resolveMe()){el('ovLogin').classList.remove('on');el('app').classList.remove('hidden');applyRole();renderAll();try{_scheduleRefresh(+localStorage.getItem('osher_crm_texp')||0);}catch(e){}cloudPullDeals().then(function(ok){if(ok){save();renderAll();}checkNewLeads();startLeadPoll();});cloudPullContratos().then(function(ok){if(ok){renderInicio();birthdayPopup();}});cloudPullRouting().then(function(ok){if(ok)renderFila();});}
 else{el('ovLogin').classList.add('on');}
 </script>
 </body>
