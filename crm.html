@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>OSHER CAPITAL — CRM Comercial</title><!-- v-pb2 -->
-<!-- crm v38 · Pop-up aniversariante SEMPRE ativo: removido o limite de 1x/dia (osher_aniv_seen) — o pop-up automático aparece em TODA entrada em que houver aniversariante na carteira, mesmo que o vendedor logue 10x no dia; quando não há ninguém, não incomoda (só o botão fixo mostra "nenhum hoje" quando clicado) · 2026-08-17 · v37 · Pop-up aniversariante: botão FIXO "🎂 Aniversariantes de hoje" na tela inicial abre o pop-up na hora (força) e mostra "nenhum aniversariante hoje" quando a carteira não tem ninguém · 2026-08-17 · v36 · Pop-up aniversariante: botão "Parabenizar no WhatsApp" SEMPRE aparece com a mensagem de parabéns pré-preenchida (contratos não têm telefone) — com número salvo (via leads) abre o chat do cliente; sem número, abre o WhatsApp com a msg pronta p/ escolher o contato · 2026-08-14 · v35 · Pop-up de aniversariante do dia: ao logar, 1º pop-up mostra os clientes da carteira (contratos, RLS = só os do vendedor) que fazem aniversário HOJE, com a idade que estão fazendo + botão Parabenizar (WhatsApp com msg dos anos). Mostra 1x por dia por navegador (localStorage osher_aniv_seen) · 2026-08-14 · v34 · Sync à prova de Safari/ITP: banner FIXO no topo "alterações NÃO sincronizadas — Reenviar agora" (vermelho) + "Sincronizando…" (azul) durante o push; save mostra estado na hora; flush automático ao voltar o foco/aba (visibilitychange+focus). Objetivo: nada fica preso no navegador sem o vendedor ver; fim dos exports manuais · 2026-08-14 · v33 · Aba "Minhas análises": cada vendedor vê as análises de atendimento das suas reuniões (lidas de payload->reunioes; nota/compliance/relatório do robô analise-atendimentos-comercial), com nota média e % conforme no topo; admin/diretor veem todas com filtro por vendedor. RLS garante que o vendedor só carrega os próprios leads · 2026-08-14 · Mantém v32 · FIX sync: _cloudPushNow deduplica deals por id e isola registros recusados (não trava o lote); mostra recusados + erro · 2026-08-05 -->
+<!-- crm v39 · Navegação reorganizada (validada em mockup): sidebar em grupos Operar / Acompanhar / Ferramentas / Diretoria. Fusões por sub-abas (mantendo TODAS as seções e render*): "Leads" = Leads & Clientes + Fila de recontato; "Carteira" = Clientes + Pós-venda; "Análise" (só diretoria) = Dashboard + Funil + Conversão + Tração + Relatório semanal. Dashboard/Funil saíram do vendedor (sinais já estão no Início). "Atividades" aposentada (redundante com Tarefas). Reversível por commit. + Módulo "Trocar senha" no rodapé da sidebar (modal → Supabase Auth PUT /auth/v1/user via authFetch, mín. 8 + confirmação) · 2026-08-17 · v38 · Pop-up aniversariante SEMPRE ativo: removido o limite de 1x/dia (osher_aniv_seen) — o pop-up automático aparece em TODA entrada em que houver aniversariante na carteira, mesmo que o vendedor logue 10x no dia; quando não há ninguém, não incomoda (só o botão fixo mostra "nenhum hoje" quando clicado) · 2026-08-17 · v37 · Pop-up aniversariante: botão FIXO "🎂 Aniversariantes de hoje" na tela inicial abre o pop-up na hora (força) e mostra "nenhum aniversariante hoje" quando a carteira não tem ninguém · 2026-08-17 · v36 · Pop-up aniversariante: botão "Parabenizar no WhatsApp" SEMPRE aparece com a mensagem de parabéns pré-preenchida (contratos não têm telefone) — com número salvo (via leads) abre o chat do cliente; sem número, abre o WhatsApp com a msg pronta p/ escolher o contato · 2026-08-14 · v35 · Pop-up de aniversariante do dia: ao logar, 1º pop-up mostra os clientes da carteira (contratos, RLS = só os do vendedor) que fazem aniversário HOJE, com a idade que estão fazendo + botão Parabenizar (WhatsApp com msg dos anos). Mostra 1x por dia por navegador (localStorage osher_aniv_seen) · 2026-08-14 · v34 · Sync à prova de Safari/ITP: banner FIXO no topo "alterações NÃO sincronizadas — Reenviar agora" (vermelho) + "Sincronizando…" (azul) durante o push; save mostra estado na hora; flush automático ao voltar o foco/aba (visibilitychange+focus). Objetivo: nada fica preso no navegador sem o vendedor ver; fim dos exports manuais · 2026-08-14 · v33 · Aba "Minhas análises": cada vendedor vê as análises de atendimento das suas reuniões (lidas de payload->reunioes; nota/compliance/relatório do robô analise-atendimentos-comercial), com nota média e % conforme no topo; admin/diretor veem todas com filtro por vendedor. RLS garante que o vendedor só carrega os próprios leads · 2026-08-14 · Mantém v32 · FIX sync: _cloudPushNow deduplica deals por id e isola registros recusados (não trava o lote); mostra recusados + erro · 2026-08-05 -->
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300..800&display=swap" rel="stylesheet">
 <style>
@@ -29,6 +29,12 @@ nav{display:flex;gap:4px;flex-wrap:wrap;margin-left:6px}
 nav button{background:transparent;border:1px solid transparent;color:var(--mut);padding:8px 12px;border-radius:9px;font-size:13px;font-weight:600;cursor:pointer}
 nav button:hover{background:var(--card2);color:var(--txt)}
 nav button.on{background:var(--pri);color:var(--on-pri)}
+#nav .grp{font-size:10px;font-weight:700;letter-spacing:1.1px;text-transform:uppercase;color:var(--mut);margin:14px 6px 4px;opacity:.85}
+#nav .grp:first-child{margin-top:2px}
+.subnav{display:flex;gap:7px;flex-wrap:wrap;margin:0 0 16px;padding-bottom:12px;border-bottom:1px solid var(--bd)}
+.subnav button{background:transparent;border:1px solid var(--bd);color:var(--mut);padding:6px 13px;border-radius:20px;font-size:12.5px;font-weight:600;cursor:pointer}
+.subnav button:hover{color:var(--txt);border-color:var(--gold)}
+.subnav button.on{background:var(--pri);color:var(--on-pri);border-color:var(--pri)}
 .actions{margin-left:auto;display:flex;gap:8px;flex-wrap:wrap;align-items:center}
 .btn{background:var(--card2);border:1px solid var(--bd);color:var(--txt);padding:8px 14px;border-radius:9px;font-size:13px;font-weight:600;cursor:pointer;display:inline-flex;align-items:center;gap:6px;text-decoration:none}
 .btn:hover{border-color:var(--acb)}
@@ -176,31 +182,31 @@ label.fl{display:flex;flex-direction:column;gap:5px;font-size:12px;color:var(--m
 <aside class="sidebar">
   <div class="brand"><div class="lock"><span class="lgo">osher</span><span class="lgc">Capital</span></div><div class="b2">CRM Comercial</div></div>
   <nav id="nav">
+    <div class="grp">Operar</div>
     <button data-v="inicio" class="on">Início</button>
+    <button data-v="pipe">Pipeline</button>
+    <button data-v="leads" data-group="leads">Leads</button>
+    <button data-v="clientes" data-group="carteira">Carteira</button>
+    <button data-v="tarefas">Tarefas</button>
+    <div class="grp">Acompanhar</div>
     <button data-v="plano">Meu Plano</button>
     <button data-v="analises">Minhas análises</button>
-    <button data-v="dash">Dashboard</button>
-    <button data-v="conv" data-see="1">Taxa de conversão</button>
-    <button data-v="funil">Funil</button>
-    <button data-v="pipe">Pipeline</button>
-    <button data-v="pos">Pós-venda</button>
-    <button data-v="tarefas">Tarefas</button>
-    <button data-v="leads">Leads &amp; Clientes</button>
-    <button data-v="fila">Fila de Leads</button>
-    <button data-v="transfer" data-see="1">Transferir</button>
-    <button data-v="clientes">Clientes</button>
+    <div class="grp">Ferramentas</div>
     <button data-v="fincalc">Simulador</button>
     <button data-v="playbook">Playbook</button>
     <button data-v="guia">Grupos</button>
-    <button data-v="vend" data-see="1">Vendedores</button>
-    <button data-v="ativ">Atividades</button>
-    <button data-v="tracao" data-see="1">Tração</button>
-    <button data-v="relatorio" data-see="1">Relatório semanal</button>
     <button data-v="rotina">Rotina</button>
+    <div class="grp" data-see="1">Diretoria</div>
+    <button data-v="dash" data-group="analise" data-see="1">Análise</button>
+    <button data-v="vend" data-see="1">Vendedores</button>
+    <button data-v="transfer" data-see="1">Transferir</button>
+    <!-- seções antigas acessadas via sub-abas (Fila, Pós-venda, Funil, Conversão, Tração, Relatório) ou aposentadas (Atividades) -->
+    <button data-v="ativ" style="display:none" aria-hidden="true">Atividades</button>
   </nav>
   <div class="side-foot">
     <span class="mechip" id="meChip"></span>
-    <button class="btn sm" onclick="logout()" style="margin-top:8px;width:100%;justify-content:center">Sair</button>
+    <button class="btn sm" onclick="openPass()" style="margin-top:8px;width:100%;justify-content:center">Trocar senha</button>
+    <button class="btn sm" onclick="logout()" style="margin-top:6px;width:100%;justify-content:center">Sair</button>
   </div>
 </aside>
 <div class="main">
@@ -217,6 +223,7 @@ label.fl{display:flex;flex-direction:column;gap:5px;font-size:12px;color:var(--m
     </div>
   </div>
   <div class="content">
+<div id="subnav" class="subnav" style="display:none"></div>
 <section class="view on" id="v-inicio"><div id="inicioBody"></div></section>
 
 <!-- DASHBOARD -->
@@ -982,11 +989,50 @@ function applyRole(){
  el('fVend').classList.toggle('hidden',!see);el('lVend').classList.toggle('hidden',!see);el('posVend').classList.toggle('hidden',!see);
  el('meChip').innerHTML='<b>'+esc(ME.nome)+'</b> · '+roleLabel(ME.papel);
  el('healthSub').textContent=see?'Sinais que pedem ação do gestor':'Seus sinais que pedem ação';
- if(!see){var cur=document.querySelector('#nav button.on');if(cur&&cur.dataset.v==='vend')document.querySelector('#nav button[data-v="dash"]').click();}
+ if(!see){var cur=document.querySelector('#nav button.on');if(cur&&cur.hasAttribute('data-see')){var ib=document.querySelector('#nav button[data-v="inicio"]');if(ib)ib.click();}}
 }
 
 /* ===================== NAV ===================== */
-[].forEach.call(document.querySelectorAll('#nav button'),function(b){b.onclick=function(){[].forEach.call(document.querySelectorAll('#nav button'),function(x){x.classList.remove('on')});b.classList.add('on');[].forEach.call(document.querySelectorAll('.view'),function(v){v.classList.remove('on')});el('v-'+b.dataset.v).classList.add('on');el('pgTitle').textContent=b.textContent.trim();renderAll();}});
+var SUBTABS={
+ leads:[['leads','Todos'],['fila','Fila / recontato']],
+ carteira:[['clientes','Carteira'],['pos','Pós-venda']],
+ analise:[['dash','Dashboard'],['funil','Funil'],['conv','Conversão %'],['tracao','Tração'],['relatorio','Relatório semanal']]
+};
+function _showView(v){[].forEach.call(document.querySelectorAll('.view'),function(x){x.classList.remove('on')});var s=el('v-'+v);if(s)s.classList.add('on');}
+function _buildSubnav(group,active){var sn=el('subnav');if(!sn)return;var items=group&&SUBTABS[group];if(!items){sn.style.display='none';sn.innerHTML='';return;}sn.style.display='flex';sn.innerHTML=items.map(function(it){return '<button data-sv="'+it[0]+'"'+(it[0]===active?' class="on"':'')+'>'+it[1]+'</button>';}).join('');}
+[].forEach.call(document.querySelectorAll('#nav button'),function(b){b.onclick=function(){[].forEach.call(document.querySelectorAll('#nav button'),function(x){x.classList.remove('on')});b.classList.add('on');_showView(b.dataset.v);el('pgTitle').textContent=b.textContent.trim();_buildSubnav(b.dataset.group||'',b.dataset.v);renderAll();}});
+(function(){var sn=el('subnav');if(!sn)return;sn.onclick=function(e){var t=e.target.closest('button[data-sv]');if(!t)return;[].forEach.call(sn.querySelectorAll('button'),function(x){x.classList.remove('on')});t.classList.add('on');_showView(t.dataset.sv);el('pgTitle').textContent=t.textContent.trim();renderAll();};})();
+function openPass(){
+  if(document.getElementById('ovPass'))return;
+  var inS='width:100%;margin:4px 0 10px;padding:9px 11px;border:1px solid var(--bd);border-radius:10px;background:var(--card2);color:var(--txt);font-size:14px';
+  var ov=document.createElement('div');ov.id='ovPass';ov.style.cssText='position:fixed;inset:0;z-index:10060;background:rgba(8,29,54,.75);display:flex;align-items:center;justify-content:center;padding:16px';
+  ov.innerHTML='<div style="background:var(--card);border:1px solid var(--bd);border-radius:16px;max-width:420px;width:100%;padding:22px;box-shadow:var(--shadow)">'
+   +'<div style="font-size:18px;font-weight:800;margin-bottom:2px">Trocar senha</div>'
+   +'<div style="font-size:12.5px;color:var(--mut);margin-bottom:14px">Defina uma nova senha de acesso ao CRM (mínimo 8 caracteres).</div>'
+   +'<label style="font-size:12px;color:var(--mut)">Nova senha</label><input id="pass1" type="password" autocomplete="new-password" style="'+inS+'">'
+   +'<label style="font-size:12px;color:var(--mut)">Confirmar nova senha</label><input id="pass2" type="password" autocomplete="new-password" style="'+inS+'">'
+   +'<div id="passMsg" style="font-size:12.5px;min-height:16px;margin:2px 0 6px;color:var(--mut)"></div>'
+   +'<div style="display:flex;gap:8px;justify-content:flex-end;margin-top:6px"><button class="btn" onclick="var o=document.getElementById(\'ovPass\');if(o)o.remove();">Cancelar</button><button class="btn primary" id="passSave" onclick="savePass()">Salvar</button></div>'
+   +'</div>';
+  ov.addEventListener('click',function(e){if(e.target===ov)ov.remove();});
+  document.body.appendChild(ov);
+  var i1=document.getElementById('pass1');if(i1){i1.focus();i1.onkeydown=function(e){if(e.key==='Enter'){var i2=document.getElementById('pass2');if(i2)i2.focus();}};}
+  var i2b=document.getElementById('pass2');if(i2b)i2b.onkeydown=function(e){if(e.key==='Enter')savePass();};
+}
+async function savePass(){
+  var m=document.getElementById('passMsg'),b=document.getElementById('passSave');
+  var p1=(document.getElementById('pass1')||{}).value||'',p2=(document.getElementById('pass2')||{}).value||'';
+  m.style.color='var(--mut)';
+  if(p1.length<8){m.style.color='var(--red)';m.textContent='A senha precisa ter pelo menos 8 caracteres.';return;}
+  if(p1!==p2){m.style.color='var(--red)';m.textContent='As senhas não coincidem.';return;}
+  b.disabled=true;m.textContent='Salvando…';
+  try{
+    var r=await authFetch(SB_URL+'/auth/v1/user',{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify({password:p1})});
+    var j=await r.json().catch(function(){return {};});
+    if(r.ok){m.style.color='var(--ac2)';m.textContent='Senha alterada com sucesso!';setTimeout(function(){var o=document.getElementById('ovPass');if(o)o.remove();},1200);}
+    else{m.style.color='var(--red)';m.textContent='Não foi possível alterar: '+((j&&(j.msg||j.error_description||j.message))||('erro '+r.status));b.disabled=false;}
+  }catch(e){m.style.color='var(--red)';m.textContent='Erro de conexão. Tente de novo.';b.disabled=false;}
+}
 
 function fillSelects(){
  var sNames=sellers().map(function(p){return p.nome});
