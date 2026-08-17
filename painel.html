@@ -196,6 +196,7 @@ th.l,td.l{text-align:left}tbody tr:hover{background:var(--card2)}
     <button data-t="recon" onclick="showTab('recon')">Conferência CRM × Planilha</button>
     <button data-t="icp" onclick="showTab('icp')">ICP &amp; Perfil</button>
     <button data-t="traf" onclick="showTab('traf')">Tráfego pago</button>
+    <button data-t="dem" onclick="showTab('dem')">Demandas</button>
     <!-- aba "Novo contrato" oculta até o cadastro pelo painel funcionar (saveContract só exibe aviso) -->
     <button data-t="novo" onclick="showTab('novo')" style="display:none">Novo contrato</button>
   </div>
@@ -261,6 +262,112 @@ th.l,td.l{text-align:left}tbody tr:hover{background:var(--card2)}
 
 <div class="panel" id="panel-icp"></div>
 <div class="panel" id="panel-traf"></div>
+
+<div class="panel" id="panel-dem">
+  <style>
+    .dm-sub{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:4px}
+    .dm-sub button{background:var(--card2);border:1px solid var(--bd);color:var(--mut);padding:7px 15px;border-radius:8px;font-size:13px;cursor:pointer;font-family:inherit;display:inline-flex;align-items:center;gap:7px}
+    .dm-sub button.on{background:var(--ac);color:var(--on-ac);border-color:var(--ac)}
+    .dm-badge{background:var(--card);color:var(--ac);border-radius:99px;font-size:10px;font-weight:700;padding:1px 7px;min-width:19px;text-align:center}
+    .dm-sub button.on .dm-badge{background:var(--on-ac);color:var(--ac)}
+    .dm-pane{display:none}.dm-pane.on{display:block}
+    .dm-form{display:grid;grid-template-columns:2.2fr 1fr 1fr 1fr auto;gap:10px;align-items:end}
+    .dm-f{display:flex;flex-direction:column;gap:5px;min-width:0}
+    .dm-f label{font-size:11px;text-transform:uppercase;letter-spacing:.5px;color:var(--mut);font-weight:600}
+    .dm-f input,.dm-f select,.dm-f textarea{background:var(--card2);border:1px solid var(--bd);color:var(--txt);border-radius:9px;padding:9px 11px;font-size:13px;font-family:inherit;width:100%}
+    .dm-f textarea{resize:vertical;min-height:58px}
+    .dm-row2{display:grid;grid-template-columns:2.2fr 1fr;gap:10px;margin-top:11px}
+    .dm-btn{background:var(--ac);color:var(--on-ac);border:1px solid var(--ac);border-radius:9px;padding:10px 18px;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;white-space:nowrap}
+    .dm-btn:hover{filter:brightness(1.08)}
+    .dm-btn[disabled]{opacity:.5;cursor:not-allowed}
+    .dm-btn.g{background:var(--ac2);border-color:var(--ac2);color:#06281c}
+    .dm-btn.r{background:transparent;border-color:var(--red);color:var(--red)}
+    .dm-btn.s{background:transparent;border-color:var(--bd);color:var(--mut)}
+    .dm-btn.sm{padding:6px 13px;font-size:12px}
+    .dm-item{border:1px solid var(--bd);border-radius:12px;padding:14px 15px;margin-bottom:11px;background:var(--card2)}
+    .dm-item h4{font-size:14px;font-weight:600;margin-bottom:3px}
+    .dm-meta{font-size:11.5px;color:var(--mut);margin-bottom:11px}
+    .dm-grid5{display:grid;grid-template-columns:repeat(5,1fr);gap:9px;margin-bottom:11px}
+    .dm-acts{display:flex;gap:8px;flex-wrap:wrap}
+    .dm-cols{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;align-items:start;margin-top:18px}
+    .dm-col{background:var(--card);border:1px solid var(--bd);border-radius:14px;overflow:hidden}
+    .dm-ch{padding:15px 17px 12px;border-bottom:1px solid var(--bd)}
+    .dm-ch h3{font-size:14.5px;font-weight:600;display:flex;align-items:center;gap:8px}
+    .dm-ch h3 .dot{width:8px;height:8px;border-radius:50%;background:var(--ac);flex:0 0 8px}
+    .dm-prog{display:flex;align-items:center;gap:9px;margin-top:11px}
+    .dm-track{flex:1;height:6px;border-radius:99px;background:var(--card2);overflow:hidden}
+    .dm-fill{height:100%;width:0;background:var(--ac);border-radius:99px;transition:width .3s}
+    .dm-pct{font-size:11px;color:var(--mut);min-width:56px;text-align:right;font-variant-numeric:tabular-nums}
+    .dm-list{list-style:none;margin:0;padding:4px 0}
+    .dm-t{display:flex;gap:10px;padding:11px 17px;border-bottom:1px solid var(--bd);align-items:flex-start}
+    .dm-t:last-child{border-bottom:none}
+    .dm-t:hover{background:var(--card2)}
+    .dm-cb{appearance:none;-webkit-appearance:none;width:17px;height:17px;flex:0 0 17px;margin-top:2px;border:1.7px solid var(--goldbd);border-radius:5px;cursor:pointer;background:transparent;position:relative}
+    .dm-cb:checked{background:var(--ac);border-color:var(--ac)}
+    .dm-cb:checked:after{content:"";position:absolute;left:5px;top:1.5px;width:4.5px;height:9px;border:solid var(--on-ac);border-width:0 2px 2px 0;transform:rotate(43deg)}
+    .dm-tt{font-size:13px;line-height:1.4}
+    .dm-t.done .dm-tt{text-decoration:line-through;color:var(--mut)}
+    .dm-tags{display:flex;gap:6px;flex-wrap:wrap;margin-top:6px}
+    .dm-toast{position:fixed;right:18px;bottom:18px;background:var(--card);color:var(--txt);border:1px solid var(--goldbd);border-radius:11px;padding:12px 16px;font-size:13px;box-shadow:0 10px 28px rgba(0,0,0,.3);opacity:0;transform:translateY(10px);transition:.2s;z-index:99;max-width:360px;pointer-events:none}
+    .dm-toast.on{opacity:1;transform:none}
+    .dm-toast.err{border-color:var(--red)}
+    @media(max-width:980px){.dm-cols{grid-template-columns:1fr}.dm-form,.dm-row2{grid-template-columns:1fr 1fr}.dm-grid5{grid-template-columns:1fr 1fr}}
+  </style>
+
+  <div class="dm-sub">
+    <button class="on" data-d="cap" onclick="dmShow('cap')">Captura rápida</button>
+    <button data-d="val" onclick="dmShow('val')">Validação <span class="dm-badge" id="dm_bTri">0</span></button>
+    <button data-d="mesa" onclick="dmShow('mesa')">Mesa da semana</button>
+    <button class="dm-btn s sm" style="margin-left:auto" onclick="dmLoad(true)">Atualizar</button>
+  </div>
+
+  <div class="dm-pane on" id="dm-cap">
+    <div class="card">
+      <h2><span class="dot"></span>Lançar demanda</h2>
+      <div class="h2sub">Escreva e aperte Enter. Entra na fila de validação e só vai para a mesa depois de aprovada.</div>
+      <form id="dm_form" onsubmit="return dmCriar(event)">
+        <div class="dm-form">
+          <div class="dm-f"><label for="dm_titulo">Demanda</label><input id="dm_titulo" required minlength="3" autocomplete="off" placeholder="Ex.: Reativar parceiros sem venda há 30 dias"></div>
+          <div class="dm-f"><label for="dm_area">Área</label><select id="dm_area"><option>Comercial</option><option>Marketing</option><option>TI</option></select></div>
+          <div class="dm-f"><label for="dm_prio">Prioridade</label><select id="dm_prio"><option value="alta">Alta</option><option value="media" selected>Média</option><option value="baixa">Baixa</option></select></div>
+          <div class="dm-f"><label for="dm_prazo">Prazo</label><input id="dm_prazo" type="date"></div>
+          <button class="dm-btn" type="submit" id="dm_bNova">Lançar</button>
+        </div>
+        <div class="dm-row2">
+          <div class="dm-f"><label for="dm_det">Detalhe (opcional)</label><textarea id="dm_det" placeholder="Contexto, número de referência, o que precisa acontecer"></textarea></div>
+          <div class="dm-f"><label for="dm_resp">Sugerir responsável</label><select id="dm_resp"><option value="">— a definir na validação —</option></select></div>
+        </div>
+      </form>
+    </div>
+    <div class="card">
+      <h2><span class="dot" style="background:var(--vio)"></span>Minhas últimas demandas</h2>
+      <div class="h2sub">O que você lançou e em que pé está</div>
+      <div id="dm_minhas"></div>
+    </div>
+  </div>
+
+  <div class="dm-pane" id="dm-val">
+    <div class="card">
+      <h2><span class="dot" style="background:var(--warn)"></span>Fila de validação</h2>
+      <div class="h2sub" id="dm_vHint">Ajuste área, responsável, prioridade, prazo e semana antes de aprovar.</div>
+      <div id="dm_fila"></div>
+    </div>
+  </div>
+
+  <div class="dm-pane" id="dm-mesa">
+    <div class="card" style="margin-top:18px">
+      <div class="crow">
+        <div class="dm-f" style="max-width:230px"><label for="dm_sem">Semana comercial</label><select id="dm_sem" onchange="dmCarregarMesa()"></select></div>
+        <div class="dm-f" style="max-width:180px"><label for="dm_fArea">Área</label><select id="dm_fArea" onchange="dmRenderMesa()"><option value="">Todas</option><option>Comercial</option><option>Marketing</option><option>TI</option></select></div>
+        <div class="dm-f" style="max-width:200px"><label for="dm_fResp">Responsável</label><select id="dm_fResp" onchange="dmRenderMesa()"><option value="">Todos</option></select></div>
+      </div>
+    </div>
+    <div class="kpis kpis4" style="margin-top:18px" id="dm_kpis"></div>
+    <div class="dm-cols" id="dm_mesa"></div>
+  </div>
+
+  <div class="dm-toast" id="dm_toast"></div>
+</div>
 
 <div class="panel" id="panel-novo">
   <div class="card full"><h2><span class="dot"></span>Cadastrar novo contrato</h2>
@@ -810,8 +917,9 @@ function applyRole(){var full=CURRENT&&CURRENT.full;var hide=full?['novo']:['exe
  var seg=el('segTipo');if(seg&&seg.parentNode)seg.parentNode.style.display=full?'':'none';
  var u=el('userChip');if(u)u.innerHTML=(CURRENT?('<b>'+esc(CURRENT.nome)+'</b> · '+esc(CURRENT.papel)+' &nbsp;'):'')+'<span class="clink" onclick="logout()">sair</span>';}
 /* ===================== NAV / BOOT ===================== */
-function showTab(t){['geral','exec','pipe','parcelas','um','recon','icp','traf','novo'].forEach(function(x){el('panel-'+x).classList.toggle('on',x===t);});
- [].forEach.call(document.querySelectorAll('.tabs button'),function(b){b.classList.toggle('on',b.dataset.t===t);});}
+function showTab(t){['geral','exec','pipe','parcelas','um','recon','icp','traf','dem','novo'].forEach(function(x){el('panel-'+x).classList.toggle('on',x===t);});
+ [].forEach.call(document.querySelectorAll('.tabs button'),function(b){b.classList.toggle('on',b.dataset.t===t);});
+ if(t==='dem'&&typeof dmLoad==='function')dmLoad();}
 function renderAll(){CUR={geral:buildGeral(F())};
  var R=F();el('subt').innerHTML=(winLabel()||'Geral')+' · '+(state.tipo==='all'?'todos os vendedores':state.tipo==='int'?'apenas internos':'apenas externos')+' · '+R.length+' contratos · '+BRLm(R.reduce(function(s,r){return s+r.valor;},0));
  renderGeral();renderExec();renderPipe();renderParcelas();renderOne();renderRecon();renderICP();renderTraf();}
@@ -845,7 +953,7 @@ async function doLogin(){
   var prof=(Array.isArray(pr)&&pr[0])||null;
   if(!prof){er.style.display='block';er.textContent='Perfil não encontrado.';return;}
   if(prof.papel==='externo'){er.style.display='block';er.textContent='Parceiros externos não têm acesso.';return;}
-  CURRENT={nome:prof.nome,papel:prof.papel,full:(prof.papel==='admin'||prof.papel==='diretor')};
+  CURRENT={nome:prof.nome,papel:prof.papel,full:(prof.papel==='admin'||prof.papel==='diretor'),email:em};
   el('ovLogin').style.display='none';applyRole();showTab('geral');await _loadData();
  }catch(e){er.style.display='block';er.textContent='Erro ao entrar: '+e.message;}
 }
@@ -993,6 +1101,246 @@ function initTheme(){var t='dark';try{t=localStorage.getItem('osher_theme')||'da
 function toggleTheme(){var cur=document.documentElement.getAttribute('data-theme')==='light'?'light':'dark';applyTheme(cur==='light'?'dark':'light');}
 function _boot(){initTheme();if(typeof showLogin==='function')showLogin();else{var l=el('loading');if(l)l.style.display='none';var o=el('ovLogin');if(o)o.style.display='flex';}}
 if(document.readyState!=='loading')_boot();else document.addEventListener('DOMContentLoaded',_boot);
+
+/* ===================== DEMANDAS DA DIRETORIA =====================
+   Captura rápida -> validação (sócios/diretor) -> mesa da semana.
+   Banco: tabelas demandas / demanda_eventos / demanda_validadores,
+   views v_demandas_triagem / v_demandas_mesa, RPCs criar_demanda,
+   validar_demanda, recusar_demanda, mudar_status_demanda.        */
+var DM = { mesa: [], tri: [], time: [], pode: false, pronto: false, carregando: false };
+var DM_AREAS = ['Comercial', 'Marketing', 'TI'];
+var DM_PRIO = { alta: 'Alta', media: 'Média', baixa: 'Baixa' };
+var DM_ST = { triagem: 'Em triagem', aprovada: 'Aprovada', em_andamento: 'Em andamento', concluida: 'Concluída', recusada: 'Recusada' };
+var DM_ICO = {
+  Comercial: '<path d="M3 3v18h18"/><path d="M7 15l4-5 3 3 5-7"/>',
+  Marketing: '<path d="M3 11v3a1 1 0 0 0 1 1h3l6 4V6L7 10H4a1 1 0 0 0-1 1z"/><path d="M17 8a5 5 0 0 1 0 8"/>',
+  TI: '<rect x="2" y="4" width="20" height="13" rx="2"/><path d="M8 21h8M12 17v4"/><path d="M8 9l-2 2 2 2M14 9l2 2-2 2"/>'
+};
+
+function dmH() { return { apikey: SB_KEY, Authorization: 'Bearer ' + (__tok || SB_KEY), 'Content-Type': 'application/json' }; }
+function dmGet(path) { return fetch(SB_URL + path, { headers: dmH() }).then(function (r) { return r.json(); }); }
+function dmRpc(fn, body) {
+  return fetch(SB_BASE + '/rest/v1/rpc/' + fn, { method: 'POST', headers: dmH(), body: JSON.stringify(body || {}) })
+    .then(function (r) {
+      return r.json().catch(function () { return null; }).then(function (j) {
+        if (!r.ok) throw new Error((j && (j.message || j.hint)) || ('erro ' + r.status));
+        return j;
+      });
+    });
+}
+function dmToast(msg, err) {
+  var t = el('dm_toast'); if (!t) return;
+  t.textContent = msg; t.className = 'dm-toast on' + (err ? ' err' : '');
+  clearTimeout(t._h); t._h = setTimeout(function () { t.className = 'dm-toast'; }, 4000);
+}
+function dmHoje() { var n = new Date(); return new Date(n.getTime() - n.getTimezoneOffset() * 6e4).toISOString().slice(0, 10); }
+function dmDomingo(d) { var x = new Date(d + 'T12:00:00'); x.setDate(x.getDate() - x.getDay()); return x.toISOString().slice(0, 10); }
+function dmBR(iso) { if (!iso) return '—'; var p = String(iso).slice(0, 10).split('-'); return p[2] + '/' + p[1] + '/' + p[0]; }
+function dmSemLbl(dom) { var f = new Date(dom + 'T12:00:00'); f.setDate(f.getDate() + 7); return dmBR(dom) + ' a ' + dmBR(f.toISOString().slice(0, 10)); }
+
+function dmShow(p) {
+  ['cap', 'val', 'mesa'].forEach(function (x) { var e = el('dm-' + x); if (e) e.classList.toggle('on', x === p); });
+  [].forEach.call(document.querySelectorAll('#panel-dem .dm-sub button[data-d]'), function (b) { b.classList.toggle('on', b.dataset.d === p); });
+}
+
+function dmSemanas() {
+  var hoje = dmDomingo(dmHoje()), s = el('dm_sem'); if (!s) return;
+  s.innerHTML = '';
+  for (var i = -4; i <= 2; i++) {
+    var d = new Date(hoje + 'T12:00:00'); d.setDate(d.getDate() + i * 7);
+    var iso = d.toISOString().slice(0, 10);
+    s.insertAdjacentHTML('beforeend', '<option value="' + iso + '"' + (i === 0 ? ' selected' : '') + '>' + dmSemLbl(iso) + (i === 0 ? ' · atual' : '') + '</option>');
+  }
+}
+
+async function dmLoad(forcar) {
+  if (!CURRENT || DM.carregando) return;
+  if (DM.pronto && !forcar) { return dmCarregarMesa(); }
+  DM.carregando = true;
+  try {
+    if (!DM.pronto) {
+      var r = await Promise.all([dmRpc('pode_validar'), dmGet('team?select=email,nome,papel&order=nome')]);
+      DM.pode = r[0] === true;
+      DM.time = Array.isArray(r[1]) ? r[1] : [];
+      var ops = DM.time.map(function (t) { return '<option value="' + esc(t.email) + '">' + esc(t.nome || t.email) + '</option>'; }).join('');
+      var sr = el('dm_resp'), fr = el('dm_fResp');
+      if (sr && sr.options.length < 2) sr.insertAdjacentHTML('beforeend', ops);
+      if (fr && fr.options.length < 2) fr.insertAdjacentHTML('beforeend', ops);
+      dmSemanas();
+      if (!DM.pode) el('dm_vHint').textContent = 'Só a diretoria valida demandas. Aqui você acompanha o que está na fila.';
+      DM.pronto = true;
+    }
+    await Promise.all([dmCarregarMesa(), dmCarregarTriagem(), dmCarregarMinhas()]);
+  } catch (e) { dmToast('Erro ao carregar demandas: ' + e.message, true); }
+  DM.carregando = false;
+}
+
+/* ---------- captura ---------- */
+async function dmCriar(ev) {
+  ev.preventDefault();
+  var b = el('dm_bNova'); b.disabled = true;
+  try {
+    await dmRpc('criar_demanda', {
+      p_titulo: el('dm_titulo').value.trim(),
+      p_area: el('dm_area').value,
+      p_detalhe: el('dm_det').value.trim() || null,
+      p_prioridade: el('dm_prio').value,
+      p_prazo: el('dm_prazo').value || null,
+      p_responsavel: el('dm_resp').value || null,
+      p_origem: 'Painel'
+    });
+    el('dm_titulo').value = ''; el('dm_det').value = ''; el('dm_prazo').value = '';
+    el('dm_titulo').focus();
+    dmToast('Demanda enviada para validação.');
+    dmCarregarMinhas(); dmCarregarTriagem();
+  } catch (e) { dmToast('Não foi possível lançar: ' + e.message, true); }
+  b.disabled = false;
+  return false;
+}
+
+async function dmCarregarMinhas() {
+  var em = (CURRENT && CURRENT.email) || DM.email || '';
+  var d = await dmGet('demandas?select=*' + (em ? '&criado_por=eq.' + encodeURIComponent(em) : '') + '&order=criado_em.desc&limit=12');
+  var box = el('dm_minhas'); if (!box) return;
+  if (!Array.isArray(d) || !d.length) { box.innerHTML = '<div class="empty">Você ainda não lançou demandas.</div>'; return; }
+  box.innerHTML = '<div style="overflow-x:auto"><table><thead><tr><th class="l">Demanda</th><th class="l">Área</th><th class="l">Prioridade</th><th class="l">Prazo</th><th class="l">Status</th></tr></thead><tbody>' +
+    d.map(function (x) {
+      var sc = x.status === 'concluida' ? 'st-c' : (x.status === 'recusada' ? 'st-x' : 'st-a');
+      return '<tr><td class="l">' + esc(x.titulo) + (x.obs_validacao ? '<div class="tp" style="margin-top:3px">Obs.: ' + esc(x.obs_validacao) + '</div>' : '') +
+        '</td><td class="l">' + esc(x.area) + '</td><td class="l">' + DM_PRIO[x.prioridade] + '</td><td class="l tp">' + dmBR(x.prazo) +
+        '</td><td class="l"><span class="st ' + sc + '">' + (DM_ST[x.status] || x.status) + '</span></td></tr>';
+    }).join('') + '</tbody></table></div>';
+}
+
+/* ---------- validação ---------- */
+async function dmCarregarTriagem() {
+  var d = await dmGet('v_demandas_triagem?select=*');
+  DM.tri = Array.isArray(d) ? d : [];
+  var bd = el('dm_bTri'); if (bd) bd.textContent = DM.tri.length;
+  var box = el('dm_fila'); if (!box) return;
+  if (!DM.tri.length) { box.innerHTML = '<div class="empty">Nenhuma demanda aguardando validação.</div>'; return; }
+  box.innerHTML = DM.tri.map(function (x) {
+    var resp = DM.time.map(function (t) { return '<option value="' + esc(t.email) + '"' + (t.email === x.responsavel ? ' selected' : '') + '>' + esc(t.nome || t.email) + '</option>'; }).join('');
+    var areas = DM_AREAS.map(function (a) { return '<option' + (a === x.area ? ' selected' : '') + '>' + a + '</option>'; }).join('');
+    var prios = Object.keys(DM_PRIO).map(function (p) { return '<option value="' + p + '"' + (p === x.prioridade ? ' selected' : '') + '>' + DM_PRIO[p] + '</option>'; }).join('');
+    return '<div class="dm-item" data-id="' + x.id + '">' +
+      '<h4>' + esc(x.titulo) + '</h4>' +
+      '<div class="dm-meta">Lançada por ' + esc(x.criado_por_nome || x.criado_por) + ' em ' + dmBR(x.criado_em) + (x.detalhe ? ' · ' + esc(x.detalhe) : '') + '</div>' +
+      (DM.pode ?
+        '<div class="dm-grid5">' +
+        '<div class="dm-f"><label>Área</label><select class="v-area">' + areas + '</select></div>' +
+        '<div class="dm-f"><label>Responsável</label><select class="v-resp"><option value="">— definir —</option>' + resp + '</select></div>' +
+        '<div class="dm-f"><label>Prioridade</label><select class="v-prio">' + prios + '</select></div>' +
+        '<div class="dm-f"><label>Prazo</label><input type="date" class="v-prazo" value="' + (x.prazo || '') + '"></div>' +
+        '<div class="dm-f"><label>Semana</label><input type="date" class="v-sem" value="' + dmDomingo(dmHoje()) + '"></div>' +
+        '</div><div class="dm-acts">' +
+        '<button class="dm-btn g sm" onclick="dmValidar(this,' + x.id + ')">Aprovar para a mesa</button>' +
+        '<button class="dm-btn r sm" onclick="dmRecusar(this,' + x.id + ')">Recusar</button></div>'
+        : '<div class="dm-meta">Aguardando validação da diretoria.</div>') +
+      '</div>';
+  }).join('');
+}
+
+async function dmValidar(btn, id) {
+  var box = btn.closest('.dm-item'); btn.disabled = true;
+  try {
+    var sem = box.querySelector('.v-sem').value;
+    await dmRpc('validar_demanda', {
+      p_id: id,
+      p_area: box.querySelector('.v-area').value,
+      p_responsavel: box.querySelector('.v-resp').value || null,
+      p_prioridade: box.querySelector('.v-prio').value,
+      p_prazo: box.querySelector('.v-prazo').value || null,
+      p_semana_ref: sem ? dmDomingo(sem) : null,
+      p_obs: null
+    });
+    dmToast('Demanda aprovada e publicada na mesa.');
+    await Promise.all([dmCarregarTriagem(), dmCarregarMesa(), dmCarregarMinhas()]);
+  } catch (e) { btn.disabled = false; dmToast('Não foi possível aprovar: ' + e.message, true); }
+}
+
+async function dmRecusar(btn, id) {
+  var motivo = window.prompt('Motivo da recusa:');
+  if (!motivo) return;
+  btn.disabled = true;
+  try {
+    await dmRpc('recusar_demanda', { p_id: id, p_motivo: motivo });
+    dmToast('Demanda recusada.');
+    await Promise.all([dmCarregarTriagem(), dmCarregarMinhas()]);
+  } catch (e) { btn.disabled = false; dmToast('Não foi possível recusar: ' + e.message, true); }
+}
+
+/* ---------- mesa ---------- */
+async function dmCarregarMesa() {
+  var s = el('dm_sem'); var sem = (s && s.value) || dmDomingo(dmHoje());
+  var d = await dmGet('v_demandas_mesa?select=*&semana_ref=eq.' + sem);
+  DM.mesa = Array.isArray(d) ? d : [];
+  dmRenderMesa();
+}
+
+function dmFiltrada() {
+  var fa = (el('dm_fArea') || {}).value || '', fr = (el('dm_fResp') || {}).value || '';
+  return DM.mesa.filter(function (x) { return (!fa || x.area === fa) && (!fr || x.responsavel === fr); });
+}
+
+function dmContadores() {
+  var lista = dmFiltrada();
+  [].forEach.call(document.querySelectorAll('#dm_mesa .dm-col'), function (c) {
+    var a = c.dataset.area;
+    var its = lista.filter(function (x) { return x.area === a; });
+    var ok = its.filter(function (x) { return x.status === 'concluida'; }).length;
+    c.querySelector('.dm-fill').style.width = (its.length ? ok / its.length * 100 : 0) + '%';
+    c.querySelector('.dm-pct').textContent = ok + ' de ' + its.length;
+  });
+  var tot = lista.length, ok = lista.filter(function (x) { return x.status === 'concluida'; }).length;
+  var alta = lista.filter(function (x) { return x.prioridade === 'alta'; }).length;
+  var k = el('dm_kpis');
+  if (k) k.innerHTML =
+    '<div class="kpi"><div class="lbl">Na semana</div><div class="val">' + tot + '</div><div class="sub">demandas aprovadas</div></div>' +
+    '<div class="kpi warn"><div class="lbl">Prioridade alta</div><div class="val">' + alta + '</div><div class="sub">inegociáveis</div></div>' +
+    '<div class="kpi ok"><div class="lbl">Concluídas</div><div class="val">' + ok + '</div><div class="sub">no período</div></div>' +
+    '<div class="kpi"><div class="lbl">Avanço da mesa</div><div class="val">' + (tot ? Math.round(ok / tot * 100) : 0) + '%</div><div class="sub">' + ok + ' de ' + tot + '</div></div>';
+}
+
+function dmRenderMesa() {
+  var lista = dmFiltrada(), box = el('dm_mesa'); if (!box) return;
+  box.innerHTML = DM_AREAS.map(function (a) {
+    var its = lista.filter(function (x) { return x.area === a; });
+    var ok = its.filter(function (x) { return x.status === 'concluida'; }).length;
+    var nome = a === 'TI' ? 'Diretoria de Tecnologia' : (a === 'Marketing' ? 'Diretoria de Marketing' : 'Diretoria Comercial');
+    return '<section class="dm-col" data-area="' + a + '">' +
+      '<div class="dm-ch"><h3><span class="dot"></span>' + nome +
+      '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--mut)" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" style="margin-left:auto">' + DM_ICO[a] + '</svg></h3>' +
+      '<div class="dm-prog"><div class="dm-track"><div class="dm-fill" style="width:' + (its.length ? ok / its.length * 100 : 0) + '%"></div></div><div class="dm-pct">' + ok + ' de ' + its.length + '</div></div></div>' +
+      '<ul class="dm-list">' + (its.length ? its.map(function (x) {
+        var pc = x.prioridade === 'alta' ? 'st-x' : (x.prioridade === 'media' ? 'st-a' : 'st-c');
+        return '<li class="dm-t' + (x.status === 'concluida' ? ' done' : '') + '">' +
+          '<input class="dm-cb" type="checkbox" onchange="dmConcluir(this,' + x.id + ')"' + (x.status === 'concluida' ? ' checked' : '') + '>' +
+          '<div style="flex:1;min-width:0"><div class="dm-tt">' + esc(x.titulo) + '</div>' +
+          '<div class="dm-tags"><span class="st ' + pc + '">' + DM_PRIO[x.prioridade] + '</span>' +
+          '<span class="tp">' + (x.prazo ? dmBR(x.prazo) : 'sem prazo') + '</span>' +
+          (x.responsavel_nome ? '<span class="pill">' + esc(x.responsavel_nome) + '</span>' : '') +
+          '</div></div></li>';
+      }).join('') : '<div class="empty" style="margin:14px;padding:24px">Nada aprovado para esta área nesta semana.</div>') + '</ul></section>';
+  }).join('');
+  dmContadores();
+}
+
+async function dmConcluir(cb, id) {
+  var novo = cb.checked ? 'concluida' : 'aprovada';
+  cb.disabled = true;
+  try {
+    await dmRpc('mudar_status_demanda', { p_id: id, p_status: novo });
+    var d = DM.mesa.filter(function (x) { return x.id === id; })[0];
+    if (d) d.status = novo;
+    cb.closest('.dm-t').classList.toggle('done', novo === 'concluida');
+    dmContadores();
+  } catch (e) {
+    cb.checked = !cb.checked;
+    dmToast('Não foi possível atualizar: ' + e.message, true);
+  }
+  cb.disabled = false;
+}
 </script>
 </body>
 </html>
