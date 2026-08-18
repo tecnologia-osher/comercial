@@ -4,7 +4,7 @@
 <meta charset="UTF-8"><meta http-equiv="Cache-Control" content="no-store">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Painel Comercial — Osher Capital</title>
-<!-- painel v23 · Tráfego pago: bloco "Métricas de tráfego" (CPL, CAC, LTV, LTV/CAC, ticket, ROAS, conversão, payback 1º mês) no lugar do rodapé de texto · 2026-08-12 · v22 Abre por padrão no Ano corrente + Mês atual (1ª carga; _applyDefaultSpec, não reseta no refresh) · 2026-08-12 · v21 Seletor de período em 2 níveis: escolhe o Ano (chips) e aparecem só os meses/trimestres/semestres daquele ano — menos poluído; agosto aparece (buildWindows já inclui meses de tráfego) · 2026-08-12 · v20 todo mês com tráfego/investimento vira período selecionável (buildWindows inclui leads inbound + midia_custos) + rodapé curto de leitura · 2026-08-12 · v19 aba reage ao Recorte do topo (Mês→Semana 1,2,3…; Trimestre/Semestre/Ano→mês a mês); visual enxuto · 2026-08-12 · v18 Fechamento mensal (tabela trafego_mensal + robô fechamento-trafego-mensal dia 1º 08h; MoM ▲▼) + deck HTML Osher · investido puxado do Meta via Supermetrics (conta act_542319472086083) · 2026-08-12 · v17 Relatório semanal automático (tabela trafego_semanal + robô relatorio-trafego-semanal seg 08h; foto semana + mês acumulado, ▲▼) · 2026-08-12 · v16 aba Tráfego pago (custo × retorno; margem Osher = crédito×taxa×50%; investimento em midia_custos, RLS diretoria) · 2026-08-11 · semana comercial SEGUNDA a DOMINGO (wkIdx offset +3, alinhado ao CRM) · 2026-07-13 · aba Conferência CRM × Planilha · 2026-07-11 · auditoria XSS/logout 2026-07-09 · TODO agrupamento por mês/período/semana = data da 1ª parcela paga (adesão) · 2026-07-06 -->
+<!-- painel v24 · Demandas da diretoria: botão "Excluir" (RPC excluir_demanda) em Minhas / Triagem / Mesa — o criador exclui a própria demanda enquanto não estiver concluída; a diretoria (pode_validar) exclui qualquer uma. Corrige "demanda lançada errada não podia ser apagada". Requer rodar a função excluir_demanda no Supabase · 2026-08-17 · v23 · Tráfego pago: bloco "Métricas de tráfego" (CPL, CAC, LTV, LTV/CAC, ticket, ROAS, conversão, payback 1º mês) no lugar do rodapé de texto · 2026-08-12 · v22 Abre por padrão no Ano corrente + Mês atual (1ª carga; _applyDefaultSpec, não reseta no refresh) · 2026-08-12 · v21 Seletor de período em 2 níveis: escolhe o Ano (chips) e aparecem só os meses/trimestres/semestres daquele ano — menos poluído; agosto aparece (buildWindows já inclui meses de tráfego) · 2026-08-12 · v20 todo mês com tráfego/investimento vira período selecionável (buildWindows inclui leads inbound + midia_custos) + rodapé curto de leitura · 2026-08-12 · v19 aba reage ao Recorte do topo (Mês→Semana 1,2,3…; Trimestre/Semestre/Ano→mês a mês); visual enxuto · 2026-08-12 · v18 Fechamento mensal (tabela trafego_mensal + robô fechamento-trafego-mensal dia 1º 08h; MoM ▲▼) + deck HTML Osher · investido puxado do Meta via Supermetrics (conta act_542319472086083) · 2026-08-12 · v17 Relatório semanal automático (tabela trafego_semanal + robô relatorio-trafego-semanal seg 08h; foto semana + mês acumulado, ▲▼) · 2026-08-12 · v16 aba Tráfego pago (custo × retorno; margem Osher = crédito×taxa×50%; investimento em midia_custos, RLS diretoria) · 2026-08-11 · semana comercial SEGUNDA a DOMINGO (wkIdx offset +3, alinhado ao CRM) · 2026-07-13 · aba Conferência CRM × Planilha · 2026-07-11 · auditoria XSS/logout 2026-07-09 · TODO agrupamento por mês/período/semana = data da 1ª parcela paga (adesão) · 2026-07-06 -->
 <!-- auditoria 2026-07-03 -->
 <base target="_top">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -1203,12 +1203,12 @@ async function dmCarregarMinhas() {
   var d = await dmGet('demandas?select=*' + (em ? '&criado_por=eq.' + encodeURIComponent(em) : '') + '&order=criado_em.desc&limit=12');
   var box = el('dm_minhas'); if (!box) return;
   if (!Array.isArray(d) || !d.length) { box.innerHTML = '<div class="empty">Você ainda não lançou demandas.</div>'; return; }
-  box.innerHTML = '<div style="overflow-x:auto"><table><thead><tr><th class="l">Demanda</th><th class="l">Área</th><th class="l">Prioridade</th><th class="l">Prazo</th><th class="l">Status</th></tr></thead><tbody>' +
+  box.innerHTML = '<div style="overflow-x:auto"><table><thead><tr><th class="l">Demanda</th><th class="l">Área</th><th class="l">Prioridade</th><th class="l">Prazo</th><th class="l">Status</th><th class="l"></th></tr></thead><tbody>' +
     d.map(function (x) {
       var sc = x.status === 'concluida' ? 'st-c' : (x.status === 'recusada' ? 'st-x' : 'st-a');
       return '<tr><td class="l">' + esc(x.titulo) + (x.obs_validacao ? '<div class="tp" style="margin-top:3px">Obs.: ' + esc(x.obs_validacao) + '</div>' : '') +
         '</td><td class="l">' + esc(x.area) + '</td><td class="l">' + DM_PRIO[x.prioridade] + '</td><td class="l tp">' + dmBR(x.prazo) +
-        '</td><td class="l"><span class="st ' + sc + '">' + (DM_ST[x.status] || x.status) + '</span></td></tr>';
+        '</td><td class="l"><span class="st ' + sc + '">' + (DM_ST[x.status] || x.status) + '</span></td><td class="l">' + (x.status !== 'concluida' ? '<button class="dm-btn r sm" onclick="dmExcluir(' + x.id + ',this)">Excluir</button>' : '') + '</td></tr>';
     }).join('') + '</tbody></table></div>';
 }
 
@@ -1235,7 +1235,8 @@ async function dmCarregarTriagem() {
         '<div class="dm-f"><label>Semana</label><input type="date" class="v-sem" value="' + dmDomingo(dmHoje()) + '"></div>' +
         '</div><div class="dm-acts">' +
         '<button class="dm-btn g sm" onclick="dmValidar(this,' + x.id + ')">Aprovar para a mesa</button>' +
-        '<button class="dm-btn r sm" onclick="dmRecusar(this,' + x.id + ')">Recusar</button></div>'
+        '<button class="dm-btn r sm" onclick="dmRecusar(this,' + x.id + ')">Recusar</button>' +
+        '<button class="dm-btn sm" onclick="dmExcluir(' + x.id + ',this)">Excluir</button></div>'
         : '<div class="dm-meta">Aguardando validação da diretoria.</div>') +
       '</div>';
   }).join('');
@@ -1268,6 +1269,16 @@ async function dmRecusar(btn, id) {
     dmToast('Demanda recusada.');
     await Promise.all([dmCarregarTriagem(), dmCarregarMinhas()]);
   } catch (e) { btn.disabled = false; dmToast('Não foi possível recusar: ' + e.message, true); }
+}
+
+async function dmExcluir(id, btn) {
+  if (!window.confirm('Excluir esta demanda? Esta ação não pode ser desfeita.')) return;
+  if (btn) btn.disabled = true;
+  try {
+    await dmRpc('excluir_demanda', { p_id: id });
+    dmToast('Demanda excluída.');
+    await Promise.all([dmCarregarMinhas(), dmCarregarTriagem(), dmCarregarMesa()]);
+  } catch (e) { if (btn) btn.disabled = false; dmToast('Não foi possível excluir: ' + e.message, true); }
 }
 
 /* ---------- mesa ---------- */
@@ -1320,7 +1331,7 @@ function dmRenderMesa() {
           '<div class="dm-tags"><span class="st ' + pc + '">' + DM_PRIO[x.prioridade] + '</span>' +
           '<span class="tp">' + (x.prazo ? dmBR(x.prazo) : 'sem prazo') + '</span>' +
           (x.responsavel_nome ? '<span class="pill">' + esc(x.responsavel_nome) + '</span>' : '') +
-          '</div></div></li>';
+          '</div></div>' + (DM.pode ? '<button title="Excluir demanda" onclick="dmExcluir(' + x.id + ',this)" style="background:none;border:0;color:var(--mut);cursor:pointer;font-size:16px;line-height:1;padding:2px 6px">×</button>' : '') + '</li>';
       }).join('') : '<div class="empty" style="margin:14px;padding:24px">Nada aprovado para esta área nesta semana.</div>') + '</ul></section>';
   }).join('');
   dmContadores();
