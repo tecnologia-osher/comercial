@@ -4,7 +4,7 @@
 <meta charset="UTF-8"><meta http-equiv="Cache-Control" content="no-store">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Painel Comercial — Osher Capital</title>
-<!-- painel v24 · Demandas da diretoria: botão "Excluir" (RPC excluir_demanda) em Minhas / Triagem / Mesa — o criador exclui a própria demanda enquanto não estiver concluída; a diretoria (pode_validar) exclui qualquer uma. Corrige "demanda lançada errada não podia ser apagada". Requer rodar a função excluir_demanda no Supabase · 2026-08-17 · v23 · Tráfego pago: bloco "Métricas de tráfego" (CPL, CAC, LTV, LTV/CAC, ticket, ROAS, conversão, payback 1º mês) no lugar do rodapé de texto · 2026-08-12 · v22 Abre por padrão no Ano corrente + Mês atual (1ª carga; _applyDefaultSpec, não reseta no refresh) · 2026-08-12 · v21 Seletor de período em 2 níveis: escolhe o Ano (chips) e aparecem só os meses/trimestres/semestres daquele ano — menos poluído; agosto aparece (buildWindows já inclui meses de tráfego) · 2026-08-12 · v20 todo mês com tráfego/investimento vira período selecionável (buildWindows inclui leads inbound + midia_custos) + rodapé curto de leitura · 2026-08-12 · v19 aba reage ao Recorte do topo (Mês→Semana 1,2,3…; Trimestre/Semestre/Ano→mês a mês); visual enxuto · 2026-08-12 · v18 Fechamento mensal (tabela trafego_mensal + robô fechamento-trafego-mensal dia 1º 08h; MoM ▲▼) + deck HTML Osher · investido puxado do Meta via Supermetrics (conta act_542319472086083) · 2026-08-12 · v17 Relatório semanal automático (tabela trafego_semanal + robô relatorio-trafego-semanal seg 08h; foto semana + mês acumulado, ▲▼) · 2026-08-12 · v16 aba Tráfego pago (custo × retorno; margem Osher = crédito×taxa×50%; investimento em midia_custos, RLS diretoria) · 2026-08-11 · semana comercial SEGUNDA a DOMINGO (wkIdx offset +3, alinhado ao CRM) · 2026-07-13 · aba Conferência CRM × Planilha · 2026-07-11 · auditoria XSS/logout 2026-07-09 · TODO agrupamento por mês/período/semana = data da 1ª parcela paga (adesão) · 2026-07-06 -->
+<!-- painel v25 · Demandas: aprovação por 2 de 3 decisores (Pedro, Milton, Felipe). A demanda só vai à mesa quando 2 decisores diferentes aprovam (RPC aprovar_demanda + tabela demanda_aprovacoes). Triagem mostra "Aprovações: X/2" + quem aprovou; quem já votou fica bloqueado. Requer rodar sql_demandas_2de3.sql no Supabase · 2026-08-18 · v24 · Demandas da diretoria: botão "Excluir" (RPC excluir_demanda) em Minhas / Triagem / Mesa — o criador exclui a própria demanda enquanto não estiver concluída; a diretoria (pode_validar) exclui qualquer uma. Corrige "demanda lançada errada não podia ser apagada". Requer rodar a função excluir_demanda no Supabase · 2026-08-17 · v23 · Tráfego pago: bloco "Métricas de tráfego" (CPL, CAC, LTV, LTV/CAC, ticket, ROAS, conversão, payback 1º mês) no lugar do rodapé de texto · 2026-08-12 · v22 Abre por padrão no Ano corrente + Mês atual (1ª carga; _applyDefaultSpec, não reseta no refresh) · 2026-08-12 · v21 Seletor de período em 2 níveis: escolhe o Ano (chips) e aparecem só os meses/trimestres/semestres daquele ano — menos poluído; agosto aparece (buildWindows já inclui meses de tráfego) · 2026-08-12 · v20 todo mês com tráfego/investimento vira período selecionável (buildWindows inclui leads inbound + midia_custos) + rodapé curto de leitura · 2026-08-12 · v19 aba reage ao Recorte do topo (Mês→Semana 1,2,3…; Trimestre/Semestre/Ano→mês a mês); visual enxuto · 2026-08-12 · v18 Fechamento mensal (tabela trafego_mensal + robô fechamento-trafego-mensal dia 1º 08h; MoM ▲▼) + deck HTML Osher · investido puxado do Meta via Supermetrics (conta act_542319472086083) · 2026-08-12 · v17 Relatório semanal automático (tabela trafego_semanal + robô relatorio-trafego-semanal seg 08h; foto semana + mês acumulado, ▲▼) · 2026-08-12 · v16 aba Tráfego pago (custo × retorno; margem Osher = crédito×taxa×50%; investimento em midia_custos, RLS diretoria) · 2026-08-11 · semana comercial SEGUNDA a DOMINGO (wkIdx offset +3, alinhado ao CRM) · 2026-07-13 · aba Conferência CRM × Planilha · 2026-07-11 · auditoria XSS/logout 2026-07-09 · TODO agrupamento por mês/período/semana = data da 1ª parcela paga (adesão) · 2026-07-06 -->
 <!-- auditoria 2026-07-03 -->
 <base target="_top">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -1107,7 +1107,7 @@ if(document.readyState!=='loading')_boot();else document.addEventListener('DOMCo
    Banco: tabelas demandas / demanda_eventos / demanda_validadores,
    views v_demandas_triagem / v_demandas_mesa, RPCs criar_demanda,
    validar_demanda, recusar_demanda, mudar_status_demanda.        */
-var DM = { mesa: [], tri: [], time: [], pode: false, pronto: false, carregando: false };
+var DM = { mesa: [], tri: [], time: [], apr: {}, pode: false, pronto: false, carregando: false };
 var DM_AREAS = ['Comercial', 'Marketing', 'TI'];
 var DM_PRIO = { alta: 'Alta', media: 'Média', baixa: 'Baixa' };
 var DM_ST = { triagem: 'Em triagem', aprovada: 'Aprovada', em_andamento: 'Em andamento', concluida: 'Concluída', recusada: 'Recusada' };
@@ -1216,16 +1216,29 @@ async function dmCarregarMinhas() {
 async function dmCarregarTriagem() {
   var d = await dmGet('v_demandas_triagem?select=*');
   DM.tri = Array.isArray(d) ? d : [];
+  DM.apr = {};
+  if (DM.tri.length) {
+    var ids = DM.tri.map(function (x) { return x.id; }).join(',');
+    var ap = await dmGet('demanda_aprovacoes?select=demanda_id,email&demanda_id=in.(' + ids + ')');
+    if (Array.isArray(ap)) ap.forEach(function (a) { (DM.apr[a.demanda_id] = DM.apr[a.demanda_id] || []).push(a.email); });
+  }
   var bd = el('dm_bTri'); if (bd) bd.textContent = DM.tri.length;
   var box = el('dm_fila'); if (!box) return;
   if (!DM.tri.length) { box.innerHTML = '<div class="empty">Nenhuma demanda aguardando validação.</div>'; return; }
+  var meEmail = ((CURRENT && CURRENT.email) || '').toLowerCase();
+  function nomeDe(em) { var t = DM.time.filter(function (p) { return (p.email || '').toLowerCase() === (em || '').toLowerCase(); })[0]; return t ? (t.nome || t.email) : em; }
   box.innerHTML = DM.tri.map(function (x) {
     var resp = DM.time.map(function (t) { return '<option value="' + esc(t.email) + '"' + (t.email === x.responsavel ? ' selected' : '') + '>' + esc(t.nome || t.email) + '</option>'; }).join('');
     var areas = DM_AREAS.map(function (a) { return '<option' + (a === x.area ? ' selected' : '') + '>' + a + '</option>'; }).join('');
     var prios = Object.keys(DM_PRIO).map(function (p) { return '<option value="' + p + '"' + (p === x.prioridade ? ' selected' : '') + '>' + DM_PRIO[p] + '</option>'; }).join('');
+    var aps = DM.apr[x.id] || [];
+    var jaAprovei = aps.some(function (e) { return (e || '').toLowerCase() === meEmail; });
+    var nomes = aps.map(nomeDe).join(', ');
+    var prog = '<div class="dm-meta" style="margin-top:4px">Aprovações: <b>' + aps.length + ' de 2</b>' + (nomes ? ' · ' + esc(nomes) : '') + '</div>';
     return '<div class="dm-item" data-id="' + x.id + '">' +
       '<h4>' + esc(x.titulo) + '</h4>' +
       '<div class="dm-meta">Lançada por ' + esc(x.criado_por_nome || x.criado_por) + ' em ' + dmBR(x.criado_em) + (x.detalhe ? ' · ' + esc(x.detalhe) : '') + '</div>' +
+      prog +
       (DM.pode ?
         '<div class="dm-grid5">' +
         '<div class="dm-f"><label>Área</label><select class="v-area">' + areas + '</select></div>' +
@@ -1234,19 +1247,21 @@ async function dmCarregarTriagem() {
         '<div class="dm-f"><label>Prazo</label><input type="date" class="v-prazo" value="' + (x.prazo || '') + '"></div>' +
         '<div class="dm-f"><label>Semana</label><input type="date" class="v-sem" value="' + dmDomingo(dmHoje()) + '"></div>' +
         '</div><div class="dm-acts">' +
-        '<button class="dm-btn g sm" onclick="dmValidar(this,' + x.id + ')">Aprovar para a mesa</button>' +
+        (jaAprovei
+          ? '<button class="dm-btn sm" disabled>Você já aprovou · aguardando a 2ª</button>'
+          : '<button class="dm-btn g sm" onclick="dmAprovar(this,' + x.id + ')">Aprovar (' + aps.length + '/2)</button>') +
         '<button class="dm-btn r sm" onclick="dmRecusar(this,' + x.id + ')">Recusar</button>' +
         '<button class="dm-btn sm" onclick="dmExcluir(' + x.id + ',this)">Excluir</button></div>'
-        : '<div class="dm-meta">Aguardando validação da diretoria.</div>') +
+        : '<div class="dm-meta">Aguardando aprovação dos decisores (' + aps.length + '/2).</div>') +
       '</div>';
   }).join('');
 }
 
-async function dmValidar(btn, id) {
+async function dmAprovar(btn, id) {
   var box = btn.closest('.dm-item'); btn.disabled = true;
   try {
     var sem = box.querySelector('.v-sem').value;
-    await dmRpc('validar_demanda', {
+    var r = await dmRpc('aprovar_demanda', {
       p_id: id,
       p_area: box.querySelector('.v-area').value,
       p_responsavel: box.querySelector('.v-resp').value || null,
@@ -1255,7 +1270,7 @@ async function dmValidar(btn, id) {
       p_semana_ref: sem ? dmDomingo(sem) : null,
       p_obs: null
     });
-    dmToast('Demanda aprovada e publicada na mesa.');
+    dmToast((r && r.promovida) ? 'Segunda aprovação — publicada na mesa.' : 'Aprovação registrada. Falta a 2ª (de outro decisor).');
     await Promise.all([dmCarregarTriagem(), dmCarregarMesa(), dmCarregarMinhas()]);
   } catch (e) { btn.disabled = false; dmToast('Não foi possível aprovar: ' + e.message, true); }
 }
