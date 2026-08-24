@@ -4,7 +4,7 @@
 <meta charset="UTF-8"><meta http-equiv="Cache-Control" content="no-store">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Painel Comercial — Osher Capital</title>
-<!-- painel v25 · Demandas: aprovação por 2 de 3 decisores (Pedro, Milton, Felipe). A demanda só vai à mesa quando 2 decisores diferentes aprovam (RPC aprovar_demanda + tabela demanda_aprovacoes). Triagem mostra "Aprovações: X/2" + quem aprovou; quem já votou fica bloqueado. Requer rodar sql_demandas_2de3.sql no Supabase · 2026-08-18 · v24 · Demandas da diretoria: botão "Excluir" (RPC excluir_demanda) em Minhas / Triagem / Mesa — o criador exclui a própria demanda enquanto não estiver concluída; a diretoria (pode_validar) exclui qualquer uma. Corrige "demanda lançada errada não podia ser apagada". Requer rodar a função excluir_demanda no Supabase · 2026-08-17 · v23 · Tráfego pago: bloco "Métricas de tráfego" (CPL, CAC, LTV, LTV/CAC, ticket, ROAS, conversão, payback 1º mês) no lugar do rodapé de texto · 2026-08-12 · v22 Abre por padrão no Ano corrente + Mês atual (1ª carga; _applyDefaultSpec, não reseta no refresh) · 2026-08-12 · v21 Seletor de período em 2 níveis: escolhe o Ano (chips) e aparecem só os meses/trimestres/semestres daquele ano — menos poluído; agosto aparece (buildWindows já inclui meses de tráfego) · 2026-08-12 · v20 todo mês com tráfego/investimento vira período selecionável (buildWindows inclui leads inbound + midia_custos) + rodapé curto de leitura · 2026-08-12 · v19 aba reage ao Recorte do topo (Mês→Semana 1,2,3…; Trimestre/Semestre/Ano→mês a mês); visual enxuto · 2026-08-12 · v18 Fechamento mensal (tabela trafego_mensal + robô fechamento-trafego-mensal dia 1º 08h; MoM ▲▼) + deck HTML Osher · investido puxado do Meta via Supermetrics (conta act_542319472086083) · 2026-08-12 · v17 Relatório semanal automático (tabela trafego_semanal + robô relatorio-trafego-semanal seg 08h; foto semana + mês acumulado, ▲▼) · 2026-08-12 · v16 aba Tráfego pago (custo × retorno; margem Osher = crédito×taxa×50%; investimento em midia_custos, RLS diretoria) · 2026-08-11 · semana comercial SEGUNDA a DOMINGO (wkIdx offset +3, alinhado ao CRM) · 2026-07-13 · aba Conferência CRM × Planilha · 2026-07-11 · auditoria XSS/logout 2026-07-09 · TODO agrupamento por mês/período/semana = data da 1ª parcela paga (adesão) · 2026-07-06 -->
+<!-- painel v26 · Demandas na mesa: clicar no título abre modal com DETALHE + metadados (área, responsável, prazo, quem lançou/aprovou) e um CHECKLIST persistido (concluir por partes). Backend: coluna demandas.checklist (jsonb) + RPCs get_demanda e salvar_checklist_demanda (rodar sql_demandas_checklist.sql) · 2026-08-18 · v25 · Demandas: aprovação por 2 de 3 decisores (Pedro, Milton, Felipe). A demanda só vai à mesa quando 2 decisores diferentes aprovam (RPC aprovar_demanda + tabela demanda_aprovacoes). Triagem mostra "Aprovações: X/2" + quem aprovou; quem já votou fica bloqueado. Requer rodar sql_demandas_2de3.sql no Supabase · 2026-08-18 · v24 · Demandas da diretoria: botão "Excluir" (RPC excluir_demanda) em Minhas / Triagem / Mesa — o criador exclui a própria demanda enquanto não estiver concluída; a diretoria (pode_validar) exclui qualquer uma. Corrige "demanda lançada errada não podia ser apagada". Requer rodar a função excluir_demanda no Supabase · 2026-08-17 · v23 · Tráfego pago: bloco "Métricas de tráfego" (CPL, CAC, LTV, LTV/CAC, ticket, ROAS, conversão, payback 1º mês) no lugar do rodapé de texto · 2026-08-12 · v22 Abre por padrão no Ano corrente + Mês atual (1ª carga; _applyDefaultSpec, não reseta no refresh) · 2026-08-12 · v21 Seletor de período em 2 níveis: escolhe o Ano (chips) e aparecem só os meses/trimestres/semestres daquele ano — menos poluído; agosto aparece (buildWindows já inclui meses de tráfego) · 2026-08-12 · v20 todo mês com tráfego/investimento vira período selecionável (buildWindows inclui leads inbound + midia_custos) + rodapé curto de leitura · 2026-08-12 · v19 aba reage ao Recorte do topo (Mês→Semana 1,2,3…; Trimestre/Semestre/Ano→mês a mês); visual enxuto · 2026-08-12 · v18 Fechamento mensal (tabela trafego_mensal + robô fechamento-trafego-mensal dia 1º 08h; MoM ▲▼) + deck HTML Osher · investido puxado do Meta via Supermetrics (conta act_542319472086083) · 2026-08-12 · v17 Relatório semanal automático (tabela trafego_semanal + robô relatorio-trafego-semanal seg 08h; foto semana + mês acumulado, ▲▼) · 2026-08-12 · v16 aba Tráfego pago (custo × retorno; margem Osher = crédito×taxa×50%; investimento em midia_custos, RLS diretoria) · 2026-08-11 · semana comercial SEGUNDA a DOMINGO (wkIdx offset +3, alinhado ao CRM) · 2026-07-13 · aba Conferência CRM × Planilha · 2026-07-11 · auditoria XSS/logout 2026-07-09 · TODO agrupamento por mês/período/semana = data da 1ª parcela paga (adesão) · 2026-07-06 -->
 <!-- auditoria 2026-07-03 -->
 <base target="_top">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -1342,7 +1342,7 @@ function dmRenderMesa() {
         var pc = x.prioridade === 'alta' ? 'st-x' : (x.prioridade === 'media' ? 'st-a' : 'st-c');
         return '<li class="dm-t' + (x.status === 'concluida' ? ' done' : '') + '">' +
           '<input class="dm-cb" type="checkbox" onchange="dmConcluir(this,' + x.id + ')"' + (x.status === 'concluida' ? ' checked' : '') + '>' +
-          '<div style="flex:1;min-width:0"><div class="dm-tt">' + esc(x.titulo) + '</div>' +
+          '<div style="flex:1;min-width:0"><div class="dm-tt" style="cursor:pointer" title="Ver detalhes e checklist" onclick="dmAbrirDemanda(' + x.id + ')">' + esc(x.titulo) + ' <span style="color:var(--mut);font-weight:400;font-size:11px">ⓘ</span></div>' +
           '<div class="dm-tags"><span class="st ' + pc + '">' + DM_PRIO[x.prioridade] + '</span>' +
           '<span class="tp">' + (x.prazo ? dmBR(x.prazo) : 'sem prazo') + '</span>' +
           (x.responsavel_nome ? '<span class="pill">' + esc(x.responsavel_nome) + '</span>' : '') +
@@ -1351,6 +1351,46 @@ function dmRenderMesa() {
   }).join('');
   dmContadores();
 }
+
+/* ---------- detalhes da demanda + checklist ---------- */
+var DMcur = null;
+function dmNome(email){var t=(DM.time||[]).filter(function(p){return (p.email||'').toLowerCase()===(email||'').toLowerCase();})[0];return t?(t.nome||t.email):(email||'—');}
+async function dmAbrirDemanda(id){
+  try{
+    var d = await dmRpc('get_demanda', { p_id: id });
+    if(!d){ dmToast('Demanda não encontrada.', true); return; }
+    d.checklist = Array.isArray(d.checklist) ? d.checklist : (d.checklist ? JSON.parse(d.checklist) : []);
+    DMcur = d;
+    var aps = await dmGet('demanda_aprovacoes?select=email&demanda_id=eq.' + id);
+    var aprNomes = (Array.isArray(aps)?aps:[]).map(function(a){return dmNome(a.email);}).join(', ');
+    var meta=[['Área',d.area],['Responsável',d.responsavel?dmNome(d.responsavel):'—'],['Prioridade',DM_PRIO[d.prioridade]||d.prioridade],['Prazo',d.prazo?dmBR(d.prazo):'—'],['Status',DM_ST[d.status]||d.status],['Lançada por',dmNome(d.criado_por)],['Aprovada por',aprNomes||'—']];
+    var metaH=meta.map(function(m){return '<div><div style="font-size:10px;letter-spacing:.5px;text-transform:uppercase;color:var(--mut)">'+m[0]+'</div><div style="font-size:13px;font-weight:600">'+esc(String(m[1]==null?'—':m[1]))+'</div></div>';}).join('');
+    var old=document.getElementById('ovDem'); if(old)old.remove();
+    var ov=document.createElement('div'); ov.id='ovDem'; ov.style.cssText='position:fixed;inset:0;z-index:10080;background:rgba(8,29,54,.78);display:flex;align-items:center;justify-content:center;padding:16px';
+    ov.innerHTML='<div style="background:var(--card);border:1px solid var(--bd);border-radius:16px;max-width:600px;width:100%;padding:22px;box-shadow:var(--shadow);max-height:90vh;overflow:auto">'
+      +'<div style="font-size:19px;font-weight:800;margin-bottom:2px">'+esc(d.titulo||'')+'</div>'
+      +'<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px 16px;margin:12px 0">'+metaH+'</div>'
+      +'<div style="font-size:11px;letter-spacing:.5px;text-transform:uppercase;color:var(--mut);margin-top:6px">Detalhe</div>'
+      +'<div style="font-size:13.5px;white-space:pre-wrap;background:var(--card2);border:1px solid var(--bd);border-radius:10px;padding:10px;margin:4px 0 14px">'+(d.detalhe?esc(d.detalhe):'<span style="color:var(--mut)">Sem detalhe informado.</span>')+'</div>'
+      +'<div style="font-size:11px;letter-spacing:.5px;text-transform:uppercase;color:var(--mut)">Checklist</div>'
+      +'<div id="demChk" style="margin:6px 0"></div>'
+      +'<div style="display:flex;gap:8px;margin-top:8px"><input id="demChkNew" placeholder="Adicionar item do checklist" style="flex:1;padding:8px 10px;border:1px solid var(--bd);border-radius:8px;background:var(--card2);color:var(--txt);font-size:14px" onkeydown="if(event.key===\'Enter\')dmChkAdd()"><button class="dm-btn g sm" onclick="dmChkAdd()">Adicionar</button></div>'
+      +'<div style="text-align:right;margin-top:16px"><button class="dm-btn sm" onclick="var e=document.getElementById(\'ovDem\');if(e)e.remove();">Fechar</button></div></div>';
+    ov.addEventListener('click',function(ev){if(ev.target===ov)ov.remove();});
+    document.body.appendChild(ov);
+    dmChkRender();
+  }catch(e){ dmToast('Erro ao abrir demanda: '+e.message, true); }
+}
+function dmChkRender(){
+  var box=document.getElementById('demChk'); if(!box||!DMcur)return;
+  var arr=DMcur.checklist||[]; var done=arr.filter(function(i){return i.ok;}).length;
+  box.innerHTML=(arr.length?'<div style="font-size:12px;color:var(--mut);margin-bottom:4px">'+done+' de '+arr.length+' concluídos</div>':'<div class="empty" style="padding:10px">Sem itens ainda. Adicione abaixo para concluir por partes.</div>')
+    +arr.map(function(it,i){return '<div style="display:flex;align-items:center;gap:8px;padding:5px 0;border-bottom:1px solid var(--bd)"><input type="checkbox" '+(it.ok?'checked':'')+' onchange="dmChkToggle('+i+')"><span style="flex:1;font-size:13.5px'+(it.ok?';text-decoration:line-through;color:var(--mut)':'')+'">'+esc(it.t||'')+'</span><button title="Remover" onclick="dmChkDel('+i+')" style="background:none;border:0;color:var(--mut);cursor:pointer;font-size:15px">×</button></div>';}).join('');
+}
+async function dmChkSave(){ if(!DMcur)return; try{ await dmRpc('salvar_checklist_demanda',{p_id:DMcur.id,p_checklist:DMcur.checklist}); }catch(e){ dmToast('Não foi possível salvar o checklist: '+e.message,true);} }
+function dmChkAdd(){ if(!DMcur)return; var inp=document.getElementById('demChkNew'); var t=(inp&&inp.value||'').trim(); if(!t)return; DMcur.checklist=DMcur.checklist||[]; DMcur.checklist.push({t:t,ok:false}); if(inp)inp.value=''; dmChkRender(); dmChkSave(); }
+function dmChkToggle(i){ if(!DMcur||!DMcur.checklist[i])return; DMcur.checklist[i].ok=!DMcur.checklist[i].ok; dmChkRender(); dmChkSave(); }
+function dmChkDel(i){ if(!DMcur||!DMcur.checklist)return; DMcur.checklist.splice(i,1); dmChkRender(); dmChkSave(); }
 
 async function dmConcluir(cb, id) {
   var novo = cb.checked ? 'concluida' : 'aprovada';
