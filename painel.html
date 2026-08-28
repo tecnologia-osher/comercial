@@ -4,7 +4,7 @@
 <meta charset="UTF-8"><meta http-equiv="Cache-Control" content="no-store">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Painel Comercial — Osher Capital</title>
-<!-- painel v26 (r2 27/08: comentário REFWK corrigido p/ seg→dom, sem mudança de lógica) · Demandas na mesa: clicar no título abre modal com DETALHE + metadados (área, responsável, prazo, quem lançou/aprovou) e um CHECKLIST persistido (concluir por partes). Backend: coluna demandas.checklist (jsonb) + RPCs get_demanda e salvar_checklist_demanda (rodar sql_demandas_checklist.sql) · 2026-08-18 · v25 · Demandas: aprovação por 2 de 3 decisores (Pedro, Milton, Felipe). A demanda só vai à mesa quando 2 decisores diferentes aprovam (RPC aprovar_demanda + tabela demanda_aprovacoes). Triagem mostra "Aprovações: X/2" + quem aprovou; quem já votou fica bloqueado. Requer rodar sql_demandas_2de3.sql no Supabase · 2026-08-18 · v24 · Demandas da diretoria: botão "Excluir" (RPC excluir_demanda) em Minhas / Triagem / Mesa — o criador exclui a própria demanda enquanto não estiver concluída; a diretoria (pode_validar) exclui qualquer uma. Corrige "demanda lançada errada não podia ser apagada". Requer rodar a função excluir_demanda no Supabase · 2026-08-17 · v23 · Tráfego pago: bloco "Métricas de tráfego" (CPL, CAC, LTV, LTV/CAC, ticket, ROAS, conversão, payback 1º mês) no lugar do rodapé de texto · 2026-08-12 · v22 Abre por padrão no Ano corrente + Mês atual (1ª carga; _applyDefaultSpec, não reseta no refresh) · 2026-08-12 · v21 Seletor de período em 2 níveis: escolhe o Ano (chips) e aparecem só os meses/trimestres/semestres daquele ano — menos poluído; agosto aparece (buildWindows já inclui meses de tráfego) · 2026-08-12 · v20 todo mês com tráfego/investimento vira período selecionável (buildWindows inclui leads inbound + midia_custos) + rodapé curto de leitura · 2026-08-12 · v19 aba reage ao Recorte do topo (Mês→Semana 1,2,3…; Trimestre/Semestre/Ano→mês a mês); visual enxuto · 2026-08-12 · v18 Fechamento mensal (tabela trafego_mensal + robô fechamento-trafego-mensal dia 1º 08h; MoM ▲▼) + deck HTML Osher · investido puxado do Meta via Supermetrics (conta act_542319472086083) · 2026-08-12 · v17 Relatório semanal automático (tabela trafego_semanal + robô relatorio-trafego-semanal seg 08h; foto semana + mês acumulado, ▲▼) · 2026-08-12 · v16 aba Tráfego pago (custo × retorno; margem Osher = crédito×taxa×50%; investimento em midia_custos, RLS diretoria) · 2026-08-11 · semana comercial SEGUNDA a DOMINGO (wkIdx offset +3, alinhado ao CRM) · 2026-07-13 · aba Conferência CRM × Planilha · 2026-07-11 · auditoria XSS/logout 2026-07-09 · TODO agrupamento por mês/período/semana = data da 1ª parcela paga (adesão) · 2026-07-06 -->
+<!-- painel v26 (r3 28/08: Demandas ancoram semana_ref na SEGUNDA via dmSegunda, antes domingo; r2 27/08: comentário REFWK corrigido p/ seg→dom) · Demandas na mesa: clicar no título abre modal com DETALHE + metadados (área, responsável, prazo, quem lançou/aprovou) e um CHECKLIST persistido (concluir por partes). Backend: coluna demandas.checklist (jsonb) + RPCs get_demanda e salvar_checklist_demanda (rodar sql_demandas_checklist.sql) · 2026-08-18 · v25 · Demandas: aprovação por 2 de 3 decisores (Pedro, Milton, Felipe). A demanda só vai à mesa quando 2 decisores diferentes aprovam (RPC aprovar_demanda + tabela demanda_aprovacoes). Triagem mostra "Aprovações: X/2" + quem aprovou; quem já votou fica bloqueado. Requer rodar sql_demandas_2de3.sql no Supabase · 2026-08-18 · v24 · Demandas da diretoria: botão "Excluir" (RPC excluir_demanda) em Minhas / Triagem / Mesa — o criador exclui a própria demanda enquanto não estiver concluída; a diretoria (pode_validar) exclui qualquer uma. Corrige "demanda lançada errada não podia ser apagada". Requer rodar a função excluir_demanda no Supabase · 2026-08-17 · v23 · Tráfego pago: bloco "Métricas de tráfego" (CPL, CAC, LTV, LTV/CAC, ticket, ROAS, conversão, payback 1º mês) no lugar do rodapé de texto · 2026-08-12 · v22 Abre por padrão no Ano corrente + Mês atual (1ª carga; _applyDefaultSpec, não reseta no refresh) · 2026-08-12 · v21 Seletor de período em 2 níveis: escolhe o Ano (chips) e aparecem só os meses/trimestres/semestres daquele ano — menos poluído; agosto aparece (buildWindows já inclui meses de tráfego) · 2026-08-12 · v20 todo mês com tráfego/investimento vira período selecionável (buildWindows inclui leads inbound + midia_custos) + rodapé curto de leitura · 2026-08-12 · v19 aba reage ao Recorte do topo (Mês→Semana 1,2,3…; Trimestre/Semestre/Ano→mês a mês); visual enxuto · 2026-08-12 · v18 Fechamento mensal (tabela trafego_mensal + robô fechamento-trafego-mensal dia 1º 08h; MoM ▲▼) + deck HTML Osher · investido puxado do Meta via Supermetrics (conta act_542319472086083) · 2026-08-12 · v17 Relatório semanal automático (tabela trafego_semanal + robô relatorio-trafego-semanal seg 08h; foto semana + mês acumulado, ▲▼) · 2026-08-12 · v16 aba Tráfego pago (custo × retorno; margem Osher = crédito×taxa×50%; investimento em midia_custos, RLS diretoria) · 2026-08-11 · semana comercial SEGUNDA a DOMINGO (wkIdx offset +3, alinhado ao CRM) · 2026-07-13 · aba Conferência CRM × Planilha · 2026-07-11 · auditoria XSS/logout 2026-07-09 · TODO agrupamento por mês/período/semana = data da 1ª parcela paga (adesão) · 2026-07-06 -->
 <!-- auditoria 2026-07-03 -->
 <base target="_top">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -1134,7 +1134,7 @@ function dmToast(msg, err) {
   clearTimeout(t._h); t._h = setTimeout(function () { t.className = 'dm-toast'; }, 4000);
 }
 function dmHoje() { var n = new Date(); return new Date(n.getTime() - n.getTimezoneOffset() * 6e4).toISOString().slice(0, 10); }
-function dmDomingo(d) { var x = new Date(d + 'T12:00:00'); x.setDate(x.getDate() - x.getDay()); return x.toISOString().slice(0, 10); }
+function dmSegunda(d) { var x = new Date(d + 'T12:00:00'); x.setDate(x.getDate() - ((x.getDay() + 6) % 7)); return x.toISOString().slice(0, 10); } /* semana comercial: ancora na SEGUNDA (ordem do diretor 28/08) */
 function dmBR(iso) { if (!iso) return '—'; var p = String(iso).slice(0, 10).split('-'); return p[2] + '/' + p[1] + '/' + p[0]; }
 function dmSemLbl(dom) { var f = new Date(dom + 'T12:00:00'); f.setDate(f.getDate() + 7); return dmBR(dom) + ' a ' + dmBR(f.toISOString().slice(0, 10)); }
 
@@ -1144,7 +1144,7 @@ function dmShow(p) {
 }
 
 function dmSemanas() {
-  var hoje = dmDomingo(dmHoje()), s = el('dm_sem'); if (!s) return;
+  var hoje = dmSegunda(dmHoje()), s = el('dm_sem'); if (!s) return;
   s.innerHTML = '';
   for (var i = -4; i <= 2; i++) {
     var d = new Date(hoje + 'T12:00:00'); d.setDate(d.getDate() + i * 7);
@@ -1245,7 +1245,7 @@ async function dmCarregarTriagem() {
         '<div class="dm-f"><label>Responsável</label><select class="v-resp"><option value="">— definir —</option>' + resp + '</select></div>' +
         '<div class="dm-f"><label>Prioridade</label><select class="v-prio">' + prios + '</select></div>' +
         '<div class="dm-f"><label>Prazo</label><input type="date" class="v-prazo" value="' + (x.prazo || '') + '"></div>' +
-        '<div class="dm-f"><label>Semana</label><input type="date" class="v-sem" value="' + dmDomingo(dmHoje()) + '"></div>' +
+        '<div class="dm-f"><label>Semana</label><input type="date" class="v-sem" value="' + dmSegunda(dmHoje()) + '"></div>' +
         '</div><div class="dm-acts">' +
         (jaAprovei
           ? '<button class="dm-btn sm" disabled>Você já aprovou · aguardando a 2ª</button>'
@@ -1267,7 +1267,7 @@ async function dmAprovar(btn, id) {
       p_responsavel: box.querySelector('.v-resp').value || null,
       p_prioridade: box.querySelector('.v-prio').value,
       p_prazo: box.querySelector('.v-prazo').value || null,
-      p_semana_ref: sem ? dmDomingo(sem) : null,
+      p_semana_ref: sem ? dmSegunda(sem) : null,
       p_obs: null
     });
     dmToast((r && r.promovida) ? 'Segunda aprovação — publicada na mesa.' : 'Aprovação registrada. Falta a 2ª (de outro decisor).');
@@ -1298,7 +1298,7 @@ async function dmExcluir(id, btn) {
 
 /* ---------- mesa ---------- */
 async function dmCarregarMesa() {
-  var s = el('dm_sem'); var sem = (s && s.value) || dmDomingo(dmHoje());
+  var s = el('dm_sem'); var sem = (s && s.value) || dmSegunda(dmHoje());
   var d = await dmGet('v_demandas_mesa?select=*&semana_ref=eq.' + sem);
   DM.mesa = Array.isArray(d) ? d : [];
   dmRenderMesa();
