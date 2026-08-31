@@ -4,7 +4,7 @@
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>Compra Imobiliária Inteligente · Financiamento ou Consórcio</title>
-<!-- calculadora v4 · PDF do comparativo com impacto no patrimônio e valor investido (rendimento CDI) + custo detalhado · 2026-07-13 · idv 2026-07-04 -->
+<!-- calculadora v5 · (1) Financiamento: indexador virou seletor de NOME (Sem correção/TR/IPCA/Poupança) + campo "Correção do indexador (% a.a.)" editável (indexadorTaxa) — o vendedor escolhe taxa E indexador; renderResult usa num('indexadorTaxa'). (2) Campos monetários (valorCredito, valorImovel, valorEntrada, lanceLiquido, amortExtra) viraram text .money com máscara de milhar pt-BR (500.000) — fmtMoneyStr formata ao digitar; num() lê .money removendo os pontos. (3) Consórcio: seletor "Indexador do consórcio" INCC/IPCA (idxCons) + label "Reajuste anual (%)". (4) Prazo do financiamento (parcelasFin) mês a mês: step 12→1, min 12. · 2026-07-13 · idv 2026-07-04 -->
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300..800&display=swap" rel="stylesheet">
 <style>
@@ -105,12 +105,13 @@
     <div class="card">
       <h3 style="font-family:'Outfit',serif;font-size:21px;margin:0 0 12px">Consórcio</h3>
       <div class="inputs" style="grid-template-columns:1fr">
-        <div><label class="f">Valor do crédito (carta)</label><input type="number" id="valorCredito" value="1000000" step="50000"><div class="help">O valor que você quer receber para o imóvel.</div></div>
+        <div><label class="f">Valor do crédito (carta)</label><input type="text" inputmode="numeric" class="money" id="valorCredito" value="1.000.000"><div class="help">O valor que você quer receber para o imóvel.</div></div>
         <div><div class="rowlab"><span>Número de parcelas</span><b id="parcConsLab">200 meses</b></div><input type="range" id="parcelasCons" min="60" max="240" step="12" value="200"><div class="help">Prazo do consórcio (máx. 240 meses).</div></div>
         <div><label class="f">Taxa de administração (%)</label><input type="number" id="taxaAdm" value="18" step="0.5"><div class="help">Total do contrato. Mercado: 9,5% a 25%.</div></div>
         <div><label class="f">Fundo de reserva (%)</label><input type="number" id="fundoReserva" value="2" step="0.5"><div class="help">Mercado: 1% a 5%.</div></div>
         <div><label class="f">Taxa de adesão (%)</label><input type="number" id="taxaAdesao" value="1" step="0.5"><div class="help">1% a 2%, paga na assinatura. Antecipa parte da taxa de adm.</div></div>
-        <div><label class="f">Reajuste anual — INCC (%)</label><input type="number" id="inccAnual" value="4.5" step="0.1"><div class="help">Corrige a carta e as parcelas.</div></div>
+        <div><label class="f">Indexador do consórcio</label><select id="idxCons"><option value="INCC" data-taxa="4.5" selected>INCC</option><option value="IPCA" data-taxa="4.5">IPCA</option></select><div class="help">Índice que corrige a carta e as parcelas.</div></div>
+        <div><label class="f">Reajuste anual (%)</label><input type="number" id="inccAnual" value="4.5" step="0.1"><div class="help">Percentual anual do indexador escolhido. Ajustável.</div></div>
         <div><label class="f">Parcela reduzida (%)</label><input type="number" id="parcelaReduzida" value="0" step="5"><div class="help">Algumas administradoras oferecem 20% a 50% até a contemplação. 0 = sem redução.</div></div>
         <div><div class="rowlab"><span>Contemplação no mês</span><b id="mesContLab">24</b></div><input type="range" id="mesContempl" min="1" max="240" step="1" value="24"></div>
         <div style="border-top:1px solid var(--border);padding-top:14px">
@@ -118,21 +119,22 @@
             <div class="seg" id="segEmb"><button data-v="nao" class="on">Não</button><button data-v="sim">Sim</button></div>
           </div>
           <div id="embWrap" class="hide" style="margin-bottom:10px"><label class="f">Lance embutido (% da carta)</label><input type="number" id="embutidoPct" value="25" step="1"><div class="help">Sai da própria carta: você contrata um crédito maior para receber líquido o valor desejado.</div></div>
-          <div><label class="f">Lance líquido (R$, do bolso)</label><input type="number" id="lanceLiquido" value="0" step="10000"><div class="help">Dinheiro seu ofertado como lance.</div></div>
+          <div><label class="f">Lance líquido (R$, do bolso)</label><input type="text" inputmode="numeric" class="money" id="lanceLiquido" value="0"><div class="help">Dinheiro seu ofertado como lance.</div></div>
         </div>
       </div>
     </div>
   <div class="card">
       <h3 style="font-family:'Outfit',serif;font-size:21px;margin:0 0 12px">Financiamento</h3>
       <div class="inputs" style="grid-template-columns:1fr">
-        <div><label class="f">Valor do imóvel</label><input type="number" id="valorImovel" value="1000000" step="50000"></div>
+        <div><label class="f">Valor do imóvel</label><input type="text" inputmode="numeric" class="money" id="valorImovel" value="1.000.000"></div>
         <div><label class="f">Para que serve este imóvel?</label><select id="objetivo"><option value="moradia">Moradia</option><option value="troca">Troca de imóvel</option><option value="investimento">Investimento (renda)</option><option value="futura">Compra futura</option></select><div class="help">Define o que mais importa na decisão.</div></div>
-        <div><label class="f">Entrada que você dá</label><input type="number" id="valorEntrada" value="200000" step="10000"><div class="help">Quanto você paga à vista. Pode ser 0.</div></div>
+        <div><label class="f">Entrada que você dá</label><input type="text" inputmode="numeric" class="money" id="valorEntrada" value="200.000"><div class="help">Quanto você paga à vista. Pode ser 0.</div></div>
         <div><label class="f">Taxa de juros (% ao ano)</label><input type="number" id="jurosAnual" value="11.5" step="0.1"></div>
-        <div><label class="f">Indexador do financiamento</label><select id="indexador"><option value="0">Sem correção</option><option value="1.5">TR (~1,5% a.a.)</option><option value="4.5" selected>IPCA (~4,5% a.a.)</option><option value="6.5">Poupança (~6,5% a.a.)</option></select><div class="help">Corrige o saldo devedor ao longo do tempo.</div></div>
+        <div><label class="f">Indexador do financiamento</label><select id="indexador"><option value="Sem correção" data-taxa="0">Sem correção</option><option value="TR" data-taxa="1.5">TR</option><option value="IPCA" data-taxa="4.5" selected>IPCA</option><option value="Poupança" data-taxa="6.5">Poupança</option></select><div class="help">Índice que corrige o saldo devedor.</div></div>
+        <div><label class="f">Correção do indexador (% a.a.)</label><input type="number" id="indexadorTaxa" value="4.5" step="0.1"><div class="help">Percentual anual do indexador. Ajustável pelo vendedor.</div></div>
         <div><label class="f">CDI (% ao ano)</label><input type="number" id="cdiAnual" value="10.5" step="0.1"><div class="help">Para medir quanto seu dinheiro renderia investido.</div></div>
-        <div><label class="f">Amortização extra por ano (R$)</label><input type="number" id="amortExtra" value="0" step="5000"><div class="help">Pagamento extra anual abatido do saldo (13º, FGTS, bônus). 0 = sem amortização extra.</div></div>
-        <div><div class="rowlab"><span>Número de parcelas</span><b id="parcFinLab">360 meses</b></div><input type="range" id="parcelasFin" min="60" max="420" step="12" value="360"><div class="help">Prazo do financiamento (máx. 420 meses).</div></div>
+        <div><label class="f">Amortização extra por ano (R$)</label><input type="text" inputmode="numeric" class="money" id="amortExtra" value="0"><div class="help">Pagamento extra anual abatido do saldo (13º, FGTS, bônus). 0 = sem amortização extra.</div></div>
+        <div><div class="rowlab"><span>Número de parcelas</span><b id="parcFinLab">360 meses</b></div><input type="range" id="parcelasFin" min="12" max="420" step="1" value="360"><div class="help">Prazo do financiamento, mês a mês (máx. 420 meses).</div></div>
       </div>
     </div>
     </div>
@@ -202,7 +204,8 @@ function consorcio(grossCred,n,mesCont,incc,adm,fundo,lanceLiq,adesao,reducao){
   return {p1:p1,total:t+adesaoVal,custo:custo,adm:grossCred*(adm+fundo)/100,adesaoVal:adesaoVal,admParc:admParc,mesCont:mesCont,parcelaApos:parcelaApos,reduzida:red>0};
 }
 function rendCDI(v,cdi,meses){return v*(Math.pow(1+mensal(cdi),meses)-1);}
-function num(id){var e=document.getElementById(id);return e?parseFloat(e.value)||0:0;}
+function fmtMoneyStr(v){v=String(v==null?'':v).replace(/\D/g,'');return v?parseInt(v,10).toLocaleString('pt-BR'):'';}
+function num(id){var e=document.getElementById(id);if(!e)return 0;if(e.classList&&e.classList.contains('money'))return parseInt(String(e.value).replace(/\D/g,''),10)||0;return parseFloat(String(e.value).replace(',','.'))||0;}
 function val(id){var e=document.getElementById(id);return e?e.value:"";}
 function metric(k,v,t,h){return '<div class="metric"><div class="k">'+k+'</div><div class="v '+(t||'')+'">'+v+'</div>'+(h?'<div class="h">'+h+'</div>':'')+'</div>';}
 function bars(items){var max=Math.max.apply(null,items.map(function(i){return i.v;}).concat([1])),w=820,bw=(w-100)/items.length-36;var s='<svg viewBox="0 0 '+w+' 190" width="100%">';items.forEach(function(it,k){var xx=50+k*((w-100)/items.length);var h=it.v/max*120,y=150-h;s+='<rect x="'+xx+'" y="'+y+'" width="'+bw+'" height="'+h+'" rx="6" fill="'+it.c+'"/><text x="'+(xx+bw/2)+'" y="'+(y-8)+'" fill="'+getC('--txt')+'" font-size="13" text-anchor="middle" font-family="ui-monospace">'+brl(it.v)+'</text><text x="'+(xx+bw/2)+'" y="170" fill="'+getC('--muted')+'" font-size="12" text-anchor="middle">'+it.l+'</text>';});return s+'</svg>';}
@@ -216,7 +219,7 @@ function syncLabels(){
 }
 
 function renderResult(){
-  var im=num("valorImovel"), ent=num("valorEntrada"), j=num("jurosAnual"), idx=num("indexador"), cdi=num("cdiAnual"), nf=num("parcelasFin"), obj=val("objetivo"), amortExtra=num("amortExtra");
+  var im=num("valorImovel"), ent=num("valorEntrada"), j=num("jurosAnual"), idx=num("indexadorTaxa"), cdi=num("cdiAnual"), nf=num("parcelasFin"), obj=val("objetivo"), amortExtra=num("amortExtra");
   var credNet=num("valorCredito"), nc=num("parcelasCons"), adm=num("taxaAdm"), fundo=num("fundoReserva"), incc=num("inccAnual"), mesC=num("mesContempl"), adesao=num("taxaAdesao");
   var embPct=embutido?num("embutidoPct"):0, lanceLiq=num("lanceLiquido"), reducao=num("parcelaReduzida");
   var trF=infl?idx:0, inccF=infl?incc:0;
@@ -356,7 +359,8 @@ function goStep(s){
 }
 function toggleTheme(){var h=document.documentElement,d=h.getAttribute("data-theme")==="dark";h.setAttribute("data-theme",d?"light":"dark");document.getElementById("themeBtn").textContent=d?"☾ Escuro":"☀ Claro";try{localStorage.setItem("tema",d?"light":"dark");}catch(e){}renderResult();}
 document.getElementById("segEmb").querySelectorAll("button").forEach(function(b){b.onclick=function(){document.getElementById("segEmb").querySelectorAll("button").forEach(function(x){x.classList.toggle("on",x===b);});embutido=b.dataset.v==="sim";document.getElementById("embWrap").classList.toggle("hide",!embutido);renderResult();};});
-document.querySelectorAll("input,select").forEach(function(el){el.addEventListener("input",function(){syncLabels();renderResult();});});
+document.querySelectorAll("input,select").forEach(function(el){el.addEventListener("input",function(){if(el.classList&&el.classList.contains('money')){el.value=fmtMoneyStr(el.value);}syncLabels();renderResult();});});
+(function(){var ix=document.getElementById("indexador");if(ix)ix.addEventListener("change",function(){var o=ix.options[ix.selectedIndex],t=document.getElementById("indexadorTaxa");if(o&&t&&o.dataset.taxa!=null)t.value=o.dataset.taxa;renderResult();});var ic=document.getElementById("idxCons");if(ic)ic.addEventListener("change",function(){var o=ic.options[ic.selectedIndex],t=document.getElementById("inccAnual");if(o&&t&&o.dataset.taxa!=null)t.value=o.dataset.taxa;renderResult();});})();
 var lead={nome:"",email:"",telefone:""}, leadId="";
 var COLMAP={evento:"evento",leadId:"lead_id",nome:"nome",email:"email",telefone:"telefone",consentimentoLgpd:"consentimento_lgpd",consentimentoEm:"consentimento_em",origem:"origem",objetivo:"objetivo",valorImovel:"valor_imovel",parcelasFin:"parcelas_fin",valorCredito:"valor_credito",parcelasCons:"parcelas_cons",taxaAdm:"taxa_adm",fundoReserva:"fundo_reserva",taxaAdesao:"taxa_adesao",parcelaReduzida:"parcela_reduzida",mesContemplacao:"mes_contemplacao",lanceLiquido:"lance_liquido",amortExtra:"amort_extra",isVip:"is_vip",etiqueta:"etiqueta"};
 function supabaseRow(p){var r={};for(var k in p){if(COLMAP[k])r[COLMAP[k]]=p[k];}return r;}
@@ -385,6 +389,7 @@ function sendFinal(){
 }
 document.getElementById("yr").textContent=new Date().getFullYear();
 try{var t=localStorage.getItem("tema");if(t==="dark"){document.documentElement.setAttribute("data-theme","dark");document.getElementById("themeBtn").textContent="☀ Claro";}}catch(e){}
+document.querySelectorAll('input.money').forEach(function(e){e.value=fmtMoneyStr(e.value);});
 syncLabels();renderResult();
 </script>
 </body>
