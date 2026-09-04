@@ -181,7 +181,6 @@ footer .meta{font-size:11.5px;color:var(--muted);margin-top:8px}
       <button class="chip on" data-tipo="all">Todos</button>
       <button class="chip" data-tipo="imovel">Imóvel</button>
       <button class="chip" data-tipo="auto">Automóvel</button>
-      <button class="chip" data-tipo="servico">Serviço</button>
       <div class="sep"></div>
       <button class="chip embnow" id="embnow">Embute neste mês</button>
     </div>
@@ -258,13 +257,6 @@ const G=[
 {g:5033,t:'auto',pi:90,pa:74,tx:'19,00%',txp:'0,26%',txl:'a.m.',red:'50%',lance:'61,11%',emb:'par',embPct:'30%'},
 {g:5034,t:'auto',pi:90,pa:80,tx:'19,00%',txp:'0,24%',txl:'a.m.',red:'50%',lance:'35,79%',emb:'par',embPct:'30%'},
 {g:5035,t:'auto',pi:90,pa:88,tx:'15,60%',txp:'0,18%',txl:'a.m.',red:'50%',lance:null,emb:'alterna',embPct:'30%'},
-/* SERVIÇO */
-{g:3104,t:'servico',pi:48,pa:2,tx:'10,50%',txp:'0,22%',txl:'a.m.',red:'20%',lance:null,emb:'servico',embPct:'20%'},
-{g:3105,t:'servico',pi:48,pa:6,tx:'10,50%',txp:'0,22%',txl:'a.m.',red:'20%',lance:null,emb:'servico',embPct:'20%'},
-{g:3106,t:'servico',pi:48,pa:12,tx:'14,50%',txp:'0,30%',txl:'a.m.',red:'20%',lance:null,emb:'servico',embPct:'20%'},
-{g:3107,t:'servico',pi:48,pa:17,tx:'14,50%',txp:'0,30%',txl:'a.m.',red:'20%',lance:null,emb:'servico',embPct:'20%'},
-{g:3108,t:'servico',pi:48,pa:23,tx:'18,50%',txp:'0,39%',txl:'a.m.',red:'20%',lance:null,emb:'servico',embPct:'20%'},
-{g:3109,t:'servico',pi:48,pa:47,tx:'17,20%',txp:'0,36%',txl:'a.m.',red:'20%',lance:null,emb:'servico',embPct:'20%'},
 ];
 
 const TIPOS={
@@ -302,7 +294,7 @@ function render(){
   const stage=document.getElementById('stage');
   stage.innerHTML='';
   let total=0;
-  for(const key of ['imovel','auto','servico']){
+  for(const key of ['imovel','auto']){
     if(fTipo!=='all'&&fTipo!==key) continue;
     let list=G.filter(x=>x.t===key);
     if(fQ) list=list.filter(x=>String(x.g).includes(fQ));
