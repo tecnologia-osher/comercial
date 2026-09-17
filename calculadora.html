@@ -4,7 +4,7 @@
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>Compra Imobiliária Inteligente · Financiamento ou Consórcio</title>
-<!-- calculadora v5 · (1) Financiamento: indexador virou seletor de NOME (Sem correção/TR/IPCA/Poupança) + campo "Correção do indexador (% a.a.)" editável (indexadorTaxa) — o vendedor escolhe taxa E indexador; renderResult usa num('indexadorTaxa'). (2) Campos monetários (valorCredito, valorImovel, valorEntrada, lanceLiquido, amortExtra) viraram text .money com máscara de milhar pt-BR (500.000) — fmtMoneyStr formata ao digitar; num() lê .money removendo os pontos. (3) Consórcio: seletor "Indexador do consórcio" INCC/IPCA (idxCons) + label "Reajuste anual (%)". (4) Prazo do financiamento (parcelasFin) mês a mês: step 12→1, min 12. · v5.1 · máscara de milhar agora em TODOS os campos numéricos: os 9 campos de taxa/percentual viraram text .num com fmtNumBR (milhar com ponto, decimal com vírgula, preserva casas: 11,5 / 1.234,56); num() lê .num tirando pontos e trocando vírgula por ponto. · 2026-07-13 · v6 (2026-09-17): PROJEÇÃO PARCELA A PARCELA — finCET e consorcio agora também devolvem a série mensal (campo `serie`, aditivo, motor intacto); novo gráfico de linhas `lineChart` (Financiamento SAC↘ em vermelho × Consórcio↗ em verde) com o mês de CRUZAMENTO destacado, inserido no resultado (chartBlock). Segue o toggle "Projetar correção". · v6.1 (2026-09-17): CUSTO DE ESPERAR — novo campo `aluguelEspera` (R$/mês, default 0 = comportamento inalterado); `custoEsperar = aluguel × (mesCont−1)`; linha no bloco patrimônio + "Custo real de aquisição (com a espera)" = Financ. × (Consórcio+espera); frase e PDF ajustados com `ecoReal = eco − custoEsperar` (mostra a diferença REAL a favor de quem, sem esconder o aluguel). Motor intacto. · v6.2 (2026-09-17): CENÁRIOS DE SAÍDA — campos `agioRevenda` (%) e `taxaLoc` (% do imóvel/mês), default 0. Revenda: desembCont=Σ parcelas até mesCont+adesão+lance; agioVal=credNet×ágio; ROI=agioVal/desembCont. Locação: aluguel=imóvel×taxaLoc; yield anual; fluxo=aluguel−parcela após contempl. Bloco "Cenários de saída" (só se >0) no resultado + PDF. Aditivo, motor intacto. · v6.3 (2026-09-17): PATRIMÔNIO × DÍVIDA — finCET agora também devolve a série de SALDO DEVEDOR (campo `saldo`, aditivo). Novo bloco "Patrimônio × Dívida" no resultado: gráfico de linhas com a dívida do financiamento (SAC) caindo × o capital investido no consórcio subindo. cap0 = ent − (lance+adesão) que o consorciado mantém investido; toggle `investDif` (default on) aporta a diferença de parcela mês a mês, tudo rendendo no CDI; marca o mês em que o patrimônio investido supera a dívida (crossPD). Seção no PDF. Aditivo, motor intacto. · v6.4 (2026-09-17): CONTEMPLAÇÃO POR CENÁRIO — bloco "Cenários de contemplação" (Otimista=previsto×0,5 / Previsto / Pessimista=previsto×1,5, auto-derivados do mês previsto, cap 1..nc): mês, ~anos, parcela após e — se preenchidos — aluguel até lá, ROI de revenda e fluxo de locação recalculados por cenário via `_cenC(mc)` (reusa `consorcio()`). Trava "depende de sorteio e lance, não garantida". Seção no PDF + campos no LASTCALC (cenOt/cenRe/cenPe). Aditivo, motor intacto. · idv 2026-07-04 -->
+<!-- calculadora v5 · (1) Financiamento: indexador virou seletor de NOME (Sem correção/TR/IPCA/Poupança) + campo "Correção do indexador (% a.a.)" editável (indexadorTaxa) — o vendedor escolhe taxa E indexador; renderResult usa num('indexadorTaxa'). (2) Campos monetários (valorCredito, valorImovel, valorEntrada, lanceLiquido, amortExtra) viraram text .money com máscara de milhar pt-BR (500.000) — fmtMoneyStr formata ao digitar; num() lê .money removendo os pontos. (3) Consórcio: seletor "Indexador do consórcio" INCC/IPCA (idxCons) + label "Reajuste anual (%)". (4) Prazo do financiamento (parcelasFin) mês a mês: step 12→1, min 12. · v5.1 · máscara de milhar agora em TODOS os campos numéricos: os 9 campos de taxa/percentual viraram text .num com fmtNumBR (milhar com ponto, decimal com vírgula, preserva casas: 11,5 / 1.234,56); num() lê .num tirando pontos e trocando vírgula por ponto. · 2026-07-13 · v6 (2026-09-17): PROJEÇÃO PARCELA A PARCELA — finCET e consorcio agora também devolvem a série mensal (campo `serie`, aditivo, motor intacto); novo gráfico de linhas `lineChart` (Financiamento SAC↘ em vermelho × Consórcio↗ em verde) com o mês de CRUZAMENTO destacado, inserido no resultado (chartBlock). Segue o toggle "Projetar correção". · v6.1 (2026-09-17): CUSTO DE ESPERAR — novo campo `aluguelEspera` (R$/mês, default 0 = comportamento inalterado); `custoEsperar = aluguel × (mesCont−1)`; linha no bloco patrimônio + "Custo real de aquisição (com a espera)" = Financ. × (Consórcio+espera); frase e PDF ajustados com `ecoReal = eco − custoEsperar` (mostra a diferença REAL a favor de quem, sem esconder o aluguel). Motor intacto. · v6.2 (2026-09-17): CENÁRIOS DE SAÍDA — campos `agioRevenda` (%) e `taxaLoc` (% do imóvel/mês), default 0. Revenda: desembCont=Σ parcelas até mesCont+adesão+lance; agioVal=credNet×ágio; ROI=agioVal/desembCont. Locação: aluguel=imóvel×taxaLoc; yield anual; fluxo=aluguel−parcela após contempl. Bloco "Cenários de saída" (só se >0) no resultado + PDF. Aditivo, motor intacto. · v6.3 (2026-09-17): PATRIMÔNIO × DÍVIDA — finCET agora também devolve a série de SALDO DEVEDOR (campo `saldo`, aditivo). Novo bloco "Patrimônio × Dívida" no resultado: gráfico de linhas com a dívida do financiamento (SAC) caindo × o capital investido no consórcio subindo. cap0 = ent − (lance+adesão) que o consorciado mantém investido; toggle `investDif` (default on) aporta a diferença de parcela mês a mês, tudo rendendo no CDI; marca o mês em que o patrimônio investido supera a dívida (crossPD). Seção no PDF. Aditivo, motor intacto. · v6.4 (2026-09-17): CONTEMPLAÇÃO POR CENÁRIO — bloco "Cenários de contemplação" (Otimista=previsto×0,5 / Previsto / Pessimista=previsto×1,5, auto-derivados do mês previsto, cap 1..nc): mês, ~anos, parcela após e — se preenchidos — aluguel até lá, ROI de revenda e fluxo de locação recalculados por cenário via `_cenC(mc)` (reusa `consorcio()`). Trava "depende de sorteio e lance, não garantida". Seção no PDF + campos no LASTCALC (cenOt/cenRe/cenPe). Aditivo, motor intacto. · v6.5 (2026-09-17): REDESIGN (entrada + resultado + IDV + fluxo, motor e ids intactos). (1) Os 3 seletores de ARRASTAR (parcelasCons/mesContempl/parcelasFin) viraram campos DIGITÁVEIS type=number mês a mês (syncLabels simplificado, só trava mesCont<=parcelasCons). (2) ENTRADA agrupada: essenciais visíveis + "Ajustes avançados" recolhíveis (details.adv) em cada card. (3) RESULTADO repaginado com HIERARQUIA: HERO "o dinheiro na mesa" (mesaVal=custoEsperar>0?ecoReal:eco = quanto o financiamento custa a mais) + 4 KPIs + seções com kicker .rk (Custo total / Como evolui / Patrimônio / Cenários) + DETALHES (barras+tabelas) recolhidos em details.det. (4) CTA de PDF destacado em #ctaBar. (5) IDV: .patbox borda neutra, novos .hero/.kpi/.rk. Nova intro "Quanto o financiamento custa a mais". · idv 2026-07-04 -->
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300..800&display=swap" rel="stylesheet">
 <style>
@@ -73,7 +73,32 @@
   .red{color:var(--red)}.grn{color:var(--green)}
   .verdict{border-radius:12px;padding:18px;border:1px solid var(--border);background:var(--greenSoft);font-size:15.5px;line-height:1.55;margin-bottom:16px}.verdict b{color:var(--green)}
   .toolbar{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;margin-bottom:16px}.chk{display:flex;gap:8px;align-items:center;font-size:13px;color:var(--muted);cursor:pointer}
-  .patbox{border:1px solid var(--green);border-radius:12px;padding:18px;margin-bottom:16px;background:var(--bg)}
+  .patbox{border:1px solid var(--border);border-radius:12px;padding:18px;margin-bottom:16px;background:var(--bg)}
+  /* redesign v6.5: hierarquia do resultado + entrada agrupada */
+  .rk{font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--gold);font-weight:600;margin:28px 0 12px;display:flex;align-items:center;gap:10px}
+  .rk::after{content:"";flex:1;height:1px;background:var(--border)}
+  .hero{border:1px solid var(--goldbd);border-radius:16px;padding:22px 24px;background:linear-gradient(180deg,var(--accentSoft),transparent);margin-bottom:18px}
+  .hero .hk{font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--gold);font-weight:600;margin-bottom:8px}
+  .hero .hv{font-size:34px;font-weight:800;font-family:'Outfit',sans-serif;line-height:1.05;letter-spacing:-.02em}
+  .hero .hd2{font-size:14px;color:var(--muted);line-height:1.55;margin-top:8px;max-width:640px}
+  .hero .hv .grn{color:var(--green)}.hero .hv .red{color:var(--red)}
+  .kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:6px}
+  .kpi{border:1px solid var(--border);border-radius:12px;padding:14px;background:var(--bg)}
+  .kpi .kk{font-size:10.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+  .kpi .kv{font-size:19px;font-weight:700;font-family:ui-monospace,monospace;margin-top:5px;line-height:1.15}
+  .kpi .kh{font-size:11px;color:var(--muted);margin-top:3px}
+  details.adv{border-top:1px solid var(--border);margin-top:6px;padding-top:6px}
+  details.adv>summary{cursor:pointer;list-style:none;font-size:13px;font-weight:600;color:var(--gold);padding:8px 0;display:flex;align-items:center;gap:7px}
+  details.adv>summary::-webkit-details-marker{display:none}
+  details.adv>summary::before{content:"+";display:inline-flex;width:18px;height:18px;align-items:center;justify-content:center;border:1px solid var(--goldbd);border-radius:6px;font-weight:700}
+  details.adv[open]>summary::before{content:"–"}
+  details.adv>.inner{display:grid;grid-template-columns:1fr;gap:16px;padding:10px 0 4px}
+  details.det{border:1px solid var(--border);border-radius:12px;background:var(--bg);margin-bottom:16px}
+  details.det>summary{cursor:pointer;list-style:none;font-size:14px;font-weight:600;padding:15px 18px;display:flex;align-items:center;gap:8px}
+  details.det>summary::-webkit-details-marker{display:none}
+  details.det>summary::before{content:"›";font-size:18px;color:var(--gold);transition:transform .15s}
+  details.det[open]>summary::before{transform:rotate(90deg)}
+  details.det>.inner{padding:0 18px 18px}
   .patline{display:flex;justify-content:space-between;gap:12px;padding:10px 0;border-bottom:1px solid var(--border);font-size:13.5px}.patline:last-child{border-bottom:0}
   .patline .q{color:var(--muted)}.patline .a{font-family:ui-monospace,monospace;text-align:right}
   .cengrid{display:flex;gap:10px}.cencol{flex:1;border:1px solid var(--border);border-radius:10px;padding:12px;text-align:center}.cencol.win{border-color:var(--green);background:var(--greenSoft)}.ceng{font-size:11px;text-transform:uppercase;letter-spacing:1px;color:var(--muted);margin-bottom:4px}.cenr{font-size:12.5px;margin-top:3px}@media(max-width:560px){.cengrid{flex-direction:column}}
@@ -87,7 +112,7 @@
   .hide{display:none}
   footer{border-top:1px solid var(--border);padding:26px 0;color:var(--muted);font-size:12px;text-align:center}
   footer .reg{font-size:11px;margin-top:6px}
-  @media(max-width:680px){.filtros,.inputs,.cmp,.detgrid{grid-template-columns:1fr}h2.t{font-size:22px}}
+  @media(max-width:680px){.filtros,.inputs,.cmp,.detgrid{grid-template-columns:1fr}.kpis{grid-template-columns:1fr 1fr}h2.t{font-size:22px}.hero .hv{font-size:27px}}
 </style>
 </head>
 <body>
@@ -99,54 +124,59 @@
 <div class="wrap">
   <div style="margin:22px 0 16px">
     <div class="kicker">Inteligência Imobiliária</div>
-    <h2 class="t" style="font-size:26px">Financiamento × Consórcio</h2>
-    <p class="lead">Preencha os dois lados — o comparativo atualiza sozinho logo abaixo. Análise, não venda.</p>
+    <h2 class="t" style="font-size:26px">Quanto o financiamento custa a mais</h2>
+    <p class="lead">Preencha os dois lados — o resultado logo abaixo mostra, na hora, quanto dinheiro você deixa na mesa e como o consórcio constrói patrimônio no lugar de dívida.</p>
   </div>
   <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(330px,1fr));gap:16px">
     <div class="card">
       <h3 style="font-family:'Outfit',serif;font-size:21px;margin:0 0 12px">Consórcio</h3>
       <div class="inputs" style="grid-template-columns:1fr">
         <div><label class="f">Valor do crédito (carta)</label><input type="text" inputmode="numeric" class="money" id="valorCredito" value="1.000.000"><div class="help">O valor que você quer receber para o imóvel.</div></div>
-        <div><div class="rowlab"><span>Número de parcelas</span><b id="parcConsLab">200 meses</b></div><input type="range" id="parcelasCons" min="60" max="240" step="12" value="200"><div class="help">Prazo do consórcio (máx. 240 meses).</div></div>
+        <div><label class="f">Número de parcelas (meses)</label><input type="number" inputmode="numeric" id="parcelasCons" min="12" max="240" step="1" value="200"><div class="help">Prazo do consórcio, mês a mês (máx. 240). Digite o número de meses.</div></div>
         <div><label class="f">Taxa de administração (%)</label><input type="text" inputmode="decimal" class="num" id="taxaAdm" value="18" step="0.5"><div class="help">Total do contrato. Mercado: 9,5% a 25%.</div></div>
-        <div><label class="f">Fundo de reserva (%)</label><input type="text" inputmode="decimal" class="num" id="fundoReserva" value="2" step="0.5"><div class="help">Mercado: 1% a 5%.</div></div>
-        <div><label class="f">Taxa de adesão (%)</label><input type="text" inputmode="decimal" class="num" id="taxaAdesao" value="1" step="0.5"><div class="help">1% a 2%, paga na assinatura. Antecipa parte da taxa de adm.</div></div>
-        <div><label class="f">Indexador do consórcio</label><select id="idxCons"><option value="INCC" data-taxa="4.5" selected>INCC</option><option value="IPCA" data-taxa="4.5">IPCA</option></select><div class="help">Índice que corrige a carta e as parcelas.</div></div>
-        <div><label class="f">Reajuste anual (%)</label><input type="text" inputmode="decimal" class="num" id="inccAnual" value="4.5" step="0.1"><div class="help">Percentual anual do indexador escolhido. Ajustável.</div></div>
-        <div><label class="f">Parcela reduzida (%)</label><input type="text" inputmode="decimal" class="num" id="parcelaReduzida" value="0" step="5"><div class="help">Algumas administradoras oferecem 20% a 50% até a contemplação. 0 = sem redução.</div></div>
-        <div><div class="rowlab"><span>Contemplação no mês</span><b id="mesContLab">24</b></div><input type="range" id="mesContempl" min="1" max="240" step="1" value="24"></div>
-        <div><label class="f">Aluguel enquanto espera (R$/mês)</label><input type="text" inputmode="numeric" class="money" id="aluguelEspera" value="0"><div class="help">Custo de esperar a contemplação: o financiado já mora no imóvel; o consorciado paga aluguel até contemplar. 0 = ignorar.</div></div>
-        <div><label class="f">Ágio na revenda da carta (%)</label><input type="text" inputmode="decimal" class="num" id="agioRevenda" value="0"><div class="help">Cenário de saída: vender a carta contemplada com ágio. Depende do mercado — não garantido. 0 = ignorar.</div></div>
-        <div><label class="f">Taxa de locação (% do imóvel/mês)</label><input type="text" inputmode="decimal" class="num" id="taxaLoc" value="0"><div class="help">Cenário de saída: renda de aluguel após contemplar. Ex.: 0,4% a 0,6%. 0 = ignorar.</div></div>
-        <div style="border-top:1px solid var(--border);padding-top:14px">
-          <div class="switch" style="margin-bottom:12px">Tem lance embutido?
-            <div class="seg" id="segEmb"><button data-v="nao" class="on">Não</button><button data-v="sim">Sim</button></div>
+        <div><label class="f">Contemplação no mês</label><input type="number" inputmode="numeric" id="mesContempl" min="1" max="240" step="1" value="24"><div class="help">Em que mês você estima contemplar (sorteio ou lance). Digite o mês.</div></div>
+        <details class="adv"><summary>Ajustes avançados do consórcio</summary><div class="inner">
+          <div><label class="f">Fundo de reserva (%)</label><input type="text" inputmode="decimal" class="num" id="fundoReserva" value="2" step="0.5"><div class="help">Mercado: 1% a 5%.</div></div>
+          <div><label class="f">Taxa de adesão (%)</label><input type="text" inputmode="decimal" class="num" id="taxaAdesao" value="1" step="0.5"><div class="help">1% a 2%, paga na assinatura. Antecipa parte da taxa de adm.</div></div>
+          <div><label class="f">Indexador do consórcio</label><select id="idxCons"><option value="INCC" data-taxa="4.5" selected>INCC</option><option value="IPCA" data-taxa="4.5">IPCA</option></select><div class="help">Índice que corrige a carta e as parcelas.</div></div>
+          <div><label class="f">Reajuste anual (%)</label><input type="text" inputmode="decimal" class="num" id="inccAnual" value="4.5" step="0.1"><div class="help">Percentual anual do indexador escolhido. Ajustável.</div></div>
+          <div><label class="f">Parcela reduzida (%)</label><input type="text" inputmode="decimal" class="num" id="parcelaReduzida" value="0" step="5"><div class="help">Algumas administradoras oferecem 20% a 50% até a contemplação. 0 = sem redução.</div></div>
+          <div><label class="f">Aluguel enquanto espera (R$/mês)</label><input type="text" inputmode="numeric" class="money" id="aluguelEspera" value="0"><div class="help">Custo de esperar a contemplação: o financiado já mora no imóvel; o consorciado paga aluguel até contemplar. 0 = ignorar.</div></div>
+          <div><label class="f">Ágio na revenda da carta (%)</label><input type="text" inputmode="decimal" class="num" id="agioRevenda" value="0"><div class="help">Cenário de saída: vender a carta contemplada com ágio. Depende do mercado — não garantido. 0 = ignorar.</div></div>
+          <div><label class="f">Taxa de locação (% do imóvel/mês)</label><input type="text" inputmode="decimal" class="num" id="taxaLoc" value="0"><div class="help">Cenário de saída: renda de aluguel após contemplar. Ex.: 0,4% a 0,6%. 0 = ignorar.</div></div>
+          <div style="border-top:1px solid var(--border);padding-top:14px">
+            <div class="switch" style="margin-bottom:12px">Tem lance embutido?
+              <div class="seg" id="segEmb"><button data-v="nao" class="on">Não</button><button data-v="sim">Sim</button></div>
+            </div>
+            <div id="embWrap" class="hide" style="margin-bottom:10px"><label class="f">Lance embutido (% da carta)</label><input type="text" inputmode="decimal" class="num" id="embutidoPct" value="25" step="1"><div class="help">Sai da própria carta: você contrata um crédito maior para receber líquido o valor desejado.</div></div>
+            <div><label class="f">Lance líquido (R$, do bolso)</label><input type="text" inputmode="numeric" class="money" id="lanceLiquido" value="0"><div class="help">Dinheiro seu ofertado como lance.</div></div>
           </div>
-          <div id="embWrap" class="hide" style="margin-bottom:10px"><label class="f">Lance embutido (% da carta)</label><input type="text" inputmode="decimal" class="num" id="embutidoPct" value="25" step="1"><div class="help">Sai da própria carta: você contrata um crédito maior para receber líquido o valor desejado.</div></div>
-          <div><label class="f">Lance líquido (R$, do bolso)</label><input type="text" inputmode="numeric" class="money" id="lanceLiquido" value="0"><div class="help">Dinheiro seu ofertado como lance.</div></div>
-        </div>
+        </div></details>
       </div>
     </div>
   <div class="card">
       <h3 style="font-family:'Outfit',serif;font-size:21px;margin:0 0 12px">Financiamento</h3>
       <div class="inputs" style="grid-template-columns:1fr">
         <div><label class="f">Valor do imóvel</label><input type="text" inputmode="numeric" class="money" id="valorImovel" value="1.000.000"></div>
-        <div><label class="f">Para que serve este imóvel?</label><select id="objetivo"><option value="moradia">Moradia</option><option value="troca">Troca de imóvel</option><option value="investimento">Investimento (renda)</option><option value="futura">Compra futura</option></select><div class="help">Define o que mais importa na decisão.</div></div>
         <div><label class="f">Entrada que você dá</label><input type="text" inputmode="numeric" class="money" id="valorEntrada" value="200.000"><div class="help">Quanto você paga à vista. Pode ser 0.</div></div>
         <div><label class="f">Taxa de juros (% ao ano)</label><input type="text" inputmode="decimal" class="num" id="jurosAnual" value="11.5" step="0.1"></div>
-        <div><label class="f">Indexador do financiamento</label><select id="indexador"><option value="Sem correção" data-taxa="0">Sem correção</option><option value="TR" data-taxa="1.5">TR</option><option value="IPCA" data-taxa="4.5" selected>IPCA</option><option value="Poupança" data-taxa="6.5">Poupança</option></select><div class="help">Índice que corrige o saldo devedor.</div></div>
-        <div><label class="f">Correção do indexador (% a.a.)</label><input type="text" inputmode="decimal" class="num" id="indexadorTaxa" value="4.5" step="0.1"><div class="help">Percentual anual do indexador. Ajustável pelo vendedor.</div></div>
-        <div><label class="f">CDI (% ao ano)</label><input type="text" inputmode="decimal" class="num" id="cdiAnual" value="10.5" step="0.1"><div class="help">Para medir quanto seu dinheiro renderia investido.</div></div>
-        <div><label class="f">Amortização extra por ano (R$)</label><input type="text" inputmode="numeric" class="money" id="amortExtra" value="0"><div class="help">Pagamento extra anual abatido do saldo (13º, FGTS, bônus). 0 = sem amortização extra.</div></div>
-        <div><div class="rowlab"><span>Número de parcelas</span><b id="parcFinLab">360 meses</b></div><input type="range" id="parcelasFin" min="12" max="420" step="1" value="360"><div class="help">Prazo do financiamento, mês a mês (máx. 420 meses).</div></div>
+        <div><label class="f">Número de parcelas (meses)</label><input type="number" inputmode="numeric" id="parcelasFin" min="12" max="420" step="1" value="360"><div class="help">Prazo do financiamento, mês a mês (máx. 420). Digite o número de meses.</div></div>
+        <div><label class="f">Para que serve este imóvel?</label><select id="objetivo"><option value="moradia">Moradia</option><option value="troca">Troca de imóvel</option><option value="investimento">Investimento (renda)</option><option value="futura">Compra futura</option></select><div class="help">Define o que mais importa na decisão.</div></div>
+        <details class="adv"><summary>Ajustes avançados do financiamento</summary><div class="inner">
+          <div><label class="f">Indexador do financiamento</label><select id="indexador"><option value="Sem correção" data-taxa="0">Sem correção</option><option value="TR" data-taxa="1.5">TR</option><option value="IPCA" data-taxa="4.5" selected>IPCA</option><option value="Poupança" data-taxa="6.5">Poupança</option></select><div class="help">Índice que corrige o saldo devedor.</div></div>
+          <div><label class="f">Correção do indexador (% a.a.)</label><input type="text" inputmode="decimal" class="num" id="indexadorTaxa" value="4.5" step="0.1"><div class="help">Percentual anual do indexador. Ajustável pelo vendedor.</div></div>
+          <div><label class="f">CDI (% ao ano)</label><input type="text" inputmode="decimal" class="num" id="cdiAnual" value="10.5" step="0.1"><div class="help">Para medir quanto seu dinheiro renderia investido.</div></div>
+          <div><label class="f">Amortização extra por ano (R$)</label><input type="text" inputmode="numeric" class="money" id="amortExtra" value="0"><div class="help">Pagamento extra anual abatido do saldo (13º, FGTS, bônus). 0 = sem amortização extra.</div></div>
+        </div></details>
       </div>
     </div>
     </div>
   <div class="card" style="margin-top:16px">
     <h3 style="font-family:'Outfit',serif;font-size:21px;margin:0 0 12px">Resultado</h3>
     <div id="out"></div>
-    <div style="margin-top:16px;text-align:right">
-      <button id="pdfBtn" onclick="gerarPDF()" style="display:none;font-family:'Outfit',sans-serif;font-size:14px;font-weight:600;padding:11px 20px;border-radius:10px;border:1px solid var(--goldbd);background:var(--accent);color:#fff;cursor:pointer">Exportar comparativo (PDF)</button>
+    <div id="ctaBar" style="display:none;margin-top:22px;padding-top:18px;border-top:1px solid var(--border);align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap">
+      <div style="font-size:13.5px;color:var(--muted);max-width:420px">Leve o comparativo para o cliente com o nome dele e a marca Osher.</div>
+      <button id="pdfBtn" onclick="gerarPDF()" style="font-family:'Outfit',sans-serif;font-size:15px;font-weight:700;padding:14px 26px;border-radius:11px;border:1px solid var(--goldbd);background:var(--accent);color:var(--onAccent);cursor:pointer">Exportar comparativo em PDF →</button>
     </div>
   </div>
 </div>
@@ -238,10 +268,8 @@ function lineChart(a,b,cross){
 }
 
 function syncLabels(){
-  document.getElementById("parcFinLab").textContent=num("parcelasFin")+" meses";
-  document.getElementById("parcConsLab").textContent=num("parcelasCons")+" meses";
-  var mc=document.getElementById("mesContempl"),pc=num("parcelasCons");mc.max=pc;if(num("mesContempl")>pc)mc.value=pc;
-  document.getElementById("mesContLab").textContent="mês "+num("mesContempl");
+  var mc=document.getElementById("mesContempl"),pc=num("parcelasCons");
+  if(mc){ mc.max=pc; if(num("mesContempl")>pc) mc.value=pc; }
 }
 
 function renderResult(){
@@ -333,36 +361,61 @@ function renderResult(){
     : 'Neste cenário o <b>financiamento</b> tende a sair melhor — principalmente se você precisa do imóvel imediatamente.';
   if(custoEsperar>0){frase+=' Considerando o aluguel até a contemplação ('+brl(custoEsperar)+'), a diferença real fica em <b>'+brl(Math.abs(ecoReal))+'</b>'+(ecoReal>0?' a favor do consórcio.':' a favor do financiamento.');}
 
+  /* HERO — o dinheiro que o cliente deixa na mesa (custo de operação do financiamento) */
+  var mesaVal=custoEsperar>0?ecoReal:eco;
+  var heroHtml;
+  if(mesaVal>0){
+    heroHtml='<div class="hero"><div class="hk">O dinheiro na mesa</div>'
+      +'<div class="hv"><span class="grn">'+brl(mesaVal)+'</span></div>'
+      +'<div class="hd2">É quanto o <b>financiamento custa a mais</b> que o consórcio neste cenário'+(custoEsperar>0?' (já descontando o aluguel de '+brl(custoEsperar)+' até a contemplação)':'')+'. O consórcio não tem juros — troca esse custo por patrimônio. Em troca, você espera a contemplação (previsto: mês '+cons.mesCont+').'+(objNote?' '+objNote:'')+'</div></div>';
+  } else {
+    heroHtml='<div class="hero"><div class="hk">Resultado</div>'
+      +'<div class="hv"><span class="red">'+brl(Math.abs(mesaVal))+'</span></div>'
+      +'<div class="hd2">Neste cenário o <b>financiamento</b> tende a sair melhor no total — principalmente se você precisa do imóvel imediatamente.'+(objNote?' '+objNote:'')+'</div></div>';
+  }
+  var consKh=cons.reduzida?'parcela reduzida até contemplar':(lanceLiq>0?'após o lance: '+brl(cons.parcelaApos):(cons.adesaoVal>0?'+ '+brl(cons.adesaoVal)+' de adesão':'sem juros'));
+  var kpisHtml='<div class="kpis">'
+    +'<div class="kpi"><div class="kk">Parcela inicial · financiamento</div><div class="kv">'+brl(sac.p1)+'</div><div class="kh">cai até '+brl(sac.pn)+'</div></div>'
+    +'<div class="kpi"><div class="kk">Parcela inicial · consórcio</div><div class="kv">'+brl(cons.p1)+'</div><div class="kh">'+consKh+'</div></div>'
+    +'<div class="kpi"><div class="kk">Mês de equilíbrio</div><div class="kv">'+(crossM?('mês '+crossM):'—')+'</div><div class="kh">quando a parcela do consórcio fica menor</div></div>'
+    +'<div class="kpi"><div class="kk">Patrimônio ao fim</div><div class="kv">'+brl(patFim)+'</div><div class="kh">'+(investDif?'investindo a diferença no CDI':'capital mantido no CDI')+'</div></div>'
+    +'</div>';
+  var cmpHtml='<div class="cmp">'
+    +'<div class="col"><div class="tag">Financiamento · SAC</div><div class="par">1ª parcela <b>'+brl(sac.p1)+'</b><br><span style="font-size:11.5px">cai até '+brl(sac.pn)+'</span>'+sacPrazo+'</div><div class="tot red">'+brl(sacTot)+'</div><div class="par" style="font-size:11.5px">custo total · '+sac.meses+' meses</div></div>'
+    +'<div class="col"><div class="tag">Financiamento · PRICE</div><div class="par">parcela fixa <b>'+brl(pr.p1)+'</b>'+prPrazo+'</div><div class="tot red">'+brl(prTot)+'</div><div class="par" style="font-size:11.5px">custo total · '+pr.meses+' meses</div></div>'
+    +'<div class="col win"><div class="tag">Consórcio</div><div class="par">parcela <b>'+brl(cons.p1)+'</b><br><span style="font-size:11.5px">'+consSub+'</span></div><div class="tot grn">'+brl(cons.total)+'</div><div class="par" style="font-size:11.5px">custo total · '+nc+' meses'+(cons.adesaoVal>0?'<br>+ '+brl(cons.adesaoVal)+' na assinatura (adesão)':'')+'</div></div>'
+    +'</div>';
+  var patHtml='<div class="patbox">'
+    +'<div class="patline"><span class="q">Liquidez que sai agora</span><span class="a">Financiamento: '+brl(ent)+' de entrada · Consórcio: '+brl(lanceLiq+cons.adesaoVal)+(cons.adesaoVal>0?' (lance + adesão)':' de lance')+'</span></div>'
+    +'<div class="patline"><span class="q">Capacidade de aporte (1ª parcela)</span><span class="a">'+(difParcela>0?'Consórcio preserva '+brl(difParcela)+'/mês a mais para investir':'Financiamento com parcela menor neste prazo')+'</span></div>'
+    +'<div class="patline"><span class="q">Esse dinheiro rendendo no CDI (até mês '+mesC+')</span><span class="a">entrada +'+brl(rendEnt)+' · lance +'+brl(rendLan)+'</span></div>'
+    +esperaLine
+    +'</div>';
+  var cenSec=(saidaBlock||cenBlock)?('<div class="rk">Cenários — e se a contemplação vier antes ou depois</div>'+saidaBlock+cenBlock):'';
+  var detHtml='<details class="det"><summary>Ver os detalhes do cálculo (juros, seguros, IOF, taxas)</summary><div class="inner">'
+    +'<div style="margin-bottom:16px">'+bars([{v:Math.round(sacTot),c:getC('--red'),l:'Financ. SAC'},{v:Math.round(prTot),c:getC('--red'),l:'Financ. PRICE'},{v:Math.round(cons.total),c:getC('--green'),l:'Consórcio'}])+'</div>'
+    +'<div class="detgrid">'
+    +'<div class="box"><h4>O custo real do financiamento</h4><div class="d">O que o banco soma além da taxa anunciada.</div><div class="mini">'+metric("Juros (SAC)",brl(sac.juros),"cost")+metric("Seguros (MIP+DFI)",brl(sac.seguros),"cost")+metric("IOF",brl(sac.iof),"cost")+metric("Sua entrada",brl(ent))+'</div></div>'
+    +(embPct>0?'<div class="box"><h4>Como fica o lance embutido</h4><div class="d">O lance sai da própria carta: você contrata um crédito maior para receber líquido o que precisa.</div><div class="mini">'+metric("Contrata (bruto)",brl(gross))+metric("Lance embutido ("+embPct+"%)",brl(lanceEmbVal),"profit")+metric("Recebe (líquido)",brl(credNet))+metric("Custo do consórcio",brl(cons.total),"cost")+'</div></div>':'<div class="box"><h4>Onde mora a diferença</h4><div class="d">O consórcio troca juros por taxa de administração.</div><div class="mini">'+metric("Juros do banco",brl(sac.juros),"cost")+metric("Taxa adm + fundo",brl(cons.adm),"profit")+'</div></div>')
+    +'</div></div></details>';
   var out=document.getElementById("out");
   out.innerHTML=
-    '<div class="cmp">'+
-      '<div class="col"><div class="tag">Financiamento · SAC</div><div class="par">1ª parcela <b>'+brl(sac.p1)+'</b><br><span style="font-size:11.5px">cai até '+brl(sac.pn)+'</span>'+sacPrazo+'</div><div class="tot red">'+brl(sacTot)+'</div><div class="par" style="font-size:11.5px">custo total · '+sac.meses+' meses</div></div>'+
-      '<div class="col"><div class="tag">Financiamento · PRICE</div><div class="par">parcela fixa <b>'+brl(pr.p1)+'</b>'+prPrazo+'</div><div class="tot red">'+brl(prTot)+'</div><div class="par" style="font-size:11.5px">custo total · '+pr.meses+' meses</div></div>'+
-      '<div class="col win"><div class="tag">Consórcio</div><div class="par">parcela <b>'+brl(cons.p1)+'</b><br><span style="font-size:11.5px">'+consSub+'</span></div><div class="tot grn">'+brl(cons.total)+'</div><div class="par" style="font-size:11.5px">custo total · '+nc+' meses'+(cons.adesaoVal>0?'<br>+ '+brl(cons.adesaoVal)+' na assinatura (adesão)':'')+'</div></div>'+
-    '</div>'+
+    heroHtml+
+    '<div class="rk">Custo total de cada caminho</div>'+
+    cmpHtml+
+    kpisHtml+
+    '<div class="rk">Como evolui ao longo do tempo</div>'+
     amortToolbar+
     chartBlock+
-    '<div class="verdict">'+frase+(objNote?' '+objNote:'')+'</div>'+
-    '<div class="patbox">'+
-      '<h4 style="margin:0 0 4px;font-size:15px;font-family:Outfit,serif">Impacto no seu patrimônio</h4>'+
-      '<div style="font-size:12px;color:var(--muted);margin-bottom:8px">Além do custo, o que cada caminho faz com a sua liquidez e a sua capacidade de investir.</div>'+
-      '<div class="patline"><span class="q">Liquidez que sai agora</span><span class="a">Financiamento: '+brl(ent)+' de entrada · Consórcio: '+brl(lanceLiq+cons.adesaoVal)+(cons.adesaoVal>0?' (lance + adesão)':' de lance')+'</span></div>'+
-      '<div class="patline"><span class="q">Capacidade de aporte (1ª parcela)</span><span class="a">'+(difParcela>0?'Consórcio preserva '+brl(difParcela)+'/mês a mais para investir':'Financiamento com parcela menor neste prazo')+'</span></div>'+
-      '<div class="patline"><span class="q">Esse dinheiro rendendo no CDI (até mês '+mesC+')</span><span class="a">entrada +'+brl(rendEnt)+' · lance +'+brl(rendLan)+'</span></div>'+
-      esperaLine+
-    '</div>'+
     patDivBlock+
-    saidaBlock+
-    cenBlock+
     '<div class="toolbar"><label class="chk"><input type="checkbox" id="inflChk" '+(infl?'checked':'')+'> Projetar correção (indexador no financiamento e INCC no consórcio)</label><span class="sub">'+(infl?'valores corrigidos':'valores contratados')+'</span></div>'+
-    '<div style="margin-bottom:16px">'+bars([{v:Math.round(sacTot),c:getC('--red'),l:'Financ. SAC'},{v:Math.round(prTot),c:getC('--red'),l:'Financ. PRICE'},{v:Math.round(cons.total),c:getC('--green'),l:'Consórcio'}])+'</div>'+
-    '<div class="detgrid">'+
-      '<div class="box"><h4>O custo real do financiamento</h4><div class="d">O que o banco soma além da taxa anunciada.</div><div class="mini">'+metric("Juros (SAC)",brl(sac.juros),"cost")+metric("Seguros (MIP+DFI)",brl(sac.seguros),"cost")+metric("IOF",brl(sac.iof),"cost")+metric("Sua entrada",brl(ent))+'</div></div>'+
-      (embPct>0?'<div class="box"><h4>Como fica o lance embutido</h4><div class="d">O lance sai da própria carta: você contrata um crédito maior para receber líquido o que precisa.</div><div class="mini">'+metric("Contrata (bruto)",brl(gross))+metric("Lance embutido ("+embPct+"%)",brl(lanceEmbVal),"profit")+metric("Recebe (líquido)",brl(credNet))+metric("Custo do consórcio",brl(cons.total),"cost")+'</div></div>':'<div class="box"><h4>Onde mora a diferença</h4><div class="d">O consórcio troca juros por taxa de administração.</div><div class="mini">'+metric("Juros do banco",brl(sac.juros),"cost")+metric("Taxa adm + fundo",brl(cons.adm),"profit")+'</div></div>')+
-    '</div>';
+    '<div class="rk">O que acontece com o seu patrimônio</div>'+
+    patHtml+
+    cenSec+
+    detHtml;
   window.LASTCALC={sacP1:sac.p1,sacPn:sac.pn,sacTot:sacTot,prP1:pr.p1,prTot:prTot,consP1:cons.p1,consTot:cons.total,consSub:consSub,mesCont:cons.mesCont,eco:eco,frase:frase,im:im,ent:ent,credNet:credNet,gross:gross,nc:nc,nf:nf,adm:adm,j:j,lanceLiq:lanceLiq,adesaoVal:cons.adesaoVal,parcelaApos:cons.parcelaApos,
    sacJuros:sac.juros,sacSeg:sac.seguros,sacIof:sac.iof,sacMeses:sac.meses,consAdmRs:cons.adm,difParcela:difParcela,rendEnt:rendEnt,rendLan:rendLan,cdi:cdi,mesC:mesC,lanceEmbVal:lanceEmbVal,embPct:embPct,fundo:fundo,adesao:adesao,obj:obj,liqCons:(lanceLiq+cons.adesaoVal),custoEsperar:custoEsperar,aluguelMes:aluguelMes,ecoReal:ecoReal,agio:agio,roiVenda:roiVenda,desembCont:desembCont,agioVal:agioVal,taxaLoc:taxaLoc,aluguelLoc:aluguelLoc,yieldAno:yieldAno,fluxoLoc:fluxoLoc,cap0:cap0,patFim:patFim,aporteTot:aporteTot,crossPD:crossPD,investDif:investDif,cenBase:mcBase,cenOt:cenOt,cenRe:cenRe,cenPe:cenPe};
-  var pb=document.getElementById("pdfBtn");if(pb)pb.style.display="";
+  var cta=document.getElementById("ctaBar");if(cta)cta.style.display="flex";
   var c=document.getElementById("inflChk");if(c)c.onchange=function(){infl=c.checked;renderResult();};
   var idc=document.getElementById("investDifChk");if(idc)idc.onchange=function(){investDif=idc.checked;renderResult();};
   var sa=document.getElementById("segAmort");if(sa)sa.querySelectorAll("button").forEach(function(b){b.onclick=function(){amortModo=b.dataset.v;renderResult();};});
