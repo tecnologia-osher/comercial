@@ -4,7 +4,7 @@
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>Compra Imobiliária Inteligente · Financiamento ou Consórcio</title>
-<!-- calculadora v5 · (1) Financiamento: indexador virou seletor de NOME (Sem correção/TR/IPCA/Poupança) + campo "Correção do indexador (% a.a.)" editável (indexadorTaxa) — o vendedor escolhe taxa E indexador; renderResult usa num('indexadorTaxa'). (2) Campos monetários (valorCredito, valorImovel, valorEntrada, lanceLiquido, amortExtra) viraram text .money com máscara de milhar pt-BR (500.000) — fmtMoneyStr formata ao digitar; num() lê .money removendo os pontos. (3) Consórcio: seletor "Indexador do consórcio" INCC/IPCA (idxCons) + label "Reajuste anual (%)". (4) Prazo do financiamento (parcelasFin) mês a mês: step 12→1, min 12. · v5.1 · máscara de milhar agora em TODOS os campos numéricos: os 9 campos de taxa/percentual viraram text .num com fmtNumBR (milhar com ponto, decimal com vírgula, preserva casas: 11,5 / 1.234,56); num() lê .num tirando pontos e trocando vírgula por ponto. · 2026-07-13 · v6 (2026-09-17): PROJEÇÃO PARCELA A PARCELA — finCET e consorcio agora também devolvem a série mensal (campo `serie`, aditivo, motor intacto); novo gráfico de linhas `lineChart` (Financiamento SAC↘ em vermelho × Consórcio↗ em verde) com o mês de CRUZAMENTO destacado, inserido no resultado (chartBlock). Segue o toggle "Projetar correção". · v6.1 (2026-09-17): CUSTO DE ESPERAR — novo campo `aluguelEspera` (R$/mês, default 0 = comportamento inalterado); `custoEsperar = aluguel × (mesCont−1)`; linha no bloco patrimônio + "Custo real de aquisição (com a espera)" = Financ. × (Consórcio+espera); frase e PDF ajustados com `ecoReal = eco − custoEsperar` (mostra a diferença REAL a favor de quem, sem esconder o aluguel). Motor intacto. · v6.2 (2026-09-17): CENÁRIOS DE SAÍDA — campos `agioRevenda` (%) e `taxaLoc` (% do imóvel/mês), default 0. Revenda: desembCont=Σ parcelas até mesCont+adesão+lance; agioVal=credNet×ágio; ROI=agioVal/desembCont. Locação: aluguel=imóvel×taxaLoc; yield anual; fluxo=aluguel−parcela após contempl. Bloco "Cenários de saída" (só se >0) no resultado + PDF. Aditivo, motor intacto. · idv 2026-07-04 -->
+<!-- calculadora v5 · (1) Financiamento: indexador virou seletor de NOME (Sem correção/TR/IPCA/Poupança) + campo "Correção do indexador (% a.a.)" editável (indexadorTaxa) — o vendedor escolhe taxa E indexador; renderResult usa num('indexadorTaxa'). (2) Campos monetários (valorCredito, valorImovel, valorEntrada, lanceLiquido, amortExtra) viraram text .money com máscara de milhar pt-BR (500.000) — fmtMoneyStr formata ao digitar; num() lê .money removendo os pontos. (3) Consórcio: seletor "Indexador do consórcio" INCC/IPCA (idxCons) + label "Reajuste anual (%)". (4) Prazo do financiamento (parcelasFin) mês a mês: step 12→1, min 12. · v5.1 · máscara de milhar agora em TODOS os campos numéricos: os 9 campos de taxa/percentual viraram text .num com fmtNumBR (milhar com ponto, decimal com vírgula, preserva casas: 11,5 / 1.234,56); num() lê .num tirando pontos e trocando vírgula por ponto. · 2026-07-13 · v6 (2026-09-17): PROJEÇÃO PARCELA A PARCELA — finCET e consorcio agora também devolvem a série mensal (campo `serie`, aditivo, motor intacto); novo gráfico de linhas `lineChart` (Financiamento SAC↘ em vermelho × Consórcio↗ em verde) com o mês de CRUZAMENTO destacado, inserido no resultado (chartBlock). Segue o toggle "Projetar correção". · v6.1 (2026-09-17): CUSTO DE ESPERAR — novo campo `aluguelEspera` (R$/mês, default 0 = comportamento inalterado); `custoEsperar = aluguel × (mesCont−1)`; linha no bloco patrimônio + "Custo real de aquisição (com a espera)" = Financ. × (Consórcio+espera); frase e PDF ajustados com `ecoReal = eco − custoEsperar` (mostra a diferença REAL a favor de quem, sem esconder o aluguel). Motor intacto. · v6.2 (2026-09-17): CENÁRIOS DE SAÍDA — campos `agioRevenda` (%) e `taxaLoc` (% do imóvel/mês), default 0. Revenda: desembCont=Σ parcelas até mesCont+adesão+lance; agioVal=credNet×ágio; ROI=agioVal/desembCont. Locação: aluguel=imóvel×taxaLoc; yield anual; fluxo=aluguel−parcela após contempl. Bloco "Cenários de saída" (só se >0) no resultado + PDF. Aditivo, motor intacto. · v6.3 (2026-09-17): PATRIMÔNIO × DÍVIDA — finCET agora também devolve a série de SALDO DEVEDOR (campo `saldo`, aditivo). Novo bloco "Patrimônio × Dívida" no resultado: gráfico de linhas com a dívida do financiamento (SAC) caindo × o capital investido no consórcio subindo. cap0 = ent − (lance+adesão) que o consorciado mantém investido; toggle `investDif` (default on) aporta a diferença de parcela mês a mês, tudo rendendo no CDI; marca o mês em que o patrimônio investido supera a dívida (crossPD). Seção no PDF. Aditivo, motor intacto. · idv 2026-07-04 -->
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300..800&display=swap" rel="stylesheet">
 <style>
@@ -165,7 +165,7 @@ var CONFIG={
   webhookUrl:""         /* opcional: Make/Zapier/Pipedrive, se não usar Supabase */
 };
 var VIP_THRESHOLD=1000000, SEG=120;
-var step=1, embutido=false, infl=false, amortModo="prazo";
+var step=1, embutido=false, infl=false, amortModo="prazo", investDif=true;
 
 var brl=function(n){return (isFinite(n)?n:0).toLocaleString("pt-BR",{style:"currency",currency:"BRL",maximumFractionDigits:0});};
 function mensal(p){return Math.pow(1+p/100,1/12)-1;}
@@ -174,7 +174,7 @@ function finCET(P,n,j,seg,tr,sistema,aval,amortExtra,modo){
   var i=mensal(j),trm=mensal(tr),s=P,jt=0,sg=0,tot=0,p1=0,pn=0,A=P/n,rem=n,meses=n;
   var pmt=i===0?P/n:P*(i*Math.pow(1+i,n))/(Math.pow(1+i,n)-1);
   var dias=Math.min(n/12*365,365),iof=0.0038*P+0.000082*P*dias;
-  var serie=[];
+  var serie=[],saldo=[];
   for(var m=1;m<=n && s>0.01;m++){
     s*=(1+trm);
     var ju=s*i,am=sistema==="PRICE"?(pmt-ju):A; if(am>s)am=s;
@@ -185,8 +185,9 @@ function finCET(P,n,j,seg,tr,sistema,aval,amortExtra,modo){
       var ex=Math.min(amortExtra,s); s-=ex; tot+=ex;
       if(modo==="parcela" && rem>0){ A=s/rem; pmt=i===0?s/rem:s*(i*Math.pow(1+i,rem))/(Math.pow(1+i,rem)-1); }
     }
+    saldo.push(Math.max(s,0));
   }
-  return {p1:p1,pn:pn,total:tot,juros:jt,seguros:sg,iof:iof,meses:meses,serie:serie};
+  return {p1:p1,pn:pn,total:tot,juros:jt,seguros:sg,iof:iof,meses:meses,serie:serie,saldo:saldo};
 }
 function consorcio(grossCred,n,mesCont,incc,adm,fundo,lanceLiq,adesao,reducao){
   var adesaoEff=Math.min(Math.max(adesao||0,0),adm); /* adesão antecipa parte da adm */
@@ -279,6 +280,25 @@ function renderResult(){
     if(taxaLoc>0){saidaBlock+='<div class="patline"><span class="q">Alugar o imóvel após contemplar</span><span class="a">aluguel '+brl(aluguelLoc)+'/mês (yield '+(Math.round(yieldAno*10)/10)+'%/ano) · fluxo após a parcela: '+(fluxoLoc>=0?'+':'')+brl(fluxoLoc)+'/mês</span></div>';}
     saidaBlock+='</div>';
   }
+  /* --- Patrimônio × Dívida: dívida do financiamento caindo × capital investido no consórcio subindo --- */
+  var serieSaldo=sac.saldo||[], Tpd=serieSaldo.length;
+  var cap0=Math.max(ent-(lanceLiq+cons.adesaoVal),0), rM=mensal(cdi);
+  var patrim=[], acc=cap0, aporteTot=0;
+  for(var _pm=1;_pm<=Tpd;_pm++){
+    var apt=investDif?Math.max((serieF[_pm-1]||0)-(serieC[_pm-1]||0),0):0;
+    aporteTot+=apt; acc=acc*(1+rM)+apt; patrim.push(acc);
+  }
+  var crossPD=0; for(var _cp=1;_cp<=Tpd;_cp++){ if(patrim[_cp-1]>=serieSaldo[_cp-1]){crossPD=_cp;break;} }
+  var patFim=patrim.length?patrim[patrim.length-1]:cap0;
+  var pdCap=investDif
+    ?('Enquanto o financiado abate a dívida, o consorciado mantém <b>'+brl(cap0)+'</b> investido e ainda aplica a diferença de parcela (total aportado: '+brl(aporteTot)+').'+(crossPD?(' No <b>mês '+crossPD+'</b> o patrimônio investido supera a dívida do financiamento.'):''))
+    :('O consorciado mantém <b>'+brl(cap0)+'</b> investido no CDI. Marque abaixo para também aplicar a diferença de parcela mês a mês.');
+  var patDivBlock=Tpd>=2?('<div class="patbox" style="margin-bottom:16px"><h4 style="margin:0 0 4px;font-size:15px;font-family:Outfit,serif">Patrimônio × Dívida</h4>'
+    +'<div style="font-size:12px;color:var(--muted);margin-bottom:8px">Um caminho abate uma dívida; o outro constrói patrimônio. '+pdCap+'</div>'
+    +lineChart(serieSaldo,patrim,crossPD)
+    +'<div style="display:flex;gap:18px;justify-content:center;font-size:12px;margin-top:6px"><span style="color:var(--red)">■ Dívida do financiamento (SAC)</span><span style="color:var(--green)">■ Capital investido (consórcio)</span></div>'
+    +'<div class="toolbar" style="margin-top:10px;margin-bottom:0"><label class="chk"><input type="checkbox" id="investDifChk" '+(investDif?'checked':'')+'> Investir a diferença de parcela mês a mês (CDI '+cdi+'%)</label><span class="sub">patrimônio ao fim do prazo: '+brl(patFim)+'</span></div>'
+    +'</div>'):'';
   var consSub=cons.reduzida?'reduzida · após contempl.: '+brl(cons.parcelaApos):(lanceLiq>0?'após lance: '+brl(cons.parcelaApos):'sem juros'+(cons.adesaoVal>0?' · adm '+cons.admParc+'% nas parcelas':''));
 
   var objNote={moradia:"Como é para moradia, o que mais pesa é não comprometer a segurança da família: olhe a liquidez que sobra e a parcela frente à sua renda.",troca:"Como é uma troca, considere a venda do imóvel atual, os custos e a recomposição do seu caixa.",investimento:"Como é investimento, o retorno precisa compensar o custo, a baixa liquidez e a concentração — compare com outras aplicações.",futura:"Como é compra futura, o consórcio tende a organizar melhor a aquisição ao longo do tempo, se houver disciplina de aporte."}[obj]||"";
@@ -306,6 +326,7 @@ function renderResult(){
       '<div class="patline"><span class="q">Esse dinheiro rendendo no CDI (até mês '+mesC+')</span><span class="a">entrada +'+brl(rendEnt)+' · lance +'+brl(rendLan)+'</span></div>'+
       esperaLine+
     '</div>'+
+    patDivBlock+
     saidaBlock+
     '<div class="toolbar"><label class="chk"><input type="checkbox" id="inflChk" '+(infl?'checked':'')+'> Projetar correção (indexador no financiamento e INCC no consórcio)</label><span class="sub">'+(infl?'valores corrigidos':'valores contratados')+'</span></div>'+
     '<div style="margin-bottom:16px">'+bars([{v:Math.round(sacTot),c:getC('--red'),l:'Financ. SAC'},{v:Math.round(prTot),c:getC('--red'),l:'Financ. PRICE'},{v:Math.round(cons.total),c:getC('--green'),l:'Consórcio'}])+'</div>'+
@@ -314,9 +335,10 @@ function renderResult(){
       (embPct>0?'<div class="box"><h4>Como fica o lance embutido</h4><div class="d">O lance sai da própria carta: você contrata um crédito maior para receber líquido o que precisa.</div><div class="mini">'+metric("Contrata (bruto)",brl(gross))+metric("Lance embutido ("+embPct+"%)",brl(lanceEmbVal),"profit")+metric("Recebe (líquido)",brl(credNet))+metric("Custo do consórcio",brl(cons.total),"cost")+'</div></div>':'<div class="box"><h4>Onde mora a diferença</h4><div class="d">O consórcio troca juros por taxa de administração.</div><div class="mini">'+metric("Juros do banco",brl(sac.juros),"cost")+metric("Taxa adm + fundo",brl(cons.adm),"profit")+'</div></div>')+
     '</div>';
   window.LASTCALC={sacP1:sac.p1,sacPn:sac.pn,sacTot:sacTot,prP1:pr.p1,prTot:prTot,consP1:cons.p1,consTot:cons.total,consSub:consSub,mesCont:cons.mesCont,eco:eco,frase:frase,im:im,ent:ent,credNet:credNet,gross:gross,nc:nc,nf:nf,adm:adm,j:j,lanceLiq:lanceLiq,adesaoVal:cons.adesaoVal,parcelaApos:cons.parcelaApos,
-   sacJuros:sac.juros,sacSeg:sac.seguros,sacIof:sac.iof,sacMeses:sac.meses,consAdmRs:cons.adm,difParcela:difParcela,rendEnt:rendEnt,rendLan:rendLan,cdi:cdi,mesC:mesC,lanceEmbVal:lanceEmbVal,embPct:embPct,fundo:fundo,adesao:adesao,obj:obj,liqCons:(lanceLiq+cons.adesaoVal),custoEsperar:custoEsperar,aluguelMes:aluguelMes,ecoReal:ecoReal,agio:agio,roiVenda:roiVenda,desembCont:desembCont,agioVal:agioVal,taxaLoc:taxaLoc,aluguelLoc:aluguelLoc,yieldAno:yieldAno,fluxoLoc:fluxoLoc};
+   sacJuros:sac.juros,sacSeg:sac.seguros,sacIof:sac.iof,sacMeses:sac.meses,consAdmRs:cons.adm,difParcela:difParcela,rendEnt:rendEnt,rendLan:rendLan,cdi:cdi,mesC:mesC,lanceEmbVal:lanceEmbVal,embPct:embPct,fundo:fundo,adesao:adesao,obj:obj,liqCons:(lanceLiq+cons.adesaoVal),custoEsperar:custoEsperar,aluguelMes:aluguelMes,ecoReal:ecoReal,agio:agio,roiVenda:roiVenda,desembCont:desembCont,agioVal:agioVal,taxaLoc:taxaLoc,aluguelLoc:aluguelLoc,yieldAno:yieldAno,fluxoLoc:fluxoLoc,cap0:cap0,patFim:patFim,aporteTot:aporteTot,crossPD:crossPD,investDif:investDif};
   var pb=document.getElementById("pdfBtn");if(pb)pb.style.display="";
   var c=document.getElementById("inflChk");if(c)c.onchange=function(){infl=c.checked;renderResult();};
+  var idc=document.getElementById("investDifChk");if(idc)idc.onchange=function(){investDif=idc.checked;renderResult();};
   var sa=document.getElementById("segAmort");if(sa)sa.querySelectorAll("button").forEach(function(b){b.onclick=function(){amortModo=b.dataset.v;renderResult();};});
 }
 function gerarPDF(){
@@ -379,6 +401,11 @@ function gerarPDF(){
      +'<tr><td>Total investido de entrada + rendimento no período</td><td><b>'+b(d.ent+d.rendEnt+d.lanceLiq+d.rendLan)+'</b></td></tr>'
    +(d.custoEsperar>0?'<tr><td>Custo de esperar a contemplação (aluguel até o mês '+d.mesCont+')</td><td>'+b(d.custoEsperar)+' — o financiado já mora no imóvel</td></tr><tr><td><b>Custo real de aquisição (com a espera)</b></td><td><b>Financ. '+b(Math.min(d.sacTot,d.prTot))+' · Consórcio '+b(d.consTot+d.custoEsperar)+'</b></td></tr>':'')
    +'</table>'
+   +(d.cap0>0||d.aporteTot>0?'<div class="sech">Patrimônio × Dívida</div><table class="params">'
+     +'<tr><td>Capital que o consorciado mantém investido</td><td>'+b(d.cap0)+(d.investDif&&d.aporteTot>0?' + '+b(d.aporteTot)+' aportando a diferença de parcela':'')+'</td></tr>'
+     +'<tr><td>Patrimônio investido ao fim do prazo do financiamento</td><td><b>'+b(d.patFim)+'</b></td></tr>'
+     +(d.crossPD>0?'<tr><td>Mês em que o patrimônio investido supera a dívida</td><td>mês '+d.crossPD+'</td></tr>':'')
+   +'</table>':'')
    +'<div class="sech">Custo real de cada caminho</div>'
    +'<table class="params">'
      +'<tr><td>Financiamento · juros</td><td>'+b(d.sacJuros)+'</td></tr>'
