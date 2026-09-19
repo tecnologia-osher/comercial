@@ -4,9 +4,9 @@
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>Compra Imobiliária Inteligente · Financiamento ou Consórcio</title>
-<!-- calculadora v5 · (1) Financiamento: indexador virou seletor de NOME (Sem correção/TR/IPCA/Poupança) + campo "Correção do indexador (% a.a.)" editável (indexadorTaxa) — o vendedor escolhe taxa E indexador; renderResult usa num('indexadorTaxa'). (2) Campos monetários (valorCredito, valorImovel, valorEntrada, lanceLiquido, amortExtra) viraram text .money com máscara de milhar pt-BR (500.000) — fmtMoneyStr formata ao digitar; num() lê .money removendo os pontos. (3) Consórcio: seletor "Indexador do consórcio" INCC/IPCA (idxCons) + label "Reajuste anual (%)". (4) Prazo do financiamento (parcelasFin) mês a mês: step 12→1, min 12. · v5.1 · máscara de milhar agora em TODOS os campos numéricos: os 9 campos de taxa/percentual viraram text .num com fmtNumBR (milhar com ponto, decimal com vírgula, preserva casas: 11,5 / 1.234,56); num() lê .num tirando pontos e trocando vírgula por ponto. · 2026-07-13 · v6 (2026-09-17): PROJEÇÃO PARCELA A PARCELA — finCET e consorcio agora também devolvem a série mensal (campo `serie`, aditivo, motor intacto); novo gráfico de linhas `lineChart` (Financiamento SAC↘ em vermelho × Consórcio↗ em verde) com o mês de CRUZAMENTO destacado, inserido no resultado (chartBlock). Segue o toggle "Projetar correção". · v6.1 (2026-09-17): CUSTO DE ESPERAR — novo campo `aluguelEspera` (R$/mês, default 0 = comportamento inalterado); `custoEsperar = aluguel × (mesCont−1)`; linha no bloco patrimônio + "Custo real de aquisição (com a espera)" = Financ. × (Consórcio+espera); frase e PDF ajustados com `ecoReal = eco − custoEsperar` (mostra a diferença REAL a favor de quem, sem esconder o aluguel). Motor intacto. · v6.2 (2026-09-17): CENÁRIOS DE SAÍDA — campos `agioRevenda` (%) e `taxaLoc` (% do imóvel/mês), default 0. Revenda: desembCont=Σ parcelas até mesCont+adesão+lance; agioVal=credNet×ágio; ROI=agioVal/desembCont. Locação: aluguel=imóvel×taxaLoc; yield anual; fluxo=aluguel−parcela após contempl. Bloco "Cenários de saída" (só se >0) no resultado + PDF. Aditivo, motor intacto. · v6.3 (2026-09-17): PATRIMÔNIO × DÍVIDA — finCET agora também devolve a série de SALDO DEVEDOR (campo `saldo`, aditivo). Novo bloco "Patrimônio × Dívida" no resultado: gráfico de linhas com a dívida do financiamento (SAC) caindo × o capital investido no consórcio subindo. cap0 = ent − (lance+adesão) que o consorciado mantém investido; toggle `investDif` (default on) aporta a diferença de parcela mês a mês, tudo rendendo no CDI; marca o mês em que o patrimônio investido supera a dívida (crossPD). Seção no PDF. Aditivo, motor intacto. · v6.4 (2026-09-17): CONTEMPLAÇÃO POR CENÁRIO — bloco "Cenários de contemplação" (Otimista=previsto×0,5 / Previsto / Pessimista=previsto×1,5, auto-derivados do mês previsto, cap 1..nc): mês, ~anos, parcela após e — se preenchidos — aluguel até lá, ROI de revenda e fluxo de locação recalculados por cenário via `_cenC(mc)` (reusa `consorcio()`). Trava "depende de sorteio e lance, não garantida". Seção no PDF + campos no LASTCALC (cenOt/cenRe/cenPe). Aditivo, motor intacto. · v6.5 (2026-09-17): REDESIGN (entrada + resultado + IDV + fluxo, motor e ids intactos). (1) Os 3 seletores de ARRASTAR (parcelasCons/mesContempl/parcelasFin) viraram campos DIGITÁVEIS type=number mês a mês (syncLabels simplificado, só trava mesCont<=parcelasCons). (2) ENTRADA agrupada: essenciais visíveis + "Ajustes avançados" recolhíveis (details.adv) em cada card. (3) RESULTADO repaginado com HIERARQUIA: HERO "o dinheiro na mesa" (mesaVal=custoEsperar>0?ecoReal:eco = quanto o financiamento custa a mais) + 4 KPIs + seções com kicker .rk (Custo total / Como evolui / Patrimônio / Cenários) + DETALHES (barras+tabelas) recolhidos em details.det. (4) CTA de PDF destacado em #ctaBar. (5) IDV: .patbox borda neutra, novos .hero/.kpi/.rk. Nova intro "Quanto o financiamento custa a mais". · v6.6 (2026-09-19): SIMULADOR EM ABAS (visão do diretor: "um simulador só com várias abas… não é para ser simples, mas precisa PARECER simples"). O resultado ganhou 3 ABAS (global `RESMODE`, default 'comparar'): (1) "Comparar com o financiamento" = hero dinheiro na mesa + comparativo + KPIs + parcela mês a mês + detalhes recolhidos; (2) "Vender a carta contemplada" = hero do ganho/ROI da revenda (ou aviso p/ preencher o ágio) + cenários de saída + contemplação por cenário; (3) "Guardar e ver o dinheiro render" = hero patrimônio ao fim + Patrimônio×Dívida + liquidez rendendo no CDI + contemplação por cenário. `.rtabs`/`.rtab` no topo do #out; clique seta RESMODE e re-renderiza. Cada aba mostra só o relevante → parece simples. Motor e ids intactos. · v6.7 (2026-09-19): REDESIGN LEVE (direção aprovada pelo diretor via mockup no chat — "menos caixas, informação em camadas; sempre mostrar a OPORTUNIDADE na mesa"). Hero DESCAIXADO (sem borda/gradiente, número 44px). Aba Comparar reescrita: hero "A oportunidade na mesa" → `.twoside` (Financiamento paga ao todo × Consórcio paga ao todo, hairline, sem 3 cards pesados) → gráfico com EXPLICAÇÃO em texto (`.chartcap`: "financiamento começa caro e cai; consórcio começa barato e sobe; a partir do mês X fica menor") → `.oppbox` "A diferença de parcela vira patrimônio" (frase clara: em vez de pagar R$ X a mais/mês ao banco, investe e vira R$ patFim) → detalhes recolhidos. cmpHtml/kpisHtml/chartBlock ficaram sem uso na aba Comparar (mantidos definidos, inócuos). Motor e ids intactos. · v7.0 (2026-09-19): SIMULADOR POR PERFIL (arquitetura nova validada por mockup — ver plano §5). Tela inicial #home "O que o cliente busca?" (4 perfis → openPath comprar/renda/agio/comparar); inputs+resultado envolvidos em #sim (oculto até escolher) com .simhead (voltar + titulo + botao "Comparar os caminhos"). Globais PATH + openPath/showHome/openCmp/applyPathInputs. Barra .rtabs REMOVIDA. renderResult ramifica por RESMODE=_pathMode(PATH): comparar/render(comprar)/vender(agio)/renda(novo)/cmp(novo). RENDA: carta rende SELIC (proxy CDI) por (nc-mesCont) meses, saca no fim (saldoCartaFim/rendCarta). CMP: visao .crow lado a lado (vender agio, renda, comprar+alugar com crossover mesesAlug=ceil(agioVal/aluguelLoc), financiar). Testado headless 5 modos. · v7.1 (2026-09-19): ENTRADA FOCADA POR CAMINHO (o diretor: "a segunda tela de cada caminho está igual"). `applyPathInputs()` agora: esconde o card de Financiamento (`#cardFin`) em renda/agio (só o card da carta `#cardCons`); mostra o campo SELIC dedicado (`#selicField`/`selicAnual`, novo — renda usa `num('selicAnual')||cdi`) só em renda; e troca o título do card da carta (`#consTitle`) por caminho (Consórcio / Dados da carta (renda) / Dados da carta (venda do ágio)). Comparar e Comprar seguem com os dois cards (precisam do financiamento). Motor e ids intactos. · v7.2 (2026-09-19): 3 TELAS SEPARADAS (pedido do diretor: "1ª escolhe a opção, 2ª tela é os dados, 3ª tela é o resultado com o ícone de exportar"). O #sim virou `#stepInputs` (só os dados + botão "Ver o resultado do cliente →") e `#stepResult` (só o resultado + o CTA de exportar PDF no `#ctaBar`). Roteamento: `openPath`→`showInputsScreen`; `showResult`; back dinâmico (`_simBack`: na tela de dados volta ao Home, na tela de resultado volta aos dados); "Comparar os caminhos" (`#simCmp`) só aparece na tela de resultado; `backFromCmp` volta ao resultado do caminho. SELIC atualizada p/ o mercado: default 13,75% (Copom 16/09/2026), help atualizado. Motor e ids intactos. · v7.3 (2026-09-19): AJUSTE FINO POR CAMPO/PERFIL. Ágio (`agioRevenda`) e taxa de locação (`taxaLoc`) SAÍRAM do avançado e viraram campos essenciais (`#fldAgio`/`#fldLoc`), mostrados só no perfil "Vender o ágio" (applyPathInputs), com PRÉ-PREENCHIMENTO de faixa de mercado (ágio 15%, locação 0,5%) quando zerados. Helps atualizados p/ o mercado (pesquisa set/2026): taxa de adm imóvel 15%–25%, fundo 1%–5%, adesão 1%–2%, SELIC 13,75%, ágio de carta contemplada de imóvel 10%–25% (não garantido), locação 0,4%–0,6%/mês. Assim cada 2ª tela pede só o que o perfil usa. Motor e ids intactos. · v7.4 (2026-09-19): MODO APRESENTAÇÃO na tela de resultado (o diretor: "o vendedor abre no PC e mostra pro cliente na tela; os números têm que ser chamativos e evidentes"; mockup aprovado no chat). Hero MAIOR (`.hero .hv` 64px, 40px no mobile) + faixa de 3 DESTAQUES grandes (`.stats`/`.stat`, número 34px, borda dourada no topo) por perfil: Comparar = parcela / no banco seria / patrimônio ao fim; Comprar(render) = hero "patrimônio construído" + parcela / imóvel na mão em X meses / economia vs banco; Renda = hero "No fim você resgata" + parcela / a carta rende / contempla no mês; Vender = parcela… não: investe / revende a carta por / retorno (ROI). Helpers `_stats(arr)` e `_anos(mm)`. `twoHtml`/`refFin` viraram inertes (destaques cobrem os totais). Motor e ids intactos. PRÓXIMO (externo): landing enxuta de tráfego (`simulador.html`) que compartilha o motor + captura de lead (Fase 6). · idv 2026-07-04 -->
+<!-- calculadora v5 · (1) Financiamento: indexador virou seletor de NOME (Sem correção/TR/IPCA/Poupança) + campo "Correção do indexador (% a.a.)" editável (indexadorTaxa) — o vendedor escolhe taxa E indexador; renderResult usa num('indexadorTaxa'). (2) Campos monetários (valorCredito, valorImovel, valorEntrada, lanceLiquido, amortExtra) viraram text .money com máscara de milhar pt-BR (500.000) — fmtMoneyStr formata ao digitar; num() lê .money removendo os pontos. (3) Consórcio: seletor "Indexador do consórcio" INCC/IPCA (idxCons) + label "Reajuste anual (%)". (4) Prazo do financiamento (parcelasFin) mês a mês: step 12→1, min 12. · v5.1 · máscara de milhar agora em TODOS os campos numéricos: os 9 campos de taxa/percentual viraram text .num com fmtNumBR (milhar com ponto, decimal com vírgula, preserva casas: 11,5 / 1.234,56); num() lê .num tirando pontos e trocando vírgula por ponto. · 2026-07-13 · v6 (2026-09-17): PROJEÇÃO PARCELA A PARCELA — finCET e consorcio agora também devolvem a série mensal (campo `serie`, aditivo, motor intacto); novo gráfico de linhas `lineChart` (Financiamento SAC↘ em vermelho × Consórcio↗ em verde) com o mês de CRUZAMENTO destacado, inserido no resultado (chartBlock). Segue o toggle "Projetar correção". · v6.1 (2026-09-17): CUSTO DE ESPERAR — novo campo `aluguelEspera` (R$/mês, default 0 = comportamento inalterado); `custoEsperar = aluguel × (mesCont−1)`; linha no bloco patrimônio + "Custo real de aquisição (com a espera)" = Financ. × (Consórcio+espera); frase e PDF ajustados com `ecoReal = eco − custoEsperar` (mostra a diferença REAL a favor de quem, sem esconder o aluguel). Motor intacto. · v6.2 (2026-09-17): CENÁRIOS DE SAÍDA — campos `agioRevenda` (%) e `taxaLoc` (% do imóvel/mês), default 0. Revenda: desembCont=Σ parcelas até mesCont+adesão+lance; agioVal=credNet×ágio; ROI=agioVal/desembCont. Locação: aluguel=imóvel×taxaLoc; yield anual; fluxo=aluguel−parcela após contempl. Bloco "Cenários de saída" (só se >0) no resultado + PDF. Aditivo, motor intacto. · v6.3 (2026-09-17): PATRIMÔNIO × DÍVIDA — finCET agora também devolve a série de SALDO DEVEDOR (campo `saldo`, aditivo). Novo bloco "Patrimônio × Dívida" no resultado: gráfico de linhas com a dívida do financiamento (SAC) caindo × o capital investido no consórcio subindo. cap0 = ent − (lance+adesão) que o consorciado mantém investido; toggle `investDif` (default on) aporta a diferença de parcela mês a mês, tudo rendendo no CDI; marca o mês em que o patrimônio investido supera a dívida (crossPD). Seção no PDF. Aditivo, motor intacto. · v6.4 (2026-09-17): CONTEMPLAÇÃO POR CENÁRIO — bloco "Cenários de contemplação" (Otimista=previsto×0,5 / Previsto / Pessimista=previsto×1,5, auto-derivados do mês previsto, cap 1..nc): mês, ~anos, parcela após e — se preenchidos — aluguel até lá, ROI de revenda e fluxo de locação recalculados por cenário via `_cenC(mc)` (reusa `consorcio()`). Trava "depende de sorteio e lance, não garantida". Seção no PDF + campos no LASTCALC (cenOt/cenRe/cenPe). Aditivo, motor intacto. · v6.5 (2026-09-17): REDESIGN (entrada + resultado + IDV + fluxo, motor e ids intactos). (1) Os 3 seletores de ARRASTAR (parcelasCons/mesContempl/parcelasFin) viraram campos DIGITÁVEIS type=number mês a mês (syncLabels simplificado, só trava mesCont<=parcelasCons). (2) ENTRADA agrupada: essenciais visíveis + "Ajustes avançados" recolhíveis (details.adv) em cada card. (3) RESULTADO repaginado com HIERARQUIA: HERO "o dinheiro na mesa" (mesaVal=custoEsperar>0?ecoReal:eco = quanto o financiamento custa a mais) + 4 KPIs + seções com kicker .rk (Custo total / Como evolui / Patrimônio / Cenários) + DETALHES (barras+tabelas) recolhidos em details.det. (4) CTA de PDF destacado em #ctaBar. (5) IDV: .patbox borda neutra, novos .hero/.kpi/.rk. Nova intro "Quanto o financiamento custa a mais". · v6.6 (2026-09-19): SIMULADOR EM ABAS (visão do diretor: "um simulador só com várias abas… não é para ser simples, mas precisa PARECER simples"). O resultado ganhou 3 ABAS (global `RESMODE`, default 'comparar'): (1) "Comparar com o financiamento" = hero dinheiro na mesa + comparativo + KPIs + parcela mês a mês + detalhes recolhidos; (2) "Vender a carta contemplada" = hero do ganho/ROI da revenda (ou aviso p/ preencher o ágio) + cenários de saída + contemplação por cenário; (3) "Guardar e ver o dinheiro render" = hero patrimônio ao fim + Patrimônio×Dívida + liquidez rendendo no CDI + contemplação por cenário. `.rtabs`/`.rtab` no topo do #out; clique seta RESMODE e re-renderiza. Cada aba mostra só o relevante → parece simples. Motor e ids intactos. · v6.7 (2026-09-19): REDESIGN LEVE (direção aprovada pelo diretor via mockup no chat — "menos caixas, informação em camadas; sempre mostrar a OPORTUNIDADE na mesa"). Hero DESCAIXADO (sem borda/gradiente, número 44px). Aba Comparar reescrita: hero "A oportunidade na mesa" → `.twoside` (Financiamento paga ao todo × Consórcio paga ao todo, hairline, sem 3 cards pesados) → gráfico com EXPLICAÇÃO em texto (`.chartcap`: "financiamento começa caro e cai; consórcio começa barato e sobe; a partir do mês X fica menor") → `.oppbox` "A diferença de parcela vira patrimônio" (frase clara: em vez de pagar R$ X a mais/mês ao banco, investe e vira R$ patFim) → detalhes recolhidos. cmpHtml/kpisHtml/chartBlock ficaram sem uso na aba Comparar (mantidos definidos, inócuos). Motor e ids intactos. · v7.0 (2026-09-19): SIMULADOR POR PERFIL (arquitetura nova validada por mockup — ver plano §5). Tela inicial #home "O que o cliente busca?" (4 perfis → openPath comprar/renda/agio/comparar); inputs+resultado envolvidos em #sim (oculto até escolher) com .simhead (voltar + titulo + botao "Comparar os caminhos"). Globais PATH + openPath/showHome/openCmp/applyPathInputs. Barra .rtabs REMOVIDA. renderResult ramifica por RESMODE=_pathMode(PATH): comparar/render(comprar)/vender(agio)/renda(novo)/cmp(novo). RENDA: carta rende SELIC (proxy CDI) por (nc-mesCont) meses, saca no fim (saldoCartaFim/rendCarta). CMP: visao .crow lado a lado (vender agio, renda, comprar+alugar com crossover mesesAlug=ceil(agioVal/aluguelLoc), financiar). Testado headless 5 modos. · v7.1 (2026-09-19): ENTRADA FOCADA POR CAMINHO (o diretor: "a segunda tela de cada caminho está igual"). `applyPathInputs()` agora: esconde o card de Financiamento (`#cardFin`) em renda/agio (só o card da carta `#cardCons`); mostra o campo SELIC dedicado (`#selicField`/`selicAnual`, novo — renda usa `num('selicAnual')||cdi`) só em renda; e troca o título do card da carta (`#consTitle`) por caminho (Consórcio / Dados da carta (renda) / Dados da carta (venda do ágio)). Comparar e Comprar seguem com os dois cards (precisam do financiamento). Motor e ids intactos. · v7.2 (2026-09-19): 3 TELAS SEPARADAS (pedido do diretor: "1ª escolhe a opção, 2ª tela é os dados, 3ª tela é o resultado com o ícone de exportar"). O #sim virou `#stepInputs` (só os dados + botão "Ver o resultado do cliente →") e `#stepResult` (só o resultado + o CTA de exportar PDF no `#ctaBar`). Roteamento: `openPath`→`showInputsScreen`; `showResult`; back dinâmico (`_simBack`: na tela de dados volta ao Home, na tela de resultado volta aos dados); "Comparar os caminhos" (`#simCmp`) só aparece na tela de resultado; `backFromCmp` volta ao resultado do caminho. SELIC atualizada p/ o mercado: default 13,75% (Copom 16/09/2026), help atualizado. Motor e ids intactos. · v7.3 (2026-09-19): AJUSTE FINO POR CAMPO/PERFIL. Ágio (`agioRevenda`) e taxa de locação (`taxaLoc`) SAÍRAM do avançado e viraram campos essenciais (`#fldAgio`/`#fldLoc`), mostrados só no perfil "Vender o ágio" (applyPathInputs), com PRÉ-PREENCHIMENTO de faixa de mercado (ágio 15%, locação 0,5%) quando zerados. Helps atualizados p/ o mercado (pesquisa set/2026): taxa de adm imóvel 15%–25%, fundo 1%–5%, adesão 1%–2%, SELIC 13,75%, ágio de carta contemplada de imóvel 10%–25% (não garantido), locação 0,4%–0,6%/mês. Assim cada 2ª tela pede só o que o perfil usa. Motor e ids intactos. · v7.4 (2026-09-19): MODO APRESENTAÇÃO na tela de resultado (o diretor: "o vendedor abre no PC e mostra pro cliente na tela; os números têm que ser chamativos e evidentes"; mockup aprovado no chat). Hero MAIOR (`.hero .hv` 64px, 40px no mobile) + faixa de 3 DESTAQUES grandes (`.stats`/`.stat`, número 34px, borda dourada no topo) por perfil: Comparar = parcela / no banco seria / patrimônio ao fim; Comprar(render) = hero "patrimônio construído" + parcela / imóvel na mão em X meses / economia vs banco; Renda = hero "No fim você resgata" + parcela / a carta rende / contempla no mês; Vender = parcela… não: investe / revende a carta por / retorno (ROI). Helpers `_stats(arr)` e `_anos(mm)`. `twoHtml`/`refFin` viraram inertes (destaques cobrem os totais). Motor e ids intactos. PRÓXIMO (externo): landing enxuta de tráfego (`simulador.html`) que compartilha o motor + captura de lead (Fase 6). · v7.5 (2026-09-19): TIPOGRAFIA WEALTH/PRIVATE BANKING (direção escolhida pelo diretor entre serifada×moderna via mockup no chat). Fonte trocada: TEXTO/rótulos em Manrope, NÚMEROS e TÍTULOS em Fraunces (serifada, peso de patrimônio — sai da cara de planilha do monospace). Import trocado (Fraunces+Manrope). Substituições de font-family SEM aspas (nomes de 1 palavra, válidos em CSS e em strings JS): body→Manrope; h1/h2/h3/heros/números (.hero .hv, .stat .sv e os antigos ui-monospace) → Fraunces; UI/inputs → Manrope. Override garante Fraunces em .hero .hv/.perfil .pt/.simhead .st/.filtro .fn/.oppbox h4. TELA INICIAL melhorada: cards `.perfil` com seta `::after` e elevação no hover. O gerador de PDF segue em Outfit (documento à parte). Testado: node --check OK, 5 modos renderizam. PRÓXIMO APROVADO: levar a MESMA tipografia (Fraunces+Manrope) e estrutura pro CRM INTEIRO (`crm_osher.html`, 3 cópias+zip) — mudança de IDV aprovada pelo diretor. · idv 2026-07-04 -->
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300..800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Manrope:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <style>
   :root,[data-theme="light"]{
     --bg:#f1f2f2;--surface:#ffffff;--surface2:#e7eaee;--border:rgba(11,44,81,.14);
@@ -21,20 +21,20 @@
     --red:#ec6a6a;--redSoft:rgba(236,106,106,.10);--winBg:rgba(52,211,153,.10)
   }
   *{box-sizing:border-box}
-  body{margin:0;background:var(--bg);color:var(--txt);font-family:'Outfit',system-ui,Segoe UI,sans-serif;-webkit-font-smoothing:antialiased;line-height:1.5}
-  h1,h2,h3,.serif{font-family:'Outfit',system-ui,sans-serif;font-weight:700;letter-spacing:-.01em}
+  body{margin:0;background:var(--bg);color:var(--txt);font-family:Manrope,system-ui,sans-serif;-webkit-font-smoothing:antialiased;line-height:1.5}
+  h1,h2,h3,.serif{font-family:Fraunces,Georgia,serif;font-weight:700;letter-spacing:-.01em}
   .wrap{max-width:900px;margin:0 auto;padding:0 20px}
   header{border-bottom:1px solid var(--border)}
   .hd{display:flex;align-items:center;justify-content:space-between;padding:16px 0}
   .brand{display:flex;align-items:center;gap:11px}
-  .logo{width:36px;height:36px;border-radius:9px;background:var(--accent);display:flex;align-items:center;justify-content:center;color:var(--onAccent);font-family:'Outfit',sans-serif;font-weight:700;font-size:18px}
+  .logo{width:36px;height:36px;border-radius:9px;background:var(--accent);display:flex;align-items:center;justify-content:center;color:var(--onAccent);font-family:Manrope,system-ui,sans-serif;font-weight:700;font-size:18px}
   .bname{font-weight:600;font-size:15px}.bname span{color:var(--gold)}
   .sub{font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:var(--muted)}
   .themebtn{background:transparent;border:1px solid var(--border);border-radius:8px;color:var(--muted);padding:7px 11px;cursor:pointer;font-size:13px}
   .themebtn:hover{border-color:var(--goldbd);color:var(--txt)}
   .steps{display:flex;gap:8px;justify-content:center;margin:30px 0 4px;flex-wrap:wrap}
   .sdot{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--muted)}
-  .sdot .n{width:27px;height:27px;border-radius:50%;border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:13px;font-family:'Outfit',sans-serif}
+  .sdot .n{width:27px;height:27px;border-radius:50%;border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:13px;font-family:Manrope,system-ui,sans-serif}
   .sdot.on{color:var(--txt)}.sdot.on .n{border-color:var(--goldbd);background:var(--accentSoft);color:var(--txt);font-weight:700}
   .sdot.done .n{background:var(--accent);color:var(--onAccent);border-color:var(--accent)}
   .sline{width:22px;height:1px;background:var(--border);align-self:center}
@@ -43,7 +43,7 @@
   .kicker{font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--gold);margin-bottom:6px}
   .filtros{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:22px}
   .filtro{border:1px solid var(--border);border-radius:12px;padding:18px;background:var(--bg)}
-  .filtro .fn{font-family:'Outfit',sans-serif;color:var(--gold);font-size:22px;font-weight:700}
+  .filtro .fn{font-family:Manrope,system-ui,sans-serif;color:var(--gold);font-size:22px;font-weight:700}
   .filtro h3{margin:6px 0 6px;font-size:16px}.filtro p{margin:0;font-size:13px;color:var(--muted);line-height:1.5}
   .caminhos{border-top:1px solid var(--border);padding-top:18px;margin-bottom:6px}
   .caminhos .row{display:flex;gap:10px;font-size:13.5px;padding:5px 0;color:var(--txt)}
@@ -52,10 +52,10 @@
   .inputs{display:grid;grid-template-columns:1fr 1fr;gap:18px}
   label.f{display:block;font-size:13.5px;color:var(--txt);margin-bottom:5px;font-weight:500}
   .help{font-size:11.5px;color:var(--muted);margin-top:5px;line-height:1.45}
-  input[type=number],input.money,input.num,select{width:100%;background:var(--bg);border:1px solid var(--border);border-radius:9px;color:var(--txt);padding:11px;font-family:ui-monospace,Menlo,monospace;font-size:14px}
+  input[type=number],input.money,input.num,select{width:100%;background:var(--bg);border:1px solid var(--border);border-radius:9px;color:var(--txt);padding:11px;font-family:Manrope,system-ui,sans-serif;font-size:14px}
   input[type=text],input[type=email]{width:100%;background:var(--bg);border:1px solid var(--border);border-radius:9px;color:var(--txt);padding:12px;font-size:14px;font-family:inherit}
   input[type=range]{width:100%;accent-color:var(--accent)}
-  .rowlab{display:flex;justify-content:space-between;font-size:13.5px;margin-bottom:6px;font-weight:500}.rowlab b{color:var(--green);font-family:ui-monospace,monospace}
+  .rowlab{display:flex;justify-content:space-between;font-size:13.5px;margin-bottom:6px;font-weight:500}.rowlab b{color:var(--green);font-family:Fraunces,Georgia,serif}
   .switch{display:flex;align-items:center;gap:10px;font-size:14px}
   .seg{display:inline-flex;border:1px solid var(--border);border-radius:8px;overflow:hidden}
   .seg button{background:transparent;border:0;color:var(--muted);padding:8px 14px;cursor:pointer;font-size:13px}
@@ -68,8 +68,8 @@
   .col{border:1px solid var(--border);border-radius:12px;padding:17px;background:var(--bg)}
   .col.win{border-color:var(--green);background:var(--winBg)}
   .col .tag{font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
-  .col .par{font-size:13px;color:var(--muted);margin-top:8px}.col .par b{color:var(--txt);font-family:ui-monospace,monospace;font-size:15px}
-  .col .tot{font-size:23px;font-weight:700;font-family:ui-monospace,monospace;margin-top:10px}
+  .col .par{font-size:13px;color:var(--muted);margin-top:8px}.col .par b{color:var(--txt);font-family:Fraunces,Georgia,serif;font-size:15px}
+  .col .tot{font-size:23px;font-weight:700;font-family:Fraunces,Georgia,serif;margin-top:10px}
   .red{color:var(--red)}.grn{color:var(--green)}
   .verdict{border-radius:12px;padding:18px;border:1px solid var(--border);background:var(--greenSoft);font-size:15.5px;line-height:1.55;margin-bottom:16px}.verdict b{color:var(--green)}
   .toolbar{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;margin-bottom:16px}.chk{display:flex;gap:8px;align-items:center;font-size:13px;color:var(--muted);cursor:pointer}
@@ -78,21 +78,21 @@
   .perfis{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:12px;margin-top:22px}
   .perfil{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:20px;cursor:pointer;text-align:left;font-family:inherit;color:var(--txt);transition:border-color .12s}
   .perfil:hover{border-color:var(--goldbd)}
-  .perfil .pt{font-size:16.5px;font-weight:700;font-family:'Outfit',sans-serif}
+  .perfil .pt{font-size:16.5px;font-weight:700;font-family:Manrope,system-ui,sans-serif}
   .perfil .pp{font-size:12px;color:var(--gold);margin-top:2px}
   .perfil .pd{font-size:13.5px;color:var(--muted);line-height:1.5;margin-top:9px}
   .simhead{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin:20px 0 22px}
   .backbtn{background:transparent;border:1px solid var(--border);border-radius:9px;color:var(--muted);padding:8px 13px;cursor:pointer;font-size:13px;font-family:inherit}
   .backbtn:hover{border-color:var(--goldbd);color:var(--txt)}
-  .simhead .st{font-size:20px;font-weight:700;font-family:'Outfit',sans-serif;flex:1;min-width:120px}
-  .cmpbtn{background:var(--accent);color:var(--onAccent);border:0;border-radius:9px;padding:9px 16px;cursor:pointer;font-size:13.5px;font-weight:600;font-family:'Outfit',sans-serif}
+  .simhead .st{font-size:20px;font-weight:700;font-family:Manrope,system-ui,sans-serif;flex:1;min-width:120px}
+  .cmpbtn{background:var(--accent);color:var(--onAccent);border:0;border-radius:9px;padding:9px 16px;cursor:pointer;font-size:13.5px;font-weight:600;font-family:Manrope,system-ui,sans-serif}
   .cmpbtn:hover{box-shadow:0 0 0 1px var(--goldbd)}
   .crow{display:flex;align-items:center;gap:14px;padding:15px 2px;border-bottom:1px solid var(--border)}
   .crow .ct{flex:1;min-width:0}.crow .cn{font-size:15px;font-weight:600}.crow .cs{font-size:12.5px;color:var(--muted);margin-top:1px}
   .crow.best{background:var(--greenSoft);border-radius:8px;padding-left:12px;padding-right:12px}
-  .crow .cv{text-align:right;white-space:nowrap}.crow .cvv{font-size:18px;font-weight:700;font-family:ui-monospace,monospace}.crow .cvh{font-size:11.5px;color:var(--muted)}
+  .crow .cv{text-align:right;white-space:nowrap}.crow .cvv{font-size:18px;font-weight:700;font-family:Fraunces,Georgia,serif}.crow .cvh{font-size:11.5px;color:var(--muted)}
   .rtabs{display:flex;gap:4px;border-bottom:1px solid var(--border);margin-bottom:22px;flex-wrap:wrap}
-  .rtab{background:transparent;border:0;border-bottom:2px solid transparent;color:var(--muted);padding:11px 16px;margin-bottom:-1px;cursor:pointer;font-size:14px;font-weight:600;font-family:'Outfit',sans-serif;white-space:nowrap}
+  .rtab{background:transparent;border:0;border-bottom:2px solid transparent;color:var(--muted);padding:11px 16px;margin-bottom:-1px;cursor:pointer;font-size:14px;font-weight:600;font-family:Manrope,system-ui,sans-serif;white-space:nowrap}
   .rtab:hover{color:var(--txt)}
   .rtab.on{color:var(--txt);border-bottom-color:var(--goldbd)}
   @media(max-width:600px){.rtabs{flex-wrap:nowrap;overflow-x:auto}.rtab{padding:9px 12px;font-size:12.5px}}
@@ -100,28 +100,28 @@
   .rk::after{content:"";flex:1;height:1px;background:var(--border)}
   .hero{margin:6px 0 30px}
   .hero .hk{font-size:14px;color:var(--muted);margin-bottom:8px}
-  .hero .hv{font-size:64px;font-weight:700;font-family:'Outfit',sans-serif;line-height:.98;letter-spacing:-.03em}
+  .hero .hv{font-size:64px;font-weight:700;font-family:Manrope,system-ui,sans-serif;line-height:.98;letter-spacing:-.03em}
   .hero .hd2{font-size:16px;color:var(--muted);line-height:1.55;margin-top:14px;max-width:580px}
   .hero .hv .grn{color:var(--green)}.hero .hv .red{color:var(--red)}
   .stats{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:28px}
   .stat{border-top:2px solid var(--goldbd);padding-top:14px}
   .stat .sl{font-size:13px;color:var(--muted)}
-  .stat .sv{font-size:34px;font-weight:700;font-family:ui-monospace,monospace;letter-spacing:-.01em;line-height:1;margin-top:7px}
+  .stat .sv{font-size:34px;font-weight:700;font-family:Fraunces,Georgia,serif;letter-spacing:-.01em;line-height:1;margin-top:7px}
   .stat .sv.grn{color:var(--green)}.stat .sv.red{color:var(--red)}
   .stat .sh{font-size:12.5px;color:var(--muted);margin-top:7px}
   @media(max-width:600px){.hero .hv{font-size:40px}.stats{grid-template-columns:1fr;gap:12px}.stat .sv{font-size:30px}}
   .twoside{display:flex;border-top:1px solid var(--border);border-bottom:1px solid var(--border);margin-bottom:26px}
   .twoside .ts{flex:1;padding:16px 0}.twoside .ts+.ts{padding-left:24px;margin-left:24px;border-left:1px solid var(--border)}
-  .twoside .tsl{font-size:13px;color:var(--muted)}.twoside .tsv{font-size:26px;font-weight:700;font-family:ui-monospace,monospace;margin-top:4px}.twoside .tsh{font-size:12px;color:var(--muted);margin-top:3px}
+  .twoside .tsl{font-size:13px;color:var(--muted)}.twoside .tsv{font-size:26px;font-weight:700;font-family:Fraunces,Georgia,serif;margin-top:4px}.twoside .tsh{font-size:12px;color:var(--muted);margin-top:3px}
   .chartcap{font-size:13.5px;color:var(--muted);line-height:1.6;margin:0 0 16px;max-width:560px}
   .oppbox{background:var(--greenSoft);border-radius:12px;padding:18px 20px;margin-top:22px}
-  .oppbox h4{margin:0 0 8px;font-size:15px;font-weight:600;font-family:'Outfit',sans-serif}
+  .oppbox h4{margin:0 0 8px;font-size:15px;font-weight:600;font-family:Manrope,system-ui,sans-serif}
   .oppbox p{margin:0;font-size:14px;color:var(--muted);line-height:1.65}.oppbox b{color:var(--txt);font-weight:600}.oppbox b.g{color:var(--green)}
   @media(max-width:560px){.twoside{flex-direction:column}.twoside .ts+.ts{padding-left:0;margin-left:0;border-left:0;border-top:1px solid var(--border)}}
   .kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:6px}
   .kpi{border:1px solid var(--border);border-radius:12px;padding:14px;background:var(--bg)}
   .kpi .kk{font-size:10.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
-  .kpi .kv{font-size:19px;font-weight:700;font-family:ui-monospace,monospace;margin-top:5px;line-height:1.15}
+  .kpi .kv{font-size:19px;font-weight:700;font-family:Fraunces,Georgia,serif;margin-top:5px;line-height:1.15}
   .kpi .kh{font-size:11px;color:var(--muted);margin-top:3px}
   details.adv{border-top:1px solid var(--border);margin-top:6px;padding-top:6px}
   details.adv>summary{cursor:pointer;list-style:none;font-size:13px;font-weight:600;color:var(--gold);padding:8px 0;display:flex;align-items:center;gap:7px}
@@ -136,19 +136,22 @@
   details.det[open]>summary::before{transform:rotate(90deg)}
   details.det>.inner{padding:0 18px 18px}
   .patline{display:flex;justify-content:space-between;gap:12px;padding:10px 0;border-bottom:1px solid var(--border);font-size:13.5px}.patline:last-child{border-bottom:0}
-  .patline .q{color:var(--muted)}.patline .a{font-family:ui-monospace,monospace;text-align:right}
+  .patline .q{color:var(--muted)}.patline .a{font-family:Fraunces,Georgia,serif;text-align:right}
   .cengrid{display:flex;gap:10px}.cencol{flex:1;border:1px solid var(--border);border-radius:10px;padding:12px;text-align:center}.cencol.win{border-color:var(--green);background:var(--greenSoft)}.ceng{font-size:11px;text-transform:uppercase;letter-spacing:1px;color:var(--muted);margin-bottom:4px}.cenr{font-size:12.5px;margin-top:3px}@media(max-width:560px){.cengrid{flex-direction:column}}
   .detgrid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
   .box{border:1px solid var(--border);background:var(--bg);border-radius:12px;padding:16px}
   .box h4{margin:0 0 4px;font-size:15px}.box .d{font-size:12px;color:var(--muted);margin:0 0 12px}
   .mini{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-  .metric{border:1px solid var(--border);border-radius:10px;padding:11px}.metric .k{font-size:11px;color:var(--muted)}.metric .v{font-size:17px;font-weight:600;font-family:ui-monospace,monospace;margin-top:3px}.metric .h{font-size:11px;color:var(--muted);margin-top:3px}
+  .metric{border:1px solid var(--border);border-radius:10px;padding:11px}.metric .k{font-size:11px;color:var(--muted)}.metric .v{font-size:17px;font-weight:600;font-family:Fraunces,Georgia,serif;margin-top:3px}.metric .h{font-size:11px;color:var(--muted);margin-top:3px}
   .cost{color:var(--red)}.profit{color:var(--green)}
   .modal{position:fixed;inset:0;background:rgba(0,0,0,.5);display:none;align-items:center;justify-content:center;padding:18px;z-index:50}.modal.on{display:flex}.modalc{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:24px;max-width:430px;width:100%}.modalc input{width:100%;background:var(--bg);border:1px solid var(--border);border-radius:9px;color:var(--txt);padding:11px 12px;font-size:14px}.chk2{display:flex;gap:8px;align-items:flex-start;font-size:12px;color:var(--muted);cursor:pointer}
   .hide{display:none}
   footer{border-top:1px solid var(--border);padding:26px 0;color:var(--muted);font-size:12px;text-align:center}
   footer .reg{font-size:11px;margin-top:6px}
   @media(max-width:680px){.filtros,.inputs,.cmp,.detgrid{grid-template-columns:1fr}.kpis{grid-template-columns:1fr 1fr}h2.t{font-size:22px}.hero .hv{font-size:27px}}
+  .hero .hv,.perfil .pt,.simhead .st,.filtro .fn,.oppbox h4{font-family:Fraunces,Georgia,serif}
+  .perfil{position:relative}.perfil::after{content:'\2192';position:absolute;top:18px;right:20px;color:var(--muted);font-size:18px;transition:transform .15s,color .15s}
+  .perfil:hover{transform:translateY(-2px)}.perfil:hover::after{transform:translateX(3px);color:var(--gold)}
 </style>
 </head>
 <body>
@@ -180,7 +183,7 @@
     <div id="stepInputs">
   <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(330px,1fr));gap:16px">
     <div class="card" id="cardCons">
-      <h3 id="consTitle" style="font-family:'Outfit',serif;font-size:21px;margin:0 0 12px">Dados da carta</h3>
+      <h3 id="consTitle" style="font-family:Fraunces,Georgia,serif;font-size:21px;margin:0 0 12px">Dados da carta</h3>
       <div class="inputs" style="grid-template-columns:1fr">
         <div><label class="f">Valor do crédito (carta)</label><input type="text" inputmode="numeric" class="money" id="valorCredito" value="1.000.000"><div class="help">O valor que você quer receber para o imóvel.</div></div>
         <div><label class="f">Número de parcelas (meses)</label><input type="number" inputmode="numeric" id="parcelasCons" min="12" max="240" step="1" value="200"><div class="help">Prazo do consórcio, mês a mês (máx. 240). Digite o número de meses.</div></div>
@@ -207,7 +210,7 @@
       </div>
     </div>
   <div class="card" id="cardFin">
-      <h3 style="font-family:'Outfit',serif;font-size:21px;margin:0 0 12px">Financiamento</h3>
+      <h3 style="font-family:Fraunces,Georgia,serif;font-size:21px;margin:0 0 12px">Financiamento</h3>
       <div class="inputs" style="grid-template-columns:1fr">
         <div><label class="f">Valor do imóvel</label><input type="text" inputmode="numeric" class="money" id="valorImovel" value="1.000.000"></div>
         <div><label class="f">Entrada que você dá</label><input type="text" inputmode="numeric" class="money" id="valorEntrada" value="200.000"><div class="help">Quanto você paga à vista. Pode ser 0.</div></div>
@@ -227,11 +230,11 @@
   </div>
   <div id="stepResult" class="hide">
   <div class="card" style="margin-top:4px">
-    <h3 style="font-family:'Outfit',serif;font-size:21px;margin:0 0 12px">Resultado</h3>
+    <h3 style="font-family:Fraunces,Georgia,serif;font-size:21px;margin:0 0 12px">Resultado</h3>
     <div id="out"></div>
     <div id="ctaBar" style="display:none;margin-top:22px;padding-top:18px;border-top:1px solid var(--border);align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap">
       <div style="font-size:13.5px;color:var(--muted);max-width:420px">Leve o comparativo para o cliente com o nome dele e a marca Osher.</div>
-      <button id="pdfBtn" onclick="gerarPDF()" style="font-family:'Outfit',sans-serif;font-size:15px;font-weight:700;padding:14px 26px;border-radius:11px;border:1px solid var(--goldbd);background:var(--accent);color:var(--onAccent);cursor:pointer">Exportar comparativo em PDF →</button>
+      <button id="pdfBtn" onclick="gerarPDF()" style="font-family:Manrope,system-ui,sans-serif;font-size:15px;font-weight:700;padding:14px 26px;border-radius:11px;border:1px solid var(--goldbd);background:var(--accent);color:var(--onAccent);cursor:pointer">Exportar comparativo em PDF →</button>
     </div>
   </div>
   </div>
@@ -354,14 +357,14 @@ function renderResult(){
   var crossM=0, limS=Math.min(serieF.length,serieC.length);
   for(var _cm=1;_cm<=limS;_cm++){ if(serieC[_cm-1]>=serieF[_cm-1]){crossM=_cm;break;} }
   var chartCap=crossM?('O consórcio começa com a parcela menor. O financiamento (SAC) vai caindo e, a partir do <b>mês '+crossM+'</b>, passa a ter a parcela mensal menor — mas no <b>custo total</b> o consórcio segue à frente (sem juros).'):('No prazo simulado, o consórcio mantém a parcela mensal abaixo do financiamento.');
-  var chartBlock='<div class="patbox" style="margin-bottom:16px"><h4 style="margin:0 0 4px;font-size:15px;font-family:Outfit,serif">Parcela mês a mês</h4><div style="font-size:12px;color:var(--muted);margin-bottom:8px">O financiamento (SAC) começa caro e cai; o consórcio começa menor e sobe com o reajuste anual. '+chartCap+'</div>'+lineChart(serieF,serieC,crossM)+'<div style="display:flex;gap:18px;justify-content:center;font-size:12px;margin-top:6px"><span style="color:var(--red)">■ Financiamento (SAC)</span><span style="color:var(--green)">■ Consórcio</span></div></div>';
+  var chartBlock='<div class="patbox" style="margin-bottom:16px"><h4 style="margin:0 0 4px;font-size:15px;font-family:Fraunces,Georgia,serif">Parcela mês a mês</h4><div style="font-size:12px;color:var(--muted);margin-bottom:8px">O financiamento (SAC) começa caro e cai; o consórcio começa menor e sobe com o reajuste anual. '+chartCap+'</div>'+lineChart(serieF,serieC,crossM)+'<div style="display:flex;gap:18px;justify-content:center;font-size:12px;margin-top:6px"><span style="color:var(--red)">■ Financiamento (SAC)</span><span style="color:var(--green)">■ Consórcio</span></div></div>';
   var agio=num("agioRevenda"), taxaLoc=num("taxaLoc");
   var _limSaida=Math.min(cons.mesCont,serieC.length), desembCont=0; for(var _dd=0;_dd<_limSaida;_dd++){desembCont+=serieC[_dd];} desembCont+=cons.adesaoVal+lanceLiq;
   var agioVal=credNet*agio/100, roiVenda=desembCont>0?agioVal/desembCont*100:0;
   var aluguelLoc=im*taxaLoc/100, yieldAno=im>0?aluguelLoc*12/im*100:0, fluxoLoc=aluguelLoc-cons.parcelaApos;
   var saidaBlock='';
   if(agio>0||taxaLoc>0){
-    saidaBlock='<div class="patbox" style="margin-bottom:16px"><h4 style="margin:0 0 4px;font-size:15px;font-family:Outfit,serif">Cenários de saída</h4><div style="font-size:12px;color:var(--muted);margin-bottom:8px">O que dá para fazer com a carta contemplada (mês '+cons.mesCont+'). Valores estimados — ágio e locação dependem do mercado e não são garantidos.</div>';
+    saidaBlock='<div class="patbox" style="margin-bottom:16px"><h4 style="margin:0 0 4px;font-size:15px;font-family:Fraunces,Georgia,serif">Cenários de saída</h4><div style="font-size:12px;color:var(--muted);margin-bottom:8px">O que dá para fazer com a carta contemplada (mês '+cons.mesCont+'). Valores estimados — ágio e locação dependem do mercado e não são garantidos.</div>';
     if(agio>0){saidaBlock+='<div class="patline"><span class="q">Vender a carta contemplada (ágio '+agio+'%)</span><span class="a">investido '+brl(desembCont)+' · ágio +'+brl(agioVal)+' → <b>ROI '+Math.round(roiVenda)+'%</b> em '+cons.mesCont+' meses</span></div>';}
     if(taxaLoc>0){saidaBlock+='<div class="patline"><span class="q">Alugar o imóvel após contemplar</span><span class="a">aluguel '+brl(aluguelLoc)+'/mês (yield '+(Math.round(yieldAno*10)/10)+'%/ano) · fluxo após a parcela: '+(fluxoLoc>=0?'+':'')+brl(fluxoLoc)+'/mês</span></div>';}
     saidaBlock+='</div>';
@@ -379,7 +382,7 @@ function renderResult(){
   var pdCap=investDif
     ?('Enquanto o financiado abate a dívida, o consorciado mantém <b>'+brl(cap0)+'</b> investido e ainda aplica a diferença de parcela (total aportado: '+brl(aporteTot)+').'+(crossPD?(' No <b>mês '+crossPD+'</b> o patrimônio investido supera a dívida do financiamento.'):''))
     :('O consorciado mantém <b>'+brl(cap0)+'</b> investido no CDI. Marque abaixo para também aplicar a diferença de parcela mês a mês.');
-  var patDivBlock=Tpd>=2?('<div class="patbox" style="margin-bottom:16px"><h4 style="margin:0 0 4px;font-size:15px;font-family:Outfit,serif">Patrimônio × Dívida</h4>'
+  var patDivBlock=Tpd>=2?('<div class="patbox" style="margin-bottom:16px"><h4 style="margin:0 0 4px;font-size:15px;font-family:Fraunces,Georgia,serif">Patrimônio × Dívida</h4>'
     +'<div style="font-size:12px;color:var(--muted);margin-bottom:8px">Um caminho abate uma dívida; o outro constrói patrimônio. '+pdCap+'</div>'
     +lineChart(serieSaldo,patrim,crossPD)
     +'<div style="display:flex;gap:18px;justify-content:center;font-size:12px;margin-top:6px"><span style="color:var(--red)">■ Dívida do financiamento (SAC)</span><span style="color:var(--green)">■ Capital investido (consórcio)</span></div>'
@@ -398,7 +401,7 @@ function renderResult(){
   var mcBase=cons.mesCont, mcOt=Math.max(1,Math.round(mcBase*0.5)), mcPe=Math.min(nc,Math.round(mcBase*1.5));
   var cenOt=_cenC(mcOt), cenRe=_cenC(mcBase), cenPe=_cenC(mcPe);
   function _cenCol(t,c,hl){
-    var r='<div style="font-size:20px;font-weight:700;font-family:Outfit,serif">mês '+c.mc+'</div>';
+    var r='<div style="font-size:20px;font-weight:700;font-family:Fraunces,Georgia,serif">mês '+c.mc+'</div>';
     r+='<div style="font-size:11.5px;color:var(--muted);margin-bottom:6px">em ~'+(Math.round(c.mc/12*10)/10)+' anos</div>';
     r+='<div class="cenr">Parcela após: <b>'+brl(c.pa)+'</b></div>';
     if(aluguelMes>0)r+='<div class="cenr">Aluguel até lá: '+brl(c.cesp)+'</div>';
@@ -406,7 +409,7 @@ function renderResult(){
     if(taxaLoc>0)r+='<div class="cenr">Fluxo locação: '+(c.flx>=0?'+':'')+brl(c.flx)+'/mês</div>';
     return '<div class="cencol'+(hl?' win':'')+'"><div class="ceng">'+t+'</div>'+r+'</div>';
   }
-  var cenBlock='<div class="patbox" style="margin-bottom:16px"><h4 style="margin:0 0 4px;font-size:15px;font-family:Outfit,serif">Cenários de contemplação</h4>'
+  var cenBlock='<div class="patbox" style="margin-bottom:16px"><h4 style="margin:0 0 4px;font-size:15px;font-family:Fraunces,Georgia,serif">Cenários de contemplação</h4>'
     +'<div style="font-size:12px;color:var(--muted);margin-bottom:10px">A contemplação depende de sorteio e lance — <b>não é garantida</b>. Veja como muda se ela vier antes ou depois do mês previsto ('+mcBase+').</div>'
     +'<div class="cengrid">'+_cenCol('Otimista',cenOt,false)+_cenCol('Previsto',cenRe,true)+_cenCol('Pessimista',cenPe,false)+'</div></div>';
   var consSub=cons.reduzida?'reduzida · após contempl.: '+brl(cons.parcelaApos):(lanceLiq>0?'após lance: '+brl(cons.parcelaApos):'sem juros'+(cons.adesaoVal>0?' · adm '+cons.admParc+'% nas parcelas':''));
